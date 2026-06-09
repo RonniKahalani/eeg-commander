@@ -445,7 +445,7 @@ function resetToDefaults() {
  * Loads saved patterns from localStorage.
  * @returns {void}
  */
-function loadSavedPatterns() {
+async function loadSavedPatterns() {
     const saved = localStorage.getItem(LOCAL_STORAGE_PATTERNS);
     if (saved) {
         try {
@@ -457,8 +457,7 @@ function loadSavedPatterns() {
         } catch (e) { }
     }
     // Fallback to defaults
-    const defaultPatterns = loadPatterns(DEFAULT_PATTERNS);
-    patterns = JSON.parse(JSON.stringify(defaultPatterns));
+    await loadPatterns(config.patterns);
 }
 
 /**
