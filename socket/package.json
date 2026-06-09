@@ -1,0 +1,12 @@
+{
+  "name": "socket-server",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node socket-server.js",
+    "dev": "node --watch socket-server.js"
+  },
+  "dependencies": {
+    "ws": "^8.20.1"
+  }
+}

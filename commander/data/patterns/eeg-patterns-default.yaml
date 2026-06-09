@@ -1,0 +1,121 @@
+patterns:
+  - name: Relaxed (JS - Video)
+    alias: js-video
+    description: Detects high focus states using a moving average of absolute values across all channels.  
+    enabled: false
+    condition:
+      channel: avg
+      metric: moving_avg_abs
+      operator: <
+      threshold: 12
+      duration: 4
+    action:
+      type: js
+      payload: ./data/js/demo-action-video.js
+    cooldown: 12
+  - name: Relaxed (JS - 3D)
+    alias: js-3d
+    description: Detects high focus states using a moving average of absolute values across all channels.  
+    enabled: false
+    condition:
+      channel: avg
+      metric: moving_avg_abs
+      operator: <
+      threshold: 12
+      duration: 4
+    action:
+      type: js
+      payload: ./data/js/demo-action-3d.js
+    cooldown: 12
+  - name: Relaxed (OS Shell)
+    alias: shell-cmd
+    description: Detects high focus states using a moving average of absolute values across all channels.  
+    enabled: false
+    condition:
+      channel: avg
+      metric: moving_avg_abs
+      operator: '<'
+      threshold: 12
+      duration: 4
+    action:
+      type: shell
+      payload:
+        host: http://localhost:3000
+        command: c:\code\echo-stuff.cmd
+    cooldown: 12
+  - name: Relaxed (URL)
+    alias: url-post
+    description: Detects high focus states using a moving average of absolute values across all channels.
+    enabled: false
+    condition:
+      channel: avg
+      metric: moving_avg_abs
+      operator: '<'
+      threshold: 12
+      duration: 4
+    action:
+      type: url
+      payload:
+        method: POST
+        url: https://httpbin.org/post
+        authorization: Bearer sk_live_demo1234567890abcdef
+        contentType: application/json
+        body: {"event":"high_focus","source":"Commander","intensity":"high"}
+    cooldown: 8
+  - name: Relaxed (WebSocket)
+    alias: socket-msg
+    description: Detects high focus states using a moving average of absolute values across all channels.
+    enabled: false
+    condition:
+      channel: avg
+      metric: moving_avg_abs
+      operator: '<'
+      threshold: 12
+      duration: 4
+    action:
+      type: socket
+      payload:
+        host: ws://localhost:8889
+        message: {"message": "Socket Test"}
+        timeout: 5
+        replies: 1
+    cooldown: 5
+  - name: Relaxed (UDP)
+    alias: udp-msg
+    description: Detects high focus states using a moving average of absolute values across all channels.
+    enabled: false
+    condition:
+      channel: avg
+      metric: moving_avg_abs
+      operator: '<'
+      threshold: 12
+      duration: 4
+    action:
+      type: udp
+      payload:
+        host: localhost
+        port: 8888
+        message: {"message": "UDP Test"}
+        timeout: 5
+        replies: 1
+    cooldown: 5
+  - name: Relaxed (MQTT)
+    alias: mqtt-msg
+    description: Detects high focus states using a moving average of absolute values across all channels.
+    enabled: false
+    condition:
+      channel: avg
+      metric: moving_avg_abs
+      operator: '<'
+      threshold: 12
+      duration: 4
+    action:
+      type: mqtt
+      payload:
+        host: wss://broker.emqx.io:8084/mqtt
+        topic: browser/demo
+        quality: 0
+        message: {"message": "MQTT Test"}
+        timeout: 5
+        replies: 1
+    cooldown: 5    

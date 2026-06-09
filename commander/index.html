@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="EEG Commander: Transform EEG brain signals into powerful automations. Control your computer, smart devices, and workflows using focus, stress, and relaxation patterns.">
+    <title>EEG Commander • Signal Pattern Triggers</title>
+
+    <link rel="shortcut icon" href="/commander/img/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/commander/css/master.css">
+
+    <script type='text/javascript' src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <script type='text/javascript' src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script type='text/javascript' src="https://cdn.tailwindcss.com"></script>
+
+    <script type='text/javascript' defer src="/commander/js/utils.js"></script>
+    <script type='text/javascript' defer src="/commander/js/tasks.js"></script>
+    <script type='text/javascript' defer src="/commander/js/actions.js"></script>
+    <script type='text/javascript' defer src="/commander/js/patterns.js"></script>
+    <script type='text/javascript' defer src="/commander/js/log.js"></script>
+    <script type='text/javascript' defer src="/commander/js/events.js"></script>
+    <script type='text/javascript' defer src="/commander/js/three.js"></script>
+    <script type='text/javascript' defer src="/commander/js/eeg-chart.js"></script>
+    <script type='text/javascript' defer src="/commander/js/http-status.js"></script>
+    <script type='text/javascript' defer src="/commander/js/dialogs.js"></script>
+    <script type='text/javascript' defer src="/commander/js/helper/three-helper.js"></script>
+    <script type='text/javascript' defer src="/commander/js/helper/media-helper.js"></script>
+    <script type='text/javascript' defer src="/commander/js/helper/ui-helper.js"></script>
+    <script type='text/javascript' defer src="/commander/js/helper/eeg-helper.js"></script>
+    <script type='text/javascript' defer src="/commander/js/helper/js-helper.js"></script>
+    <script type='text/javascript' defer src="/commander/js/commander.js"></script>
+</head>
+
+<body class="bg-slate-900 text-slate-400 app-container min-h-screen">
+    <header></header>
+
+    <nav class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-lg sticky top-0 z-50">
+        <div class="max-w-screen-2xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-x-3">
+                <div
+                    class="w-11 h-11 bg-gradient-to-br from-orange-500 to-orange-900 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/30">
+                    <i class="fa-solid fa-brain text-white text-3xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-display text-3xl font-semibold tracking-tighter">EEG <span
+                            class="sdk-badge">Commander</span></h1>
+                    <p class="text-[10px] text-slate-500 -mt-1">Signal Pattern → Action Engine</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-x-4">
+
+                <button onclick="toggleMute()" title="Toggle mute audio"
+                    class="text-gray-500 dark:text-gray-400 hover:text-blue-400 transition-colors"
+                    :class="{ 'text-blue-400': isMuted }">
+                    <!-- Volume On Icon -->
+                    <svg id="mute" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6 hidden">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z">
+                        </path>
+                    </svg>
+                    <!-- Volume Mute Icon -->
+                    <svg id="unmute" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6" hidden>
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M17.25 9.75L19.5 12m0 0l2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z">
+                        </path>
+                    </svg>
+                </button>
+
+                <!-- Tutorial + SDK Docs -->
+                <a href="https://github.com/RonniKahalani/BrainBit/blob/main/commander/TUTORIAL.md" target="_blank"
+                    class="px-3 py-1.5 bg-orange-800 hover:bg-orange-700 active:bg-orange-600 transition-all text-sm font-semibold border border-slate-700 rounded-3xl flex items-center gap-x-2 text-xs">
+                    <i class="fa-brands fa-github mr-1.5"></i>
+                    <span class="font-mono">Tutorial</span>
+                </a>
+
+                <a href="https://sdk.brainbit.com/web-quickstart/" target="_blank"
+                    class="flex items-center gap-x-2 px-4 py-2 text-sm hover:bg-slate-800 rounded-3xl transition-colors border border-slate-700 hover:border-slate-600">
+                    <i class="fa-brands fa-github mr-1.5"></i>
+                    <span class="text-xs font-medium">SDK Docs</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+
+        <div class="max-w-screen-2xl mx-auto px-6 pt-6 pb-12">
+
+            <!-- Connection Status Bar -->
+            <div class="p-0 mb-0 flex flex-col lg:flex-row lg:items-center gap-4">
+                <div class="flex items-center gap-x-4 flex-1">
+                    <div id="connection-status"
+                        class="flex items-center gap-x-3 px-4 py-2.5 bg-slate-900 rounded-3xl border border-slate-700 min-w-[220px]">
+                        <div class="flex items-center gap-x-2">
+                            <i id="status-icon" class="fa-solid fa-plug text-amber-400 fa-fw"></i>
+                            <div>
+                                <div id="status-text" class="font-semibold text-sm">Disconnected</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-x-2">
+                        <button title="Connect Device" onclick="connectDevice()" id="connect-btn"
+                            class="px-6 py-2.5 bg-orange-800 hover:bg-orange-700 active:bg-orange-600 transition-all text-sm font-semibold rounded-3xl flex items-center gap-x-2 shadow-lg shadow-orange-400/30">
+                            <i class="fa-solid fa-link fa-fw"></i>
+                            <span id="connect-text">Connect</span>
+                            <div class="text-[10px] text-slate-500"></div>
+                        </button>
+
+                        <button title="Disconnect Device" onclick="disconnectDevice()" id="disconnect-btn"
+                            class="hidden px-4 py-2.5 bg-slate-800 hover:bg-red-900/50 text-red-400 text-sm font-semibold rounded-3xl flex items-center gap-x-2 border border-slate-700">
+                            <i class="fa-solid fa-unlink fa-fw"></i>
+                            <span>Disconnect</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Device Info -->
+                <div id="device-info" class="hidden lg:flex items-center gap-x-6 text-sm">
+                    <div class="flex items-center gap-x-2">
+                        <span class="text-slate-400">Battery</span>
+                        <div class="w-24 h-2 bg-slate-800 rounded-full overflow-hidden">
+                            <div id="battery-bar" class="h-full bg-emerald-400 transition-all" style="width: 78%"></div>
+                        </div>
+                        <span id="battery-text" class="font-mono text-xs w-8 text-emerald-400">78%</span>
+                    </div>
+
+                    <div class="h-3 w-px bg-slate-700"></div>
+
+                    <div>
+                        <span class="text-slate-400 text-xs">FW</span>
+                        <span id="firmware-text" class="font-mono text-xs ml-1">2.4.1</span>
+                    </div>
+
+                    <div class="h-3 w-px bg-slate-700"></div>
+
+                    <div class="flex items-center gap-x-1.5">
+                        <div id="device-channels" class="font-medium text-sm"></div>
+                        <div id="device-name" class="font-medium text-sm">Not connected</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-sm font-medium text-center text-body border-b border-orange-400 mb-3">
+                <ul class="flex flex-wrap -mb-px text-lg">
+
+                    <li class="me-2">
+                        <a href="#" onclick="showTab('tab-playground')"
+                            class="inline-block p-4 text-fg-brand border-b border-orange-400 rounded-t-base active"
+                            aria-current="page">Playground</a>
+                    </li>
+
+                    <li class="me-2">
+                        <a href="#" onclick="showTab('tab-patterns')"
+                            class="inline-block p-4 border-b border-orange-400 rounded-t-base hover:text-fg-brand hover:border-brand">Patterns</a>
+                    </li>
+
+                    <li class="me-2">
+                        <a href="#" onclick="showTab('tab-events')"
+                            class="inline-block p-4 border-b border-orange-400 rounded-t-base hover:text-fg-brand hover:border-brand">Events</a>
+                    </li>
+
+                    <li class="me-2">
+                        <a href="#" onclick="showTab('tab-eeg')"
+                            class="inline-block p-4 border-b border-orange-400 rounded-t-base hover:text-fg-brand hover:border-brand">EEG</a>
+                    </li>
+
+                </ul>
+            </div>
+
+            <!-- PLAYGROUND TAB -->
+            <div id="tab-playground" class="main-tab">
+
+                <div class="w-full">
+
+                    <div class="flex-1 p-0 mb-0">
+                        <img src="/commander/img/playground-banner.png" alt="Playground Banner"
+                            class="w-full h-full object-cover rounded-3xl opacgity-0 border border-slate-800">
+                        <!-- <h1 class="font-semibold text-3xl text-orange-400">Playground</h1>
+<p class="text-2xl">Turn your brainwaves into real-world actions. The ultimate creative playground for your mind.</p> -->
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-2 p-2">
+
+                        <div class="p-2 mb-2">
+                            <h2 class="font-semibold text-lg text-orange-400">What</h2>
+                            <p class="mb-2">A playground where you create your own actions
+                                triggered
+                                by EEG signal patterns.
+                            </p>
+                        </div>
+
+                        <div class="p-2 mb-2">
+                            <h2 class="font-semibold text-lg text-orange-400">Why</h2>
+                            <p class="mb-2">Having fun making creative real-world actions from brain
+                                signals.
+                            </p>
+                        </div>
+
+                        <div class="p-2 mb-2">
+                            <h2 class="font-semibold text-lg text-orange-400">Who</h2>
+                            <p class="mb-2">Anyone interested in exploring the potential of brainwaves and real-world
+                                actions.
+                            </p>
+                        </div>
+
+                        <div class="p-2 mb-2">
+                            <h2 class="font-semibold text-lg text-orange-400">Where</h2>
+                            <p class="mb-2">
+                            </p>
+                            <div class="mb-2 flex items-center gap-x-4">
+
+                                <div>
+                                    <a title="GitHub"
+                                        class="hover:text-blue-800 underline hover:no-underline transition duration-300"
+                                        href="https://github.com/RonniKahalani/BrainBit/tree/main/commander"
+                                        target="_blank">
+                                        <svg data-component="Octicon" aria-hidden="true" focusable="false"
+                                            class="octicon octicon-mark-github" viewBox="0 0 24 24" width="32"
+                                            height="32" fill="currentColor" display="inline-block" overflow="visible"
+                                            style="vertical-align:text-bottom">
+                                            <path
+                                                d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943">
+                                            </path>
+                                        </svg>
+                                    </a>
+                                </div>
+                                <div>
+                                    <a title="Discord"
+                                        class="hover:text-blue-800 underline hover:no-underline transition duration-300"
+                                        href="https://discord.gg/TB63BhKCx" target="_blank">
+
+                                        <svg width="32" height="32" viewBox="0 0 127.14 96.36" fill="currentColor"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M107.7 8.07A105.15 105.15 0 0081.47 0a72.06 72.06 0 00-3.36 6.83A97.68 97.68 0 0049.05 6.83 72.37 72.37 0 0045.64 0 105.89 105.89 0 0019.39 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0032.17 16.12 77.7 77.7 0 006.89-11.14 68.42 68.42 0 01-10.85-5.23c.91-.66 1.8-1.34 2.66-2.05a75.57 75.57 0 0064.32 0c.87.71 1.76 1.39 2.66 2.05a68.68 68.68 0 01-10.87 5.23 77.3 77.3 0 006.89 11.14 105.6 105.6 0 0032.19-16.12c2.4-27.1-4.1-50.6-19.49-72.14zM42.45 65.63c-5.6 0-10.18-5.13-10.18-11.44s4.58-11.44 10.18-11.44c5.61 0 10.2 5.13 10.2 11.44s-4.59 11.44-10.2 11.44zm42.24 0c-5.6 0-10.18-5.13-10.18-11.44s4.58-11.44 10.18-11.44c5.61 0 10.2 5.13 10.2 11.44s-4.59 11.44-10.2 11.44z" />
+                                        </svg>
+                                    </a>
+                                </div>
+                                <div>
+                                    <a title="BrainBit"
+                                        class="hover:text-blue-800 underline hover:no-underline transition duration-300"
+                                        href="https://brainbit.com" target="_blank">
+
+                                        <img src="/commander/img/brainbit.png" alt="BrainBit Logo" class="w-6 h-6 ">
+                                    </a>
+                                </div>
+
+                                <div class="flex-1"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- EXAMPLES -->
+                    <hr class="border-orange-400">
+
+                    <h2 class="font-semibold text-center text-3xl text-orange-400 p-6">Playground</h2>
+                    <div id="example-1"></div>
+                    <select id="example-select" onchange="location.href='#' + this.value"
+                        class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-3 text-sm mb-3">
+                        <option value="example-1">1 - Interact with a 3D scene</option>
+                        <option value="example-2">2 - Interact with videos</option>
+                        <option value="example-3">3 - Send via URL</option>
+                        <option value="example-4">4 - Send via WebSocket</option>
+                        <option value="example-5">5 - Send via UDP</option>
+                        <option value="example-6">6 - Send via MQTT</option>
+                        <option value="example-7">7 - Execute shell script</option>
+                    </select>
+
+                    <!-- EXAMPLE 1 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+                        <div>
+                            <h2 class="mb-2 font-semibold text-2xl text-orange-400 flex items-center gap-x-2">1
+                                -
+                                Interact with a 3D scene</h2>
+                            <p class="mb-2">Interacts with the 3D scene embedded to the right which could have been a
+                                online multiplayer game.</p>
+                            <p class="mb-2">Notice you can use mouse wheel and mouse down to zoom and rotate the scene.
+                            </p>
+
+                            <ul class="list-disc pl-6">
+                                <li>Flashes the background color</li>
+                                <li>Wiggles (shakes) an element on the page</li>
+                                <li>Shows a popup (toast) in the lower right corner</li>
+                                <li>Plays an audio clip</li>
+                                <li>Talks to the user via the speech API</li>
+                                <li>Moves the pin up in the 3D scene and changes its material color to a new random
+                                    color
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="neuro-card rounded-3xl p-6 mb-6">
+                            <div id="view3d"></div>
+
+                            <div class="w-full">
+                                <p class="text-right p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <button title="Run" onclick="triggerAlias('js-3d')"
+                                        class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Run</button>
+
+                                    <button title="Edit" onclick="editPatternViaAlias('js-3d')"
+                                        class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Edit</button>
+
+                                    <button title="Code"
+                                        onclick="window.open('https://github.com/RonniKahalani/BrainBit/blob/main/commander/data/js/demo-action-3d.js','_blank')"
+                                        class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Code</button>
+                                </p>
+                            </div>
+
+                            <div class="neuro-card rounded-3xl p-6 bg-slate-900 border border-slate-700">
+                                <div id="example-js-3d" class="example-response overflow-auto space-y-2 custom-scroll">
+                                    Click <span class="font-semibold text-orange-400">Run</span> to test this or <span
+                                        class="font-semibold text-orange-400">Edit</span> to modify this pattern.
+                                </div>
+                                <div class="text-right text-xs text-slate-500 mt-2">Drag triangle to resize.</div>
+                                <div id="example-2"></div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <hr class="col-span-2 mb-3 border-orange-400">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+
+                        <!-- JS VIDEO-->
+                        <div>
+                            <h2 class="mb-2 font-semibold text-2xl text-orange-400 flex items-center gap-x-2">2
+                                -
+                                Interact with videos</h2>
+                            <p class="mb-2">Inserts a randomized YouTube video <code>iframe</code> into a given content
+                                element.</p>
+
+                            <ul class="list-disc pl-6">
+                                <li>Flashes the background color</li>
+                                <li>Wiggles (shakes) an element on the page</li>
+                                <li>Shows a popup (toast) in the lower right corner</li>
+                                <li>Plays an audio clip</li>
+                                <li>Talks to the user via the speech API</li>
+                                <li>Changes to a random YouTube video
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="neuro-card rounded-3xl p-6 mb-6">
+                            <div id="video-container">
+                                <iframe width="100%" height="400"
+                                    src="https://www.youtube.com/embed/Sg1CWhDfpDE?si=2QWvYshTI0DPLfMv"
+                                    title="YouTube video player" frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                            </div>
+
+                            <div class="w-full">
+                                <p class="text-right p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <button title="Run" onclick="triggerAlias('js-video')"
+                                        class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Run</button>
+
+                                    <button title="Edit" onclick="editPatternViaAlias('js-video')"
+                                        class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Edit</button>
+
+                                    <button title="Code"
+                                        onclick="window.open('https://github.com/RonniKahalani/BrainBit/blob/main/commander/data/js/demo-action-video.js','_blank')"
+                                        class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Code</button>
+                                </p>
+                            </div>
+                            <div class="neuro-card rounded-3xl p-6 bg-slate-900 border border-slate-700">
+                                <div id="example-js-video"
+                                    class="example-response overflow-auto space-y-2 custom-scroll">Click <span
+                                        class="font-semibold text-orange-400">Run</span> to test this or <span
+                                        class="font-semibold text-orange-400">Edit</span> to modify this pattern.
+                                </div>
+                                <div class="text-right text-xs text-slate-500 mt-2">Drag triangle to resize.</div>
+                                <div id="example-3"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="col-span-2 mb-3 border-orange-400">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+
+                        <!-- EXAMPLE URL-->
+                        <div>
+                            <h2 class="mb-2 font-semibold text-2xl text-orange-400 flex items-center gap-x-2">3
+                                -
+                                Send via URL</h2>
+                            <p class="mb-2">Posts data via an URL to an external web app or REST API.</p>
+
+                            <ul class="list-disc pl-6 pt-3">
+                                <li>Posts data to the web app <code>https://httpbin.org/post</code>.
+                                </li>
+                                <li>Gets a response with some metadata and echo of the message sent.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="neuro-card rounded-3xl p-6 py-0 mb-6">
+                            <p class="text-right p-6 pt-0 grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <button title="Run" onclick="triggerAlias('url-post')"
+                                    class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Run</button>
+
+                                <button title="Edit" onclick="editPatternViaAlias('url-post')"
+                                    class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Edit</button>
+
+                                <button title="Info" onclick="alert('Not implemented yet')"
+                                    class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Info</button>
+
+                            </p>
+                            <div class="neuro-card rounded-3xl p-6 bg-slate-900 border border-slate-700">
+                                <div id="example-url-post"
+                                    class="example-response overflow-auto space-y-2 custom-scroll">Click <span
+                                        class="font-semibold text-orange-400">Run</span> to test this or <span
+                                        class="font-semibold text-orange-400">Edit</span> to modify this pattern.
+                                </div>
+                                <div class="text-right text-xs text-slate-500 mt-2">Drag triangle to resize.</div>
+                                <div id="example-4"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="col-span-2 mb-3 border-orange-400">
+
+                    <!-- EXAMPLE WEBSOCKET-->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+
+                        <div>
+                            <h2 class="mb-2 font-semibold text-2xl text-orange-400 flex items-center gap-x-2">4
+                                -
+                                Send via WebSocket</h2>
+                            <p class="mb-2">Sends a message to a host via a WebSocket.</p>
+                            <ul class="list-disc pl-6">
+                                <li>Sends a message to a host (ex. <code>ws://localhost:8889</code>).
+                                </li>
+                                <li>Can wait for a specified number of replies, a timeout or just fire and forget.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="neuro-card rounded-3xl p-6 py-0 mb-6">
+                            <p class="text-right p-6 pt-0 grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <button title="Run" onclick="triggerAlias('socket-msg')"
+                                    class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Run</button>
+
+                                <button title="Edit" onclick="editPatternViaAlias('socket-msg')"
+                                    class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Edit</button>
+
+                                <button title="Info" onclick="alert('Not implemented yet')"
+                                    class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Info</button>
+
+                            </p>
+                            <div class="neuro-card rounded-3xl p-6 bg-slate-900 border border-slate-700">
+                                <div id="example-socket-msg"
+                                    class="example-response overflow-auto space-y-2 custom-scroll">Click <span
+                                        class="font-semibold text-orange-400">Run</span> to test this or <span
+                                        class="font-semibold text-orange-400">Edit</span> to modify this pattern.
+                                </div>
+                                <div class="text-right text-xs text-slate-500 mt-2">Drag triangle to resize.</div>
+                                <div id="example-5"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="col-span-2 mb-3 border-orange-400">
+
+                    <!-- EXAMPLE UDP-->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+                        <div>
+                            <h2 class="mb-2 font-semibold text-2xl text-orange-400 flex items-center gap-x-2">5
+                                -
+                                Send via UDP</h2>
+                            <p class="mb-2">Sends a message via UDP, which is also used by multiplayer games and
+                                streaming services.</p>
+
+                            <ul class="list-disc pl-6 pt-3">
+                                <li>Sends an UDP message to a host (ex. <code>localhost</code>) at a specific port
+                                    (ex.
+                                    <code>8888</code>).
+                                </li>
+                                <li>Can wait for a specified number of replies, a timeout or just fire and forget.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="neuro-card rounded-3xl p-6 py-0 mb-6">
+                            <p class="text-right p-6 pt-0 grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <button title="Run" onclick="triggerAlias('udp-msg')"
+                                    class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Run</button>
+
+                                <button title="Edit" onclick="editPatternViaAlias('udp-msg')"
+                                    class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Edit</button>
+
+                                <button title="Info" onclick="alert('Not implemented yet')"
+                                    class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Info</button>
+                            </p>
+                            <div class="neuro-card rounded-3xl p-6 bg-slate-900 border border-slate-700">
+                                <div id="example-udp-msg"
+                                    class="example-response overflow-auto space-y-2 custom-scroll">Click <span
+                                        class="font-semibold text-orange-400">Run</span> to test this or <span
+                                        class="font-semibold text-orange-400">Edit</span> to modify this pattern.
+                                </div>
+                                <div class="text-right text-xs text-slate-500 mt-2">Drag triangle to resize.</div>
+                                <div id="example-6"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="col-span-2 mb-3 border-orange-400">
+
+                    <!-- EXAMPLE MQTT -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+                        <div>
+                            <h2 class="mb-2 font-semibold text-2xl text-orange-400 flex items-center gap-x-2">6
+                                -
+                                Send via MQTT</h2>
+                            <p class="mb-2">Sends a message to a message queue broker via the Message Queuing
+                                Telemetry
+                                Transport protocol (MQTT) used by most IoT devices.</p>
+
+                            <ul class="list-disc pl-6">
+                                <li>Sends a message to <code>wss://broker.emqx.io:8084/mqtt</code> on the topic
+                                    <code>browser/demo</code>.
+                                </li>
+                                <li>Can wait for a specified number of replies, a timeout or just fire and forget.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="neuro-card rounded-3xl p-6 py-0 mb-6">
+                            <p class="text-right p-6 pt-0 grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <button title="Run" onclick="triggerAlias('mqtt-msg')"
+                                    class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Run</button>
+
+                                <button title="Edit" onclick="editPatternViaAlias('mqtt-msg')"
+                                    class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Edit</button>
+
+                                <button title="Info" onclick="alert('Not implemented yet')"
+                                    class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Info</button>
+                            </p>
+
+                            <div class="neuro-card rounded-3xl p-6 bg-slate-900 border border-slate-700">
+                                <div id="example-mqtt-msg"
+                                    class="example-response overflow-auto space-y-2 custom-scroll">Click <span
+                                        class="font-semibold text-orange-400">Run</span> to test this or <span
+                                        class="font-semibold text-orange-400">Edit</span> to modify this pattern.
+                                </div>
+                                <div class="text-right text-xs text-slate-500 mt-2">Drag triangle to resize.</div>
+                                <div id="example-7"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="col-span-2 mb-3 border-orange-400">
+
+                    <!-- EXAMPLE SHELL -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+                        <div>
+                            <h2 class="mb-2 font-semibold text-2xl text-orange-400 flex items-center gap-x-2">7
+                                -
+                                Execute shell script</h2>
+                            <p class="mb-2">Sends a shell command to a local or remote host via Shell Server.</p>
+                            <p class="mb-2">Browsers cannot use local OS shell scripts, so this request is
+                                dispatched to a Shell Server.</p>
+
+                            <ul class="list-disc pl-6 pt-3">
+                                <li>Sends a shell command <code>c:\code\echo-stuff.cmd</code> to a host on a give
+                                    port
+                                    (ex.
+                                    <code>http://localhost:3000</code>).
+                                </li>
+                                <li>Returns the output from the shell command.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="neuro-card rounded-3xl p-6 py-0 mb-6">
+                            <p class="text-right p-6 pt-0 grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <button title="Run" onclick="triggerAlias('shell-cmd')"
+                                    class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Run</button>
+
+                                <button title="Edit" onclick="editPatternViaAlias('shell-cmd')"
+                                    class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Edit</button>
+
+                                <button title="Info" onclick="alert('Not implemented yet')"
+                                    class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Info</button>
+                            </p>
+
+                            <div class="neuro-card rounded-3xl p-6 bg-slate-900 border border-slate-700">
+                                <div id="example-shell-cmd"
+                                    class="example-response overflow-auto space-y-2 custom-scroll">Click <span
+                                        class="font-semibold text-orange-400">Run</span> to test this or <span
+                                        class="font-semibold text-orange-400">Edit</span> to modify this pattern.
+                                </div>
+                                <div class="text-right text-xs text-slate-500 mt-2">Drag triangle to resize.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="col-span-2 border-orange-400">
+                </div>
+            </div>
+
+            <!-- PATTERNS TAB-->
+            <div id="tab-patterns" class="main-tab hidden">
+                <div class="flex flex-col md:flex-row w-full gap-6 my-0">
+
+
+                    <!-- PATTERNS PANEL -->
+                    <div class="flex-1 neuro-card rounded-3xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <h2 class="font-semibold text-lg flex items-center gap-x-2">
+                                    <i class="fa-solid fa-magic text-violet-400"></i>
+                                    Patterns <span id="pattern-count">0</span>
+                                </h2>
+                                <p class="text-xs text-slate-500">Wiring brain signals to real-world actions</p>
+                            </div>
+
+                            <button id="add-pattern-btn" title="Add Pattern" onclick="patternDialog.addPattern()"
+                                class="px-4 py-2 bg-orange-900 hover:bg-orange-700 text-sm font-semibold rounded-3xl flex items-center gap-x-2 shadow-lg shadow-orange-900/30 transition-all active:scale-[0.985]">
+                                <i class="fa-solid fa-plus fa-fw"></i>
+                                <span>New Pattern</span>
+                            </button>
+                        </div>
+
+                        <!-- Patterns List -->
+                        <div class="flex-1 overflow-hidden space-y-2  pt-0">
+                            <div class="pb-0 mb-0">
+
+                                <input id="pattern-search-input" type="search" placeholder="Input search term."
+                                    spellcheck="false" oninput="filterPatterns(this.value)" value=""
+                                    class="w-full mb-0 bg-slate-900 border border-slate-700 rounded-2xl p-4 py-2 text-sm outline-none"
+                                    title="Filters through pattern name, description, alias, condition & type. (ESC = clear input)">
+
+                                <div class="text-right text-sm py-2"><span id="pattern-search-count"></span> matches
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class=" bg-slate-900 rounded-2xl border border-slate-700 p-6">
+                            <div class="text-right pr-3">
+                                <label title="Toggle enabled for all patterns"
+                                    class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" onchange="toggleAllPatternEnabled(this.checked)"
+                                        class="sr-only peer">
+                                    <div
+                                        class="w-9 h-5 bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600">
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div id="patterns-list" class="overflow-auto space-y-2 custom-scroll">
+                                <!-- Populated by JS -->
+                            </div>
+
+                            <div class="pt-2 flex gap-x-2">
+                                <button id="export-btn" title="Export" onclick="exportPatterns()"
+                                    class="flex-1 py-2.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-3xl flex items-center justify-center gap-x-2">
+                                    <i class="fa-solid fa-download fa-fw"></i>
+                                    <span>Export</span>
+                                </button>
+                                <button id="import-btn" title="Import" onclick="importPatterns()"
+                                    class="flex-1 py-2.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-3xl flex items-center justify-center gap-x-2">
+                                    <i class="fa-solid fa-upload fa-fw"></i>
+                                    <span>Import</span>
+                                </button>
+                                <button id="reset-btn" title="Reset to Defaults" onclick="resetToDefaults()"
+                                    class="px-4 py-2.5 text-xs font-semibold bg-slate-800 hover:bg-red-900/30 text-red-400 border border-slate-700 rounded-3xl flex items-center justify-center">
+                                    <i class="fa-solid fa-undo fa-fw"></i>
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EVENTS TAB -->
+            <div id="tab-events" class="main-tab hidden">
+
+                <!-- RESPONSE EVENT LOG -->
+                <div class="flex-1 neuro-card rounded-3xl p-0">
+                    <div class="float-right">
+                        <div id="response-spinner"
+                            class="hidden float-right mt-3 inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-warning motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                            role="status">
+                            <span
+                                class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between mb-3">
+
+                        <div>
+                            <h2 class="font-semibold text-lg flex items-center gap-x-2">
+                                <i class="fa-solid fa-history text-emerald-400"></i>
+                                Events <span id="response-count" class="">0</span>
+                            </h2>
+                            <div id="task-activity" class="text-xs text-slate-500">0 active, 0 success, 0 fail.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="responses-list"
+                        class="overflow-auto space-y-2 custom-scroll bg-slate-900 rounded-2xl border border-slate-700 p-3">
+                        <div class="text-xs text-center text-gray-500">No trigger events yet.</div>
+                    </div>
+
+                    <div class="pt-2 flex gap-x-2">
+                        <button id="resourses-clear-btn" title="Clear responses" onclick="clearResponses()"
+                            class="flex-1 py-2.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-3xl flex items-center justify-center gap-x-2">
+                            <i class="fa-solid fa-trash fa-fw"></i>
+                            <span>Clear</span>
+                        </button>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <!-- EEG TAB -->
+            <div id="tab-eeg" class="main-tab hidden">
+                <!-- LIVE VISUALIZATION -->
+                <div class="neuro-card rounded-3xl p-0 w-full">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h2 class="font-semibold text-lg flex items-center gap-x-2">
+                                <i class="fa-solid fa-chart-line text-indigo-400"></i>
+                                Live EEG Stream
+                            </h2>
+                            <p class="text-xs text-slate-500">250 Hz • 4 channels • Real-time</p>
+                        </div>
+
+                        <div class="flex items-center gap-x-2">
+                            <div title="Toggle Simulation" onclick="toggleSimulation()" id="sim-toggle"
+                                class="cursor-pointer flex items-center gap-x-2 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-3xl text-xs font-medium">
+                                <i class="fa-solid fa-play fa-fw text-emerald-400" id="sim-icon"></i>
+                                <span id="sim-text">Simulate</span>
+                            </div>
+
+                            <div
+                                class="px-3 py-1 bg-slate-900 border border-slate-700 rounded-3xl text-xs flex items-center gap-x-1.5">
+                                <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
+                                <span class="font-mono text-emerald-400" id="sample-rate">248 Hz</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Current Metrics -->
+                    <div class="grid grid-cols-4 gap-3 mt-4 mb-4">
+                        <div class="bg-slate-900 rounded-2xl p-3 border border-slate-700">
+                            <div class="mb-1">
+                                <div class="text-center">
+                                    <div id="ch1-label" class="channel-label">CH1 (T3)</div>
+                                    <div id="ch1-value" class="data-value font-semibold metric-value">12.4
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-[10px] text-slate-500">µV</div>
+                                    <div id="ch1-bar" class="w-8 h-1.5 rounded mt-1" style="width: 45%">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900 rounded-2xl p-3 border border-slate-700">
+                            <div class="mb-1">
+                                <div class="text-center">
+                                    <div id="ch2-label" class="channel-label">CH2 (T4)</div>
+                                    <div id="ch2-value" class="data-value font-semibold metric-value">-8.7
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-[10px] text-slate-500">µV</div>
+                                    <div id="ch2-bar" class="w-8 h-1.5 rounded mt-1" style="width: 32%">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900 rounded-2xl p-3 border border-slate-700">
+                            <div class="mb-1">
+                                <div class="text-center">
+                                    <div id="ch3-label" class="channel-label">CH3 (O1)</div>
+                                    <div id="ch3-value" class="data-value font-semibold metric-value">4.2</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-[10px] text-slate-500">µV</div>
+                                    <div id="ch3-bar" class="w-8 h-1.5 rounded mt-1" style="width: 67%">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900 rounded-2xl p-3 border border-slate-700">
+                            <div class="mb-1">
+                                <div class="text-center">
+                                    <div id="ch4-label" class="channel-label">CH4 (O2)</div>
+                                    <div id="ch4-value" class="data-value font-semibold metric-value">-19.3
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-[10px] text-slate-500">µV</div>
+                                    <div id="ch4-bar" class="w-8 h-1.5 rounded mt-1" style="width: 28%">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- EEG Chart -->
+                    <div class="bg-slate-900 rounded-2xl p-3 border border-slate-700" style="height: 500px;">
+                        <canvas id="eeg-chart"></canvas>
+                    </div>
+
+                    <div class="mt-3 text-xs text-slate-500 italic">Values are simulated for demo purposes. Connect
+                        an
+                        headband and start streaming real EEG data.</div>
+
+                    <div class="mt-3 text-xs text-slate-500 italic">
+                        Average (across all channels): <span id="eeg-avg">0.0</span>
+                    </div>
+
+                    <div class="mt-3 text-xs text-slate-500 italic">
+                        Any Channel Peek : <span id="eeg-peak">0.0</span>
+                    </div>
+
+                    <div class="mt-3 text-xs text-slate-500 italic">
+                        Any Channel Trough : <span id="eeg-trough">0.0</span>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="flex flex-row gap-6 my-0">
+
+                <!-- ACTIVITY LOG -->
+                <div class="flex-1 neuro-card rounded-3xl py-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <h2 class="font-semibold text-lg flex items-center gap-x-2">
+                            <i class="fa-solid fa-history text-emerald-400"></i>
+                            Trigger Log
+                        </h2>
+                    </div>
+
+                    <div id="log-container"
+                        class="bg-slate-900 rounded-2xl border border-slate-700 h-40 overflow-auto p-3 text-xs font-mono custom-scroll">
+                        <div class="text-slate-500 italic px-2">No triggers yet. Define patterns and start streaming
+                            to
+                            see activity.</div>
+                    </div>
+
+                    <div class="pt-2 flex gap-x-2">
+                        <button id="log-clear-btn" title="Clear responses" onclick="clearLog()"
+                            class="flex-1 py-2.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-3xl flex items-center justify-center gap-x-2">
+                            <i class="fa-solid fa-trash fa-fw"></i>
+                            <span>Clear</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- Real SDK Integration Note -->
+            <div
+                class="mt-6 px-5 py-4 bg-slate-900 border border-slate-700 rounded-3xl text-xs flex flex-col md:flex-row md:items-center gap-3">
+                <div class="flex items-center gap-x-2 text-amber-400">
+                    <i class="fa-solid fa-info-circle fa-fw"></i>
+                    <span class="font-semibold">Real Hardware Mode</span>
+                </div>
+                <div class="text-slate-400 flex-1">
+                    This demo uses simulated EEG data. For real BrainBit headband,
+                    <a href="https://gitlab.com/brainbit-inc/brainbit-web" target="_blank"
+                        class="underline hover:text-indigo-400">install web-neurosdk-brainbit</a>
+                    and replace simulation code (see console or edit this file).
+                </div>
+                <button id="sdk-instructions-btn" title="Show SDK Instructions" onclick="showSDKInstructions()"
+                    class="px-4 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 rounded-2xl whitespace-nowrap">Show
+                    Integration Code</button>
+            </div>
+        </div>
+
+        <!-- Add/Edit Pattern Modal -->
+        <div id="pattern-modal" onclick="if (event.target.id === 'pattern-modal') patternDialog.close()"
+            class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+            <div onclick="event.stopImmediatePropagation()"
+                class="modal dialog w-full max-w-lg rounded-3xl p-7 border border-slate-600">
+
+                <div class="flex justify-between items-center mb-6">
+                    <h3 id="modal-pattern-title" class="font-semibold text-xl">Create New Pattern</h3>
+                    <button id="cancel-pattern-btn" title="Cancel Pattern" onclick="patternDialog.close()"
+                        class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
+                </div>
+
+                <div class="space-y-5 overflow-auto space-y-2 custom-scroll" style="max-height: 70vh;">
+
+                    <div>
+                        <div>
+                            <label class="text-sm text-slate-500">Name</label>
+                            <input id="pattern-name" type="text" value=""
+                                class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 rounded-2xl px-4 py-3 text-sm outline-none"
+                                spellcheck="false">
+                        </div>
+
+                        <div>
+                            <label class="text-sm text-slate-500">Alias</label>
+                            <input id="pattern-alias" type="text" value=""
+                                class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 rounded-2xl px-4 py-3 text-sm outline-none"
+                                spellcheck="false">
+                        </div>
+
+                        <div>
+                            <label class="text-sm text-slate-500">Description</label>
+                            <textarea id="pattern-description" rows="2" spellcheck="false"
+                                placeholder='Example: This pattern...'
+                                class="w-full font-mono text-sm bg-slate-900 border border-slate-700 rounded-2xl p-4"></textarea>
+                        </div>
+
+                    </div>
+
+                    <!-- Condition Builder -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-400 mb-1.5">TRIGGER CONDITION</label>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <!-- Channel -->
+                            <div>
+                                <label class="text-sm text-slate-500">Channel / Metric</label>
+                                <select id="condition-channel"
+                                    class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-3 py-2.5 text-sm">
+                                    <option value="avg">Average (All Channels)</option>
+                                    <option value="ch1">CH1 (T3)</option>
+                                    <option value="ch2">CH2 (T4)</option>
+                                    <option value="ch3">CH3 (O1)</option>
+                                    <option value="ch4">CH4 (O2)</option>
+                                    <option value="any">Any Channel Peak</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="text-sm text-slate-500">Operator &amp; Threshold (µV)</label>
+                                <div class="flex gap-x-2">
+                                    <select id="condition-operator"
+                                        class="bg-slate-900 border border-slate-700 rounded-2xl px-3 py-2.5 text-sm w-20">
+                                        <option value=">" title="Greater than">&gt;</option>
+                                        <option value="<" title="Less than">&lt;</option>
+                                        <option value=">=" title="Greater than or equal to">&gt;=</option>
+                                        <option value="<=" title="Less than or equal to">&lt;=</option>
+                                    </select>
+                                    <input id="condition-threshold" style="width:100px;" type="number" value="45"
+                                        step="0.5" onkeypress="preventNonNumericalInput(event)"
+                                        class="flex-1 bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2.5 text-sm"
+                                        spellcheck="false">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-3 grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-sm text-slate-500">Duration (seconds)</label>
+                                <input id="condition-duration" type="number" value="1.8" step="0.1" min="0.2"
+                                    onkeypress="preventNonNumericalInput(event)"
+                                    class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2.5 text-sm"
+                                    spellcheck="false">
+                            </div>
+                            <div>
+                                <label class="text-sm text-slate-500">Cooldown (seconds)</label>
+                                <input id="condition-cooldown" type="number" value="4" step="1" min="0"
+                                    onkeypress="preventNonNumericalInput(event)"
+                                    class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2.5 text-sm"
+                                    spellcheck="false">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1.5">ACTION ON MATCH</label>
+
+                        <select id="action-type" onchange="updateActionFields()"
+                            class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-3 text-sm mb-3">
+                            <option value="js">JavaScript - Runs JavaScript in the browser context</option>
+                            <option value="shell">OS Shell - Sends a command to a device (local or remote)</option>
+                            <option value="url">URL - Sends data to a web app</option>
+                            <option value="sdk">SDK - Runs an internal SDK feature</option>
+                            <option value="udp">UDP - Sends data to an UDP server</option>
+                            <option value="socket">WebSocket - Sends a message to a web socket server</option>
+                            <option value="mqtt">MQTT - Sends a message to a message queue topic</option>
+                        </select>
+
+                        <!-- JS Action -->
+                        <div id="action-js" class="action-panel">
+                            <label for="action-js-code" class="text-sm text-slate-500">Code or a url to a .js file
+                                (local to project or external)
+                                .js file</label>
+                            <textarea id="action-js-code" rows="4" spellcheck="false"
+                                placeholder="Example: a project local url to a .js file [./action.js] or the code itself [console.log('It works!');]"
+                                class="w-full font-mono text-sm bg-slate-900 border border-slate-700 rounded-2xl p-4"></textarea>
+                        </div>
+
+                        <!-- Shell Action -->
+                        <div id="action-shell" class="action-panel hidden">
+                            <div>
+                                <label for="action-shell-host" class="text-sm text-slate-500">Host</label>
+                                <input id="action-shell-host" rows="2" spellcheck="false"
+                                    placeholder="Host url (http://localhost:3000) to send the command to"
+                                    class="w-full font-mono text-sm bg-slate-900 border border-slate-700 rounded-2xl p-4">
+                            </div>
+
+                            <div>
+                                <label class="text-sm text-slate-500">command</label>
+                                <textarea id="action-shell-command" rows="2" spellcheck="false"
+                                    placeholder="The command line to execute"
+                                    class="w-full font-mono text-sm bg-slate-900 border border-slate-700 rounded-2xl p-4"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- URL Action -->
+                        <div id="action-url" class="action-panel hidden">
+                            <div class="mt-3 grid grid-cols-1 gap-3 mb-2">
+
+                                <div>
+                                    <label class="text-sm text-slate-500">Method</label>
+                                    <select id="action-url-method"
+                                        class="bg-slate-900 border border-slate-700 rounded-2xl px-3 py-2 text-sm w-24"
+                                        onchange="patternDialog.handleUrlMethodSection(this.value)">
+                                        <option value="GET">GET</option>
+                                        <option value="POST" selected>POST</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="text-sm text-slate-500">Url</label>
+                                    <input id="action-url-url" type="text" value="" spellcheck="false"
+                                        placeholder="Example: https://httpbin.org/post"
+                                        class="w-full flex-1 bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2 text-sm">
+                                </div>
+
+                                <div>
+                                    <label class="text-sm text-slate-500">Authorization</label>
+                                    <input id="action-url-authorization" type="text" value="" spellcheck="false"
+                                        placeholder='Example: "Bearer API_KEY"'
+                                        class="w-full flex-1 bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2 text-sm">
+                                </div>
+
+                                <div>
+                                    <label class="text-sm text-slate-500">Content Type</label>
+                                    <input id="action-url-contentType" type="text" value="" spellcheck="false"
+                                        placeholder='Example: application/json'
+                                        class="w-full flex-1 bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2 text-sm">
+                                </div>
+
+                                <div id="action-url-body-section">
+                                    <label class="text-sm text-slate-500">Body</label>
+                                    <textarea id="action-url-body" rows="2" spellcheck="false"
+                                        placeholder='Example: {event: "focus_detected", intensity: 87}'
+                                        class="w-full font-mono text-sm bg-slate-900 border border-slate-700 rounded-2xl p-4"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SDK Action -->
+                        <div id="action-sdk" class="action-panel hidden">
+                            <div>
+                                <label class="text-sm text-slate-500">Function</label>
+                                <select id="action-sdk-function"
+                                    class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-3 text-sm mb-2">
+                                    <option value="injectMarker">injectMarker(42) — Sync marker</option>
+                                    <option value="startEEGStream">startEEGStream()</option>
+                                    <option value="stopEEGStream">stopEEGStream()</option>
+                                    <option value="custom">Custom SDK call...</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="text-sm text-slate-500">Custom Function</label>
+                                <input id="action-sdk-custom" type="text" placeholder="e.g. setGain(2)"
+                                    spellcheck="false"
+                                    class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2 text-sm">
+                            </div>
+                        </div>
+
+                        <!-- UDP Action -->
+                        <div id="action-udp" class="action-panel hidden">
+
+                            <div>
+                                <label class="text-sm text-slate-500">Host</label>
+                                <input id="action-udp-host" type="text" placeholder="Host" spellcheck="false"
+                                    class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2 text-sm mb-2">
+                            </div>
+
+                            <div>
+                                <label class="text-sm text-slate-500">Port</label>
+                                <input id="action-udp-port" type="number" min="0" max="65535" step="1"
+                                    placeholder="Port" onkeypress="preventNonNumericalInput(event)" spellcheck="false"
+                                    class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2 text-sm mb-2">
+                            </div>
+
+                            <div>
+                                <label class="text-sm text-slate-500">Message</label>
+                                <textarea id="action-udp-message" rows="2" placeholder="Message"
+                                    class="w-full font-mono text-sm bg-slate-900 border border-slate-700 rounded-2xl p-3"
+                                    spellcheck="false"></textarea>
+                            </div>
+
+                            <div class="mt-3 grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-sm text-slate-500">Number of Replies to Wait For</label>
+                                    <input id="action-udp-replies" type="number" min="1" max="99" step="1"
+                                        onkeypress="preventNonNumericalInput(event)"
+                                        placeholder="Number of Replies to Wait For"
+                                        class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2 text-sm mb-2">
+                                </div>
+
+                                <div>
+                                    <label class="text-sm text-slate-500">Timeout (seconds)</label>
+                                    <input id="action-udp-timeout" type="number" min="0" max="99" step="1"
+                                        onkeypress="preventNonNumericalInput(event)" placeholder="Timeout (seconds)"
+                                        class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2 text-sm mb-2">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- WebSocket Action -->
+                        <div id="action-socket" class="action-panel hidden">
+                            <div>
+                                <label class="text-sm text-slate-500">Host</label>
+                                <input id="action-socket-host" type="text"
+                                    placeholder="Input a host url (e.g., ws://host:port)"
+                                    class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2 text-sm mb-2"
+                                    spellcheck="false">
+                            </div>
+
+                            <div>
+                                <label class="text-sm text-slate-500">Message</label>
+                                <textarea id="action-socket-message" rows="2" placeholder="Message"
+                                    class="w-full font-mono text-sm bg-slate-900 border border-slate-700 rounded-2xl p-3"
+                                    spellcheck="false"></textarea>
+                            </div>
+                            <div class="mt-3 grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-sm text-slate-500">Number of Replies to Wait For</label>
+                                    <input id="action-socket-replies" type="number" min="1" max="99" step="1"
+                                        onkeypress="preventNonNumericalInput(event)"
+                                        placeholder="Number of Replies to Wait For"
+                                        class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2 text-sm mb-2">
+                                </div>
+
+                                <div>
+                                    <label class="text-sm text-slate-500">Timeout (seconds)</label>
+                                    <input id="action-socket-timeout" type="number" min="0" max="99" step="1"
+                                        onkeypress="preventNonNumericalInput(event)" placeholder="Timeout (seconds)"
+                                        class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2 text-sm mb-2">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- MQTT Action -->
+                        <div id="action-mqtt" class="action-panel hidden">
+                            <div>
+                                <label class="text-sm text-slate-500">Host</label>
+                                <input id="action-mqtt-host" type="text"
+                                    placeholder="Input a host url (e.g., ws://host:port)"
+                                    class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2 text-sm mb-2"
+                                    spellcheck="false">
+                            </div>
+
+                            <div>
+                                <label class="text-sm text-slate-500">Topic</label>
+                                <input id="action-mqtt-topic" type="text"
+                                    placeholder="Input topic to relate the message to"
+                                    class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2 text-sm mb-2"
+                                    spellcheck="false">
+                            </div>
+
+                            <div>
+                                <label class="text-sm text-slate-500">Quality of Service (0-2) 0=low 1=medium
+                                    2=high</label>
+                                <input id="action-mqtt-quality" type="number" min="0" max="2" step="1"
+                                    placeholder="Input a quality of service"
+                                    onkeypress="preventNonNumericalInput(event)"
+                                    class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2 text-sm mb-2"
+                                    spellcheck="false">
+                            </div>
+
+                            <div>
+                                <label class="text-sm text-slate-500">Message</label>
+                                <textarea id="action-mqtt-message" rows="2" placeholder="Message" spellcheck="false"
+                                    class="w-full font-mono text-sm bg-slate-900 border border-slate-700 rounded-2xl
+                                p-3"></textarea>
+                            </div>
+                            <div class="mt-3 grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-sm text-slate-500">Number of Replies to Wait For</label>
+                                    <input id="action-mqtt-replies" type="number" min="1" max="99" step="1"
+                                        onkeypress="preventNonNumericalInput(event)"
+                                        placeholder="Number of Replies to Wait For"
+                                        class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2 text-sm mb-2"
+                                        spellcheck="false">
+                                </div>
+
+                                <div>
+                                    <label class="text-sm text-slate-500">Timeout (seconds)</label>
+                                    <input id="action-mqtt-timeout" type="number" min="0" max="99" step="1"
+                                        spellcheck="false" onkeypress="preventNonNumericalInput(event)"
+                                        placeholder="Timeout (seconds)"
+                                        class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2 text-sm mb-2">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-x-2 pt-2">
+                    <input type="checkbox" id="pattern-enabled" checked class="accent-indigo-500 w-4 h-4"
+                        spellcheck="false">
+                    <label for="pattern-enabled" class="text-sm cursor-pointer">Enabled immediately</label>
+                </div>
+
+                <div class="flex gap-x-3 mt-7">
+
+                    <button id="cancel-pattern2-btn" title="Cancel" onclick="patternDialog.close()"
+                        class="flex-1 py-3 text-sm font-semibold bg-slate-900 hover:bg-slate-700 rounded-3xl">Cancel</button>
+                    <button title="Save" onclick="patternDialog.savePattern()" id="modal-save-btn"
+                        class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Create
+                        Pattern</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Response Modal -->
+        <div id="response-modal" onclick="if (event.target.id === 'response-modal') responseDialog.close()"
+            class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+            <div style="height:600px;" onclick="event.stopImmediatePropagation()"
+                class="modal dialog w-full max-w-lg rounded-3xl p-7 border border-slate-600">
+
+                <div class="flex justify-between items-center mb-6">
+                    <h3 id="modal-response-title" class="font-semibold text-xl">Event Details</h3>
+                    <button id="cancel-response-btn" title="Cancel Pattern" onclick="responseDialog.close()"
+                        class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
+                </div>
+
+                <div class="block text-sm font-semibold text-slate-400 mb-1">
+                    <div id="response-details-id" class="hidden"></div>
+                    <div>Successful: <span class="font-normal" id="response-details-success"></span></div>
+                    <div>Start time: <span class="font-normal" id="response-details-starttime"></span></div>
+                    <div>End time: <span class="font-normal" id="response-details-endtime"></span></div>
+                    <div>Valid JSON: <span class="font-normal" id="response-details-json"></span></div>
+                    <div class="m-1"></div>
+                    <p>Output:</p>
+                </div>
+
+                <div id="response-details"
+                    class="overflow-auto space-y-2 custom-scroll text-sm rounded border border-slate-600 bg-slate-950 p-2 m-2 text-white-400 font-mono mt-1 break-all"
+                    onclick="event.stopImmediatePropagation();">
+
+                    <div id="response-details-data" class="space-y-4 text-sm">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <div id="response-details-error" class="space-y-4 text-sm">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="flex gap-x-3 mt-7">
+                    <button id="cancel-response2-btn" title="Cancel" onclick="responseDialog.close()"
+                        class="flex-1 py-3 text-sm font-semibold bg-slate-900 hover:bg-slate-700 rounded-3xl">Cancel</button>
+
+                    <button id="clipboard-copy" title="Copy to clipboard"
+                        onclick="copyResponseToClipboard(document.getElementById('response-details-id').innerText)"
+                        class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Copy
+                        To
+                        clipboard</button>
+
+                </div>
+            </div>
+        </div>
+
+
+
+    </main>
+
+    <footer class="text-center py-8 text-[10px] text-slate-500">
+        Built with BrainBit Web SDK • For research &amp; prototyping only • Not for medical use
+    </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,112 @@
+{
+  "simulation": {
+    "sampleRate": 250,
+    "maxBufferSeconds": 12,
+    "maxChartPoints": 220,
+    "options": {
+      "responsive": true,
+      "maintainAspectRatio": false,
+      "animation": {
+        "duration": 0
+      },
+      "scales": {
+        "x": {
+          "display": false,
+          "grid": {
+            "display": false
+          }
+        },
+        "y": {
+          "display": true,
+          "grid": {
+            "color": "#334155",
+            "lineWidth": 0.5
+          },
+          "ticks": {
+            "color": "#64748b",
+            "font": {
+              "size": 14
+            },
+            "stepSize": 30
+          },
+          "min": -80,
+          "max": 80
+        }
+      },
+      "plugins": {
+        "legend": {
+          "display": false
+        },
+        "tooltip": {
+          "mode": "index",
+          "intersect": false
+        }
+      },
+      "elements": {
+        "line": {
+          "borderJoinStyle": "round"
+        }
+      }
+    },
+    "timeScale": 1,
+    "noise": {
+      "amplitude": 18,
+      "description": "Base noise level (± half amplitude)"
+    }
+  },
+  "channels": {
+    "ch1": {
+      "label": "T3",
+      "lowFrequency": 1.8,
+      "lowAmplitude": 18,
+      "highFrequency": 9.2,
+      "highAmplitude": 6,
+      "color": "#00ff00"
+    },
+    "ch2": {
+      "label": "T4",
+      "lowFrequency": 2.1,
+      "lowAmplitude": 22,
+      "highFrequency": 10.4,
+      "highAmplitude": 5,
+      "color": "#a855f7"
+    },
+    "ch3": {
+      "label": "O1",
+      "lowFrequency": 1.4,
+      "lowAmplitude": 14,
+      "highFrequency": 8.7,
+      "highAmplitude": 9,
+      "color": "#f43f5e"
+    },
+    "ch4": {
+      "label": "O2",
+      "lowFrequency": 1.6,
+      "lowAmplitude": 19,
+      "highFrequency": 11.1,
+      "highAmplitude": 4,
+      "color": "#f59e0b"
+    }
+  },
+  "artifacts": {
+    "blink": {
+      "probability": 0.012,
+      "amplitude": 140,
+      "channelMultipliers": {
+        "ch1": 0.7,
+        "ch2": 0.9,
+        "ch3": 0.6,
+        "ch4": 1.0
+      },
+      "description": "Occasional high-amplitude eye blink / muscle artifact"
+    },
+    "drift": {
+      "probability": 0.003,
+      "amplitudes": {
+        "ch1": 35,
+        "ch4": 28
+      },
+      "description": "Slow baseline drift (affects specific channels)"
+    }
+  }
+}
