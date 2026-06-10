@@ -36,4 +36,4 @@ Therefore this app supports configuration (config.json) for
 Start by locating the <code>shell</code> project folder and run this command: 
 <pre><code>node shell-server.js</code></pre>
 
-![Shell Server](doc/shell-server.png)
+![Shell Server](docs/images/shell-server.png)
