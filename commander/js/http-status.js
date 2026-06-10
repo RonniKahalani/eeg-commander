@@ -39,72 +39,31 @@ function getHttpStatusMessage(statusCode) {
     // ==================== INFORMATIONAL (1xx) ====================
     case statusCode >= 100 && statusCode < 200:
       category = "Informational";
-      switch (statusCode) {
-        case 100: message = "Continue"; break;
-        case 101: message = "Switching Protocols"; break;
-        case 102: message = "Processing"; break;
-        case 103: message = "Early Hints"; break;
-        default: message = "Informational Response";
-      }
+      message = getInformationalMessage(statusCode);
       break;
 
     // ==================== SUCCESS (2xx) ====================
     case statusCode >= 200 && statusCode < 300:
       category = "Success";
-      switch (statusCode) {
-        case 200: message = "OK"; break;
-        case 201: message = "Created"; break;
-        case 202: message = "Accepted"; break;
-        case 204: message = "No Content"; break;
-        case 206: message = "Partial Content"; break;
-        default: message = "Success";
-      }
+      message = getSuccessMessage(statusCode);
       break;
 
     // ==================== REDIRECTION (3xx) ====================
     case statusCode >= 300 && statusCode < 400:
       category = "Redirection";
-      switch (statusCode) {
-        case 301: message = "Moved Permanently"; break;
-        case 302: message = "Found"; break;
-        case 304: message = "Not Modified"; break;
-        case 307: message = "Temporary Redirect"; break;
-        case 308: message = "Permanent Redirect"; break;
-        default: message = "Redirection";
-      }
+      message = getRedirectionMessage(statusCode);
       break;
 
     // ==================== CLIENT ERRORS (4xx) ====================
     case statusCode >= 400 && statusCode < 500:
       category = "Client Error";
-      switch (statusCode) {
-        case 400: message = "Bad Request"; break;
-        case 401: message = "Unauthorized"; break;
-        case 403: message = "Forbidden"; break;
-        case 404: message = "Not Found"; break;
-        case 405: message = "Method Not Allowed"; break;
-        case 408: message = "Request Timeout"; break;
-        case 409: message = "Conflict"; break;
-        case 410: message = "Gone"; break;
-        case 413: message = "Payload Too Large"; break;
-        case 415: message = "Unsupported Media Type"; break;
-        case 429: message = "Too Many Requests"; break;
-        default: message = "Client Error";
-      }
+      message = getClientErrorMessage(statusCode);
       break;
 
     // ==================== SERVER ERRORS (5xx) ====================
     case statusCode >= 500 && statusCode < 600:
       category = "Server Error";
-      switch (statusCode) {
-        case 500: message = "Internal Server Error"; break;
-        case 501: message = "Not Implemented"; break;
-        case 502: message = "Bad Gateway"; break;
-        case 503: message = "Service Unavailable"; break;
-        case 504: message = "Gateway Timeout"; break;
-        case 505: message = "HTTP Version Not Supported"; break;
-        default: message = "Server Error";
-      }
+      message = getServerErrorMessage(statusCode);
       break;
 
     default:
@@ -117,4 +76,90 @@ function getHttpStatusMessage(statusCode) {
     message: message,
     category: category
   };
+}
+
+/**
+ * Returns the informational message
+ * @param {number} statusCode 
+ * @returns {string}
+ */
+function getInformationalMessage(statusCode) {
+        switch (statusCode) {
+        case 100: return "Continue"; break;
+        case 101: return "Switching Protocols"; break;
+        case 102: return "Processing"; break;
+        case 103: return "Early Hints"; break;
+        default: return "Informational Response";
+      }
+}
+
+/**
+ * Returns the success message
+ * @param {number} statusCode 
+ * @returns {string}
+ */
+function getSuccessMessage(statusCode) {
+switch (statusCode) {
+        case 200: return "OK"; break;
+        case 201: return "Created"; break;
+        case 202: return "Accepted"; break;
+        case 204: return "No Content"; break;
+        case 206: return "Partial Content"; break;
+        default: return "Success";
+      }
+}
+
+/**
+ * Returns the redirection message
+ * @param {number} statusCode 
+ * @returns {string}
+ */
+function getRedirectionMessage(statusCode) {
+       switch (statusCode) {
+        case 301: return "Moved Permanently"; break;
+        case 302: return "Found"; break;
+        case 304: return "Not Modified"; break;
+        case 307: return "Temporary Redirect"; break;
+        case 308: return "Permanent Redirect"; break;
+        default: return "Redirection";
+      }
+}
+
+/**
+ * Returns the client error message
+ * @param {number} statusCode 
+ * @returns {string}
+ */
+function getClientErrorMessage(statusCode) {
+  switch (statusCode) {
+    case 400: return "Bad Request"; break;
+    case 401: return "Unauthorized"; break;
+    case 403: return "Forbidden"; break;
+    case 404: return "Not Found"; break;
+    case 405: return "Method Not Allowed"; break;
+    case 408: return "Request Timeout"; break;
+    case 409: return "Conflict"; break;
+    case 410: return "Gone"; break;
+    case 413: return "Payload Too Large"; break;
+    case 415: return "Unsupported Media Type"; break;
+    case 429: return "Too Many Requests"; break;
+    default: return "Client Error";
+  }
+}
+
+/**
+ * Returns the server error message
+ * @param {number} statusCode 
+ * @returns {string}
+ */
+function getServerErrorMessage(statusCode) {
+  switch (statusCode) {
+    case 500: return "Internal Server Error";
+    case 501: return "Not Implemented";
+    case 502: return "Bad Gateway";
+    case 503: return "Service Unavailable";
+    case 504: return "Gateway Timeout";
+    case 505: return "HTTP Version Not Supported";
+    default: return "Server Error";
+  }
 }
