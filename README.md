@@ -1,3 +1,4 @@
+![Main Page](/commander/img/playground-banner.png)
 # EEG Commander
 Ever wished that you could control physical stuff with your mind? That is exactly what Commander enables.
 
