@@ -207,7 +207,7 @@ async function checkShellServerHealth() {
         }
 
     } catch (e) {
-        addLogEntry(`[Shell]: Server unreachable at ${config.server}<br/>${e.message}<br/>It might be offline or misconfigured. Try starting the server with: node shell-server.js`, LOG_TYPE_ERROR);
+        addLogEntry(`[Shell]: Server unreachable at ${config.server}. ${e.message}. It might be offline or misconfigured. Try starting the server with: node shell-server.js`, LOG_TYPE_ERROR);
     }
 }
 
