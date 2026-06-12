@@ -19,6 +19,9 @@
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <script type='text/javascript' src="https://cdn.tailwindcss.com"></script>
 
+    <script type='text/javascript' defer src="/commander/node_modules/web-neurosdk-brainbit/dist/brainbitClient.js"></script>
+    <script type='text/javascript' defer src="/commander/node_modules/web-neurosdk-brainbit/dist/brainbitClient.umd.js"></script>
+    
     <script type='text/javascript' defer src="/commander/js/utils.js"></script>
     <script type='text/javascript' defer src="/commander/js/tasks.js"></script>
     <script type='text/javascript' defer src="/commander/js/actions.js"></script>
@@ -35,6 +38,7 @@
     <script type='text/javascript' defer src="/commander/js/helper/eeg-helper.js"></script>
     <script type='text/javascript' defer src="/commander/js/helper/js-helper.js"></script>
     <script type='text/javascript' defer src="/commander/js/commander.js"></script>
+    <script type='text/javascript' defer src="/commander/js/headband.js"></script>
 </head>
 
 <body class="bg-slate-900 text-slate-400 app-container min-h-screen">
@@ -1293,6 +1297,8 @@
         Built with BrainBit Web SDK • For research &amp; prototyping only • Not for medical use
     </footer>
 
+    <!-- Used for testint the headband -->
+    <!-- <button id="headband-start">Start</button> -->
 </body>
 
 </html>
