@@ -30,6 +30,10 @@ SOFTWARE.
 /**
  * This script handles the tasks.
  */
+const TASK_STATE_FAILED = 'failed';
+const TASK_STATE_SUCCESS = 'success';
+const TASK_STATE_ACTIVE = 'active';
+
 let tasks = [];
 
 /**
@@ -49,7 +53,7 @@ function taskStarted(task) {
  * @param {*} task 
  */
 function taskFail(task) {
-    task.state = 'failed';
+    task.state = TASK_STATE_FAILED;
     task.endTime = Date.now();
     return task;
 }
@@ -59,7 +63,7 @@ function taskFail(task) {
  * @param {*} task 
  */
 function taskSuccess(task) {
-    task.state = 'success';
+    task.state = TASK_STATE_SUCCESS;
     task.endTime = Date.now();
     return task;
 }
@@ -69,9 +73,9 @@ function taskSuccess(task) {
  */
 function initTaskInterval() {
     const interval = setInterval(() => {
-        const activeTasks = tasks.filter((task) => task.state === 'active');
-        const successTasks = tasks.filter((task) => task.state === 'success');
-        const failTasks = tasks.filter((task) => task.state === 'fail');
+        const activeTasks = tasks.filter((task) => task.state === TASK_STATE_ACTIVE);
+        const successTasks = tasks.filter((task) => task.state === TASK_STATE_SUCCESS);
+        const failTasks = tasks.filter((task) => task.state === TASK_STATE_FAILED);
 
         setVisibility(byId('response-spinner'), activeTasks.length > 0);
         byId('task-activity').innerHTML = `${activeTasks.length} active, ${successTasks.length} success, ${failTasks.length} fail.`;

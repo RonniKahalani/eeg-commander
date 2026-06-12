@@ -114,9 +114,8 @@ function makeConditionSummary(condition) {
  */
 function addResponse(task, pattern, data, err = null) {
     const timestamp = Date.now();
-    const responseId = `response-${pattern.id}-${timestamp}`;
     const response = {
-        id: responseId,
+        id: `response-${pattern.id}-${timestamp}`,
         task: (err) ? taskFail(task) : taskSuccess(task),
         pattern: pattern,
         data: data,
@@ -128,19 +127,38 @@ function addResponse(task, pattern, data, err = null) {
 
     const dataAsString = getAsString(data);
     const message = (err) ? err : !isEmpty(dataAsString.trim()) ? dataAsString : (pattern.action?.payload?.replies === 0) ? 'No response expected (replies=0 fire and forget)' : '';
-    const logType = (err) ? LOG_TYPE_ERROR : pattern.action.type;
-    addLogEntry(`${getPatternLogId(pattern)} ${message}`, logType);
+    addLogEntry(`${getPatternLogId(pattern)} ${message}`, (err) ? LOG_TYPE_ERROR : pattern.action.type);
 
     if (responses.length === 1) {
         const responseList = byId('responses-list');
         responseList.innerHTML = '';
     }
 
-    const responseList = byId('responses-list');
-    const borderColor = err ? 'border-red-700' : 'border-green-600';
-    const status = err ? err : 'Completed successfully.';
+    updateEventsUI();
 
-    const responseHtml = `
+    const callback = (err) ? notifyFail : notifySuccess;
+    callback(response);
+    return response;
+}
+
+/**
+ * Updates the Events UI
+ */
+function updateEventsUI() {
+
+    const responseList = byId('responses-list');
+    responseList.innerHTML = '';
+
+    responses.forEach((response, index) => {
+
+        const task = response.task;
+        const failedState = task.state === TASK_STATE_FAILED
+        const borderColor = failedState ? 'border-red-700' : 'border-green-600';
+        const status = failedState ? response.error : 'Completed successfully.';
+        const responseId = response.id;
+        const pattern = response.pattern;
+
+        const responseHtml = `
 <div id="${responseId}" class="response-row ${borderColor} cursor-pointer group items-center justify-between gap-x-3 px-4 py-3 rounded-2xl border border-slate-700 hover:border-slate-600" onclick="showResponse('${responseId}')">
     <div class="flex-1 min-w-0" title="${status}">
 
@@ -168,12 +186,11 @@ function addResponse(task, pattern, data, err = null) {
     </div>
 </div>`;
 
-    responseList.innerHTML = responseHtml + responseList.innerHTML;
-    byId('response-count').innerHTML = responses.length;
+        responseList.innerHTML = responseHtml + responseList.innerHTML;
+        byId('response-count').innerHTML = responses.length;
 
-    const callback = (err) ? notifyFail : notifySuccess;
-    callback(response);
-    return response;
+
+    })
 }
 
 /**
