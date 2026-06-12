@@ -2,7 +2,8 @@
 # EEG Commander
 Ever wished that you could control physical stuff with your mind? That is exactly what Commander enables.
 
-Note: This is a markup of a prototype, not a final product or app.
+Check out the [EEG Commander Introduction](https://docs.google.com/presentation/d/1lEOeM68fSkk5HG2CAB10j1WqsvjgeOr76yQdEa2zMGg/edit?usp=sharing)
+
 
 ![Main Page](/docs/images/main.png)
 

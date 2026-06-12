@@ -31,7 +31,7 @@ SOFTWARE.
  */
 import dgram from 'node:dgram';
 import os from 'os';
-import { getLocalIpAddress } from '../commander/js/network.js';
+import { getLocalIpAddress } from '../shared/network.js';
 
 const VERSION = '1.0.0';
 const PORT = 8888;
