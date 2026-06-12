@@ -1,20 +1,21 @@
 ![Main Page](/commander/img/playground-banner.png)
 # EEG Commander
-Ever wished that you could control physical stuff with your mind? That is exactly what Commander enables.
-
-Check out the [EEG Commander Introduction](https://docs.google.com/presentation/d/1lEOeM68fSkk5HG2CAB10j1WqsvjgeOr76yQdEa2zMGg/edit?usp=sharing)
-
-
-![Main Page](/docs/images/main.png)
+Ever wished that you could control physical stuff with your mind? That is exactly what Commander enables. Check out the [EEG Commander Introduction](https://docs.google.com/presentation/d/1lEOeM68fSkk5HG2CAB10j1WqsvjgeOr76yQdEa2zMGg/edit?usp=sharing)
 
 ## Features
-- Define commands mapped to signal events/values.
-- Commands are stored in a configuration file (Yaml).
+- Define patterns (commands) mapped to an EEG signal condition and action.
+- Patterns are stored in a configuration file (Yaml).
 - Configuration import and export. 
-- Test a command manually.
-- Currently simulated EEG data.
-- Trigger Log.
-- Includes a [Shell Server](/shell/README.md) for remote shell execution.
+- Run/test a pattern manually.
+- Toggle between EEG device and simulated data.
+- Trigger/event Log.
+- Includes a [Shell Server](/server/shell/README.md) for OS shell execution and UDP messaging.
+
+## Patterns Tab
+Lists defined EEG patterns. A pattern consist of a condition and an action.
+Each row repesents a pattern with actions like
+- edit, clone, delete, run and enable.
+
 
 ## Command Action Types
 - Javascript, access to all context.
