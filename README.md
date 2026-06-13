@@ -2,6 +2,8 @@
 # EEG Commander
 Ever wished that you could control physical stuff with your mind? That is exactly what Commander enables. Check out the [EEG Commander Introduction](https://docs.google.com/presentation/d/1lEOeM68fSkk5HG2CAB10j1WqsvjgeOr76yQdEa2zMGg/edit?usp=sharing)
 
+[Code of Conduct](/docs/CODE_OF_CONDUCT.md)
+
 ## Features
 - Define patterns (commands) mapped to an EEG signal condition and action.
 - Patterns are stored in a configuration file (Yaml).
@@ -15,7 +17,6 @@ Ever wished that you could control physical stuff with your mind? That is exactl
 Lists defined EEG patterns. A pattern consist of a condition and an action.
 Each row repesents a pattern with actions like
 - edit, clone, delete, run and enable.
-
 
 ## Command Action Types
 - Javascript, access to all context.
