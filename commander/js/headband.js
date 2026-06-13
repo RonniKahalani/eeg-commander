@@ -1,9 +1,7 @@
+byId('headband-start').addEventListener('pointerup', async (event) => {
+    event.preventDefault();
 
-byId('headband-start').addEventListener('click', (event) => {
     const brainbitClient = new BrainbitClient();
-
-    // Connect
-
     brainbitClient.connect()
         .then(() => {
             // subscriptions and start stream
@@ -16,7 +14,9 @@ byId('headband-start').addEventListener('click', (event) => {
                     ch3: data.val0_ch3,
                     ch4: data.val0_ch4
                 };
-                console.log(data)   // reuse existing function
+                
+                //addToBuffer(data);
+                console.log(data)
             });
 
             return brainbitClient.startEEGStream();
