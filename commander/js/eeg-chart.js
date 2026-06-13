@@ -387,7 +387,7 @@ async function connectDevice(event) {
         eegDevice = await getEegDevice(event);
 
     } catch (e) {
-                connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
+        connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
         alert(e.message);
     }
 
@@ -406,7 +406,7 @@ async function connectDevice(event) {
 function doSimulation() {
 
     setTimeout(() => {
-        // In real app: await brainbitClient.connect()
+
         simulateConnection();
         connectDeviceBtn.disabled = false;
         connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
