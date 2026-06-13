@@ -1,107 +1,57 @@
-//const { Neurosdk2, SensorFamily, createScanner, createSensor } = require('js-neurosdk2');
-const neuro = require('js-neurosdk2');
+const neurosdk = require('js-neurosdk2');
 
 async function main() {
-    console.log('Starting Brainbit Node.js app...');
-
-    let deviceProps;
+    console.log('🚀 Starting Brainbit Headband Scanner...');
 
     try {
+        // Use startScannerHeadband() as requested
+        console.log('Calling startScannerHeadband()...');
+        const result = await neurosdk.startScannerHeadband();
 
-        deviceProps = await neuro.startScannerHeadband();
-        if (deviceProps !== null) {
-            console.log('Get device: ' + deviceProps.device.ame);
+        console.log('✅ Scanner result:', result);
 
-        } else {
-            console.log('Failed to connect');
+        const { name, device, uuid } = result; // device is BluetoothDevice
+
+        if (!device) {
+            console.error('No device returned');
+            return;
         }
-    } catch (e) {
-        console.log('Error: ' + e.message);
 
-    }
+        console.log(`Found Headband: ${name} | UUID: ${uuid}`);
 
-    console.log('End');
+        // Connect to the device
+        const connection = await neurosdk.connect(device, uuid);
+        console.log('Connection info:', connection);
 
+        // Optional: Check current status
+        const status = await neurosdk.getDeviceStatus(device, uuid);
+        console.log('Current device status:', status);
 
-    /*
-// Initialize the scanner to discover nearby neuro-sensors
-const scanner = new neuro.Scanner([neuro.SensorType.BrainBit]);
+        // Put device into Idle mode first
+        await neurosdk.goIdle(device, uuid);
+        console.log('Device set to Idle');
 
-// Example: Get a list of detected devices
-const availableDevices = scanner.scan(5); 
-
-
-
-    // Create scanner for Brainbit devices
-  const scanner = createScanner([
-        SensorFamily.SensorLEBrainBit,
-        SensorFamily.SensorLEBrainBit2,
-        SensorFamily.SensorLEHeadband
-    ]);
-
-    // Subscribe to found devices
-    scanner.on('sensors', (sensors) => {
-        console.log('Found devices:', sensors);
-        
-        if (sensors.length > 0) {
-            const deviceInfo = sensors[0]; // Take the first one
-            connectToDevice(deviceInfo);
-        }
-    });
-
-    // Start scanning
-    await scanner.start();
-    console.log('Scanning for Brainbit headband...');
-    */
-}
-
-async function connectToDevice(deviceInfo) {
-    console.log('Connecting to:', deviceInfo.Name);
-
-    const sensor = createSensor(deviceInfo);
-
-    // Connection state listener
-    sensor.on('state', (state) => {
-        console.log('Connection state:', state);
-    });
-
-    // Battery listener
-    sensor.on('battery', (level) => {
-        console.log('Battery:', level, '%');
-    });
-
-    try {
-        await sensor.connect();
-        console.log('✅ Connected successfully!');
-
-        // Subscribe to EEG data (4 channels)
-        const eegChannel = sensor.createEegChannel(); // or appropriate method
-
-        eegChannel.on('data', (data) => {
-            // data typically contains array of samples with 4 channels
-            console.log('EEG Data:', {
-                timestamp: Date.now(),
-                ch1: data[0]?.O1 || data[0]?.ch1,
-                ch2: data[0]?.O2 || data[0]?.ch2,
-                ch3: data[0]?.T3 || data[0]?.ch3,
-                ch4: data[0]?.T4 || data[0]?.ch4,
-            });
+        // Subscribe to notifications (very important!)
+        // You need to attach these handlers before starting signal
+        device.addEventListener('characteristicvaluechanged', (event) => {
+            neurosdk.handleSignalNotification(event);   // This will log/process EEG data
         });
 
-        // Start signal streaming
-        await sensor.startSignal();
+        // Start EEG streaming
+        await neurosdk.goSignal(device, uuid);
+        console.log('✅ EEG Streaming started!');
 
-        console.log('Streaming EEG data... Press Ctrl+C to stop.');
+        console.log('\n📊 Listening for EEG data... (4 channels: O1, O2, T3, T4)');
 
     } catch (error) {
-        console.error('Connection failed:', error);
+        console.error('❌ Error:', error.message || error);
     }
 }
 
 // Graceful shutdown
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
     console.log('\nShutting down...');
+    // You can call neurosdk.goPowerDown() here if needed
     process.exit(0);
 });
-
 main().catch(console.error);
