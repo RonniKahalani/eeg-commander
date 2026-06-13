@@ -1,4 +1,5 @@
 "use strict"
+
 /*
 Copyright (c) 2026 Ronni Kahalani
 
@@ -27,40 +28,36 @@ SOFTWARE.
 */
 
 /**
- * UDP Server.
+ * This script handles connection to the BrainBit EEG device.
  */
-import dgram from 'node:dgram';
-import os from 'os';
-import { getLocalIpAddress } from '../shared/network.js';
 
-const VERSION = '1.0.0';
-const PORT = 8888;
-const HOST = '0.0.0.0';
-const server = dgram.createSocket('udp4');
+/**
+ * Gets an EEG device via the BrainBit client
+ */
+async function getEegDevice() {
 
-server.on('listening', () => {
-    console.log("Server is up. Let's make some noise!.");
-});
+    const brainbitClient = new BrainbitClient();
+    await brainbitClient.connect();
+    brainbitClient.eegStream.subscribe((data) => {
+        // data = { val0_ch1, val0_ch2, ... }
+        addEegData(data);
+    });
 
-server.on('message', (msg, rinfo) => {
-    const message = msg.toString();
-    console.log(`📥 Received from ${rinfo.address}:${rinfo.port} → ${message}`);
+    await brainbitClient.startEEGStream();
+}
 
-    // Send acknowledgment back
-    server.send(message, rinfo.port, rinfo.address);
-});
+/**
+ * Adds the EEG data to the EEG buffer.
+ * @param {*} data 
+ */
+function addEegData(data) {
+    const processed = {
+        ch1: data.val0_ch1,
+        ch2: data.val0_ch2,
+        ch3: data.val0_ch3,
+        ch4: data.val0_ch4
+    };
 
-server.on('error', (err) => {
-    console.error(`Server error: ${err.message}`);
-    server.close();
-});
-
-// Start server
-server.bind(PORT, HOST);
-console.clear();
-console.log('--------------------------------------------------------------');
-console.log(`🚀 UDP Server v${VERSION}`);
-console.log('--------------------------------------------------------------');
-console.log(`Endpoint: http://${getLocalIpAddress()}:${PORT}`);
-console.log('Hostname: ' + os.hostname());
-console.log('--------------------------------------------------------------');
+    //addToBuffer(data);
+    console.log(data)
+}
