@@ -44,6 +44,7 @@ let eegBuffer = []; // {timestamp, ch1, ch2, ch3, ch4}
 let eegSimulationConfig = null;
 let simulationInterval = null;
 let isConnected = false;
+let isSimulating = false;
 
 let eegHighestPeak = 0;
 let eegLowestTrough = 0;
@@ -367,27 +368,56 @@ function simulateConnection() {
     addLogEntry('Connected to BrainBit headband (simulated)', 'success');
 }
 
+
+const connectDeviceBtn = byId('connect-btn')
+connectDeviceBtn.addEventListener('pointerup', async (event) => await connectDevice(event));
+
 /**
  * Handles device disconnection by updating the UI and stopping any ongoing simulations or data processing.
  * @returns {void}
  */
-function connectDevice() {
-    const btn = byId('connect-btn');
-    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin fa-fw mr-2"></i> Connecting...`;
-    btn.disabled = true;
+async function connectDevice(event) {
+    event.preventDefault();
+
+    connectDeviceBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin fa-fw mr-2"></i> Connecting...`;
+    connectDeviceBtn.disabled = true;
+
+    let eegDevice;
+    try {
+        eegDevice = await getEegDevice(event);
+
+    } catch (e) {
+                connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
+        alert(e.message);
+    }
+
+    if (!eegDevice) {
+
+
+        if (confirm('Do you want to use EEG simulation?')) {
+            doSimulation();
+        }
+    }
+}
+
+/**
+ * Prepares for a simulation
+ */
+function doSimulation() {
 
     setTimeout(() => {
         // In real app: await brainbitClient.connect()
         simulateConnection();
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
-        btn.classList.add('hidden');
+        connectDeviceBtn.disabled = false;
+        connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
+        connectDeviceBtn.classList.add('hidden');
 
         // Auto-start simulation if not already
         if (!isSimulating) {
             startSimulation();
         }
     }, 850);
+
 }
 
 /**
