@@ -1,10 +1,39 @@
-const { Neurosdk2, SensorFamily, createScanner, createSensor } = require('js-neurosdk2');
+//const { Neurosdk2, SensorFamily, createScanner, createSensor } = require('js-neurosdk2');
+const neuro = require('js-neurosdk2');
 
 async function main() {
     console.log('Starting Brainbit Node.js app...');
 
+    let deviceProps;
+
+    try {
+
+        deviceProps = await neuro.startScannerHeadband();
+        if (deviceProps !== null) {
+            console.log('Get device: ' + deviceProps.device.ame);
+
+        } else {
+            console.log('Failed to connect');
+        }
+    } catch (e) {
+        console.log('Error: ' + e.message);
+
+    }
+
+    console.log('End');
+
+
+    /*
+// Initialize the scanner to discover nearby neuro-sensors
+const scanner = new neuro.Scanner([neuro.SensorType.BrainBit]);
+
+// Example: Get a list of detected devices
+const availableDevices = scanner.scan(5); 
+
+
+
     // Create scanner for Brainbit devices
-    const scanner = createScanner([
+  const scanner = createScanner([
         SensorFamily.SensorLEBrainBit,
         SensorFamily.SensorLEBrainBit2,
         SensorFamily.SensorLEHeadband
@@ -23,6 +52,7 @@ async function main() {
     // Start scanning
     await scanner.start();
     console.log('Scanning for Brainbit headband...');
+    */
 }
 
 async function connectToDevice(deviceInfo) {
