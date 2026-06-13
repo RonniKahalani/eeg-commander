@@ -61,7 +61,7 @@ function addLogEntry(message, type = LOG_TYPE_INFO, pattern = null, metric = nul
     }
 
     html += `">`;
-    html += `<span class="font-mono text-sm text-slate-500 w-20 flex-shrink-0">[${logTime}]</span>`;
+    html += `<span class="font-mono text-sm text-slate-500 w-35 flex-shrink-0">[${logTime}]</span>`;
     html += `<span class="flex-1 text-sm">${replaceLinebreaks(escapeHtml(message))}</span>`;
 
     if (pattern && metric !== null) {
