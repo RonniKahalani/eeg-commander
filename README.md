@@ -12,8 +12,16 @@ Other relevant information:
 - [Code of Conduct](/docs/CODE_OF_CONDUCT.md)
 - [Tutorial](/docs/TUTORIAL.md)
 
-## Running the app
-If you have VS Code, it is easily run as a simple web app.
+## Running the EEG Commander app
+If you have VS Code it is easily run as a simple web app.
 
-Note: 
-This is a demo app, not a real product. The EEG chart data are simulated, but the demo gives good insights into the idea.
+- Clone the app from <code>https://github.com/RonniKahalani/eeg-commander</code>
+Getting the code
+- Open the <code>eeg-commander</code> folder in VS Code.
+
+Start the Shell server (can be ignored if you won't use Shell or UDP actions)
+- Go to the <code>server/shell</code> folder and run <code> node shell-server.js</code>.
+Launching the web app
+- Select the file <code>/commander/index.html</code> and <code>Go Live!</code> (you must have the Live Server plugin installed).
+
+
