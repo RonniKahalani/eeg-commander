@@ -1,4 +1,4 @@
-# JavaScript Actions
+# JavaScript action
 This type of action enables evaluating (running) JavaScript at runtime, with the Browser context and included scripts/libraries available. 
 
 You can supply your JavaScript in one of two ways
@@ -6,8 +6,10 @@ You can supply your JavaScript in one of two ways
 - Let the first (and only) line be an url like <code>http://somehost.com/code/test.js</code>
 
 There is also supplied some additional helper classes:
+- Media Helper
+- UI Helper
 
-### Audio Helper (JS.AUDIO)
+### Media Helper (JS.MEDIA)
 - playFrequency(frequency, duration = 120)
 - playSequence(count = 3, frequency = 880, duration = 150, gap = 200)
 - speak(message, rate=1.0)
@@ -15,10 +17,10 @@ There is also supplied some additional helper classes:
 
 #### Examples
 Talk to the user using the speech API.
-<pre><code>JS.AUDIO.speak("Hey you, wake up!");</code></pre>
+<pre><code>JS.MEDIA.speak("Hey you, wake up!");</code></pre>
 
 Play an mp3 audio file.
-<pre><code>JS.AUDIO.playAudio("htp://somewhere.com/someaudio.mp3");</code></pre>
+<pre><code>JS.MEDIA.playAudio("htp://somewhere.com/someaudio.mp3");</code></pre>
 
 ### UI Helper (JS.UI)
 - blinkElement(element, duration = 500)
