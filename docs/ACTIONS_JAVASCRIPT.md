@@ -1,13 +1,4 @@
-# Action Types
-- Javascript
-- Web/HTTP/Url requests
-- WebSocket
-- UDP
-- MQTT
-- OS-, shell scripts
-- SDK features
-
-## JavaScript Actions
+# JavaScript Actions
 This type of action enables evaluating (running) JavaScript at runtime, with the Browser context and included scripts/libraries available. 
 
 You can supply your JavaScript in one of two ways

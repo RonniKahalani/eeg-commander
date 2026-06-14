@@ -1,5 +1,14 @@
 # Patterns
 
+# Action types
+- [Javascript](/docs/ACTIONS_JAVASCRIPT.md)
+- [Url (Web/HTTP)](/docs/ACTIONS_URL.md)
+- [WebSocket](/docs/ACTIONS_WEBSOCKET.md)
+- [UDP](/docs/ACTIONS_UDP.md)
+- [MQTT](/docs/ACTIONS_MQTT.md)
+- [OS shell](/docs/ACTIONS_SHELL.md)
+- [SDK features](/docs/ACTIONS_SDK.md)
+
 ## Patterns Tab
 Lists defined EEG patterns. A pattern consist of a condition and an action.
 Each row repesents a pattern with actions like
