@@ -7,7 +7,6 @@ Check out the Google Slides: [EEG Commander Introduction](https://docs.google.co
 Other relevant information:
 - [Features](/docs/FEATURES.md)
 - [Patterns](/docs/PATTERNS.md)
-- [Action Types](/docs/ACTION_TYPES.md)
 
 - [Contributing](/docs/CONTRIBUTING.md)
 - [Code of Conduct](/docs/CODE_OF_CONDUCT.md)
