@@ -1,5 +1,5 @@
 # Launching the EEG Commander app
-If you have VS Code it is easily run as a simple web app.
+A few simple steps for launching the app in a web browser.
 ### Get the code
 - Clone the app from <code>https://github.com/RonniKahalani/eeg-commander</code>
 ### Open the project
@@ -9,3 +9,5 @@ If you have VS Code it is easily run as a simple web app.
 - In the <code>server/shell</code> folder, run <code> node shell-server</code> in a terminal- or command prompt.
 ### Launch the web app
 - Select file <code>/commander/index.html</code> and click <code>Go Live!</code> (requires the Live Server plugin).
+
+That should do the trick.
