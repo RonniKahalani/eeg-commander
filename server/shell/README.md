@@ -1,9 +1,11 @@
 # Shell Server
-The purpose of the Shell server is to act as a bridge to feature sexecution af OS/Shell and UDP command requests, typically sent by a Commander web app. A web app it not allowed to run local OS system commands or send UDP messages itself, that what the shell server is used for.
+The purpose of the Shell server is to act as a bridge for execution af OS/Shell and UDP requests, typically sent by a Commander web app. 
 
-It can run on any local or remote Node.js enabled device.
+Because a web app is not allowed to run local OS system commands or send UDP messages itself, we use a shell server.
 
-An execute request is triggered by a HTTP POST with the command to run, via the <code>/execute</code> endpoint:
+The shell server can run on any local or remote Node.js enabled device.
+
+An execute request is triggered by a HTTP POST with the command to run, via the <code>/execute</code> endpoint, on the shell server:
 
 <pre>
 <code type="javascript">const response = await fetch('http://localhost:3000/execute', {
@@ -13,11 +15,11 @@ An execute request is triggered by a HTTP POST with the command to run, via the 
     });</code>
 </pre>
 
-So the Commander app sends a shell request to the Shell server and gets a response with the output of the executed command.
+A Commander app sends a shell request to the Shell server and gets a response with the output of the executed command.
 
 The server can be used in two different setups:
-- Run on the same node/device as the BrainBit Commander app.
-- Run one remote central Shell server shared by multiple Commander apps.
+- Run on the same node/device as the EEG Commander app.
+- Run one remote central Shell server shared by multiple EEG Commander apps.
 
 <pre>
 <code>node shell-server.js</code>

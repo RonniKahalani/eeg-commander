@@ -1,8 +1,6 @@
 ![Main Page](/commander/img/playground-banner.png)
 # EEG Commander
-The EEG Commander app is a generic and declarative command feature, for interfacing with external devices, where EEG signal patterns are mapped to common action types.
-
-Check out the Google Slides: [EEG Commander Introduction](https://docs.google.com/presentation/d/1lEOeM68fSkk5HG2CAB10j1WqsvjgeOr76yQdEa2zMGg/edit?usp=sharing).
+EEG Commander offers a generic and declarative way to turn brain signal patterns into real-wolrd actions. Check out the Google Slides: [EEG Commander Introduction](https://docs.google.com/presentation/d/1lEOeM68fSkk5HG2CAB10j1WqsvjgeOr76yQdEa2zMGg/edit?usp=sharing).
 
 ## The Product
 - [Features](/docs/FEATURES.md)
