@@ -10,6 +10,7 @@ Start by watching this presentation: [EEG Commander Introduction](https://docs.g
 No, this app includes a configurable EEG simulator, so nothing is holding you back from trying it out.
 
 ## The Software
+- [License](/LICENSE.md)
 - [Purpose](/docs/PURPOSE.md)
 - [Features](/docs/FEATURES.md)
 - [Patterns](/docs/PATTERNS.md)
