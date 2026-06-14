@@ -45,7 +45,7 @@ Lists defined EEG patterns. A pattern consist of a condition and an action.
 Each row repesents a pattern with actions like
 - edit, clone, delete, run and enable.
 
-## Create pattern
+## Adding new patterns to the default patterns list
 To register a new pattern you can add it to the default patterns in the Yaml file <code>/commander/data/patterns/eeg-patterns-default.yaml</code>
 
 Remember to reset the pattern list so it reads the default patterns file. You can also import and export the current patterns in the app.
@@ -73,8 +73,8 @@ patterns:
 ## Only using the integration layer
 In reality you could totally refactor the index.html page and hide all the pattern and EEG UI, totally customize it for your app purpose but still use the core EEG Commander layer to react to patterns in an EEG data stream supplied by your app.
 
-## Adding your own integration type
-You can easily add new integration types, with a few code additions.
+## Adding a new action type
+You can easily add new action types, with a few code additions.
 
 ### In <code>actions.js</code>
 - Add your own <code>async function execute[Type]Action(pattern, eeg)</code>
@@ -84,7 +84,8 @@ You can easily add new integration types, with a few code additions.
 - Add a background color for your action type in <code>function getActionTypeColor(type)</code>
 
 ### In <code>dialogs.js & index.html</code>
-- If you want your users to create or edit the patterns you have to add a UI to the patterns dialog HTML in the <code>index.html</code> and dialog logic like save and edit in <code>dialogs.js</code>
+- Add the new to the action type select element in <code>dialogs.js</code>
+- To create and edit your new pattern action type you have to add a UI to the patterns dialog HTML in the <code>index.html</code> and dialog logic like save and edit in <code>dialogs.js</code>
 
 
 ### Pattern Dialog

@@ -2,7 +2,7 @@
 The purpose of the EEG Command idea is to:
 - Ignite EEG creativity and excitement
 - Create added value for EEG device consumers
-- Nurture a fun and playful open-source community
+- Nurture a fun and playful [open-source community](/docs/COMMUNITY.md)
 
 ## Ignite EEG creativity and excitement
 - Facilitate a culture for creating innovative EEG experiments, like:
