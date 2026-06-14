@@ -14,14 +14,17 @@ No, this app includes a configurable EEG simulator, so nothing is holding you ba
 - [Purpose](/docs/PURPOSE.md)
 - [Features](/docs/FEATURES.md)
 - [Patterns](/docs/PATTERNS.md)
+- [Security](/docs/SECURITY.md)
+- [Support](/docs/SUPPORT.md)
+
 - [Tutorial](/docs/TUTORIAL.md)
 - [Launching the app](/docs/LAUNCH_APP.md)
 
 ## The Community
 - [Community](/docs/COMMUNITY.md)
-- [Partners](/docs/PARTNERS.md)
 - [Contributing](/docs/CONTRIBUTING.md)
 - [Code of Conduct](/docs/CODE_OF_CONDUCT.md)
+- [Partners](/docs/PARTNERS.md)
 
 ## The Hardware
 - [BrainBit EEG Headband](/docs/HARDWARE.md)
