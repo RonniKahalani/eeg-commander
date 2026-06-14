@@ -1,4 +1,5 @@
-# Community Code of Conduct
+# Code of Conduct
+To assure a non-toxic, no-a**hole culture, any person aspirering to join the team has to understand our values and red lines.
 
 ## Our Standards
 **Expected Behavior:**
@@ -26,7 +27,7 @@ Community maintainers are responsible for clarifying and enforcing these standar
 - Ban temporarily or permanently any member for inappropriate, threatening, offensive, or harmful behavior.
 
 ## Scope
-This Code of Conduct applies to **all spaces** managed by the EEG Commander project, including:
+This Code of Conduct applies to **all spaces** managed by this project, including:
 - GitHub (Issues, Pull Requests, Discussions)
 - Discord server
 - Twitter/X, LinkedIn, and other official social channels
