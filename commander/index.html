@@ -19,9 +19,11 @@
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <script type='text/javascript' src="https://cdn.tailwindcss.com"></script>
 
-    <script type='text/javascript' defer src="/commander/node_modules/web-neurosdk-brainbit/dist/brainbitClient.js"></script>
-    <script type='text/javascript' defer src="/commander/node_modules/web-neurosdk-brainbit/dist/brainbitClient.umd.js"></script>
-    
+    <script type='text/javascript' defer
+        src="/commander/node_modules/web-neurosdk-brainbit/dist/brainbitClient.js"></script>
+    <script type='text/javascript' defer
+        src="/commander/node_modules/web-neurosdk-brainbit/dist/brainbitClient.umd.js"></script>
+
     <script type='text/javascript' defer src="/commander/js/core/utils.js"></script>
     <script type='text/javascript' defer src="/commander/js/core/tasks.js"></script>
     <script type='text/javascript' defer src="/commander/js/core/actions.js"></script>
@@ -34,13 +36,13 @@
     <script type='text/javascript' defer src="/commander/js/ui/three.js"></script>
     <script type='text/javascript' defer src="/commander/js/ui/eeg-chart.js"></script>
     <script type='text/javascript' defer src="/commander/js/ui/dialogs.js"></script>
-    
+
     <script type='text/javascript' defer src="/commander/js/helper/three-helper.js"></script>
     <script type='text/javascript' defer src="/commander/js/helper/media-helper.js"></script>
     <script type='text/javascript' defer src="/commander/js/helper/ui-helper.js"></script>
     <script type='text/javascript' defer src="/commander/js/helper/eeg-helper.js"></script>
     <script type='text/javascript' defer src="/commander/js/helper/js-helper.js"></script>
-    
+
     <script type='text/javascript' defer src="/commander/js/commander.js"></script>
 </head>
 
@@ -57,7 +59,8 @@
                 <div>
                     <h1 class="font-display text-3xl font-semibold tracking-tighter">EEG <span
                             class="sdk-badge">Commander</span></h1>
-                    <p class="text-[10px] text-slate-500 -mt-1">Signal Pattern → Action Engine</p>
+                    <div id="task-activity" class="text-xs text-slate-500">0 active, 0 success, 0 fail.
+                            </div>
                 </div>
             </div>
 
@@ -444,7 +447,7 @@
                             <h2 class="mb-2 font-semibold text-2xl text-orange-400 flex items-center gap-x-2">4
                                 -
                                 Send via WebSocket</h2>
-                            <p class="mb-2">Sends a message to a host via a WebSocket.</p>
+                            <p class="mb-2">Sends a message to a WebSocket host.</p>
                             <ul class="list-disc pl-6">
                                 <li>Sends a message to a host (ex. <code>ws://localhost:8889</code>).
                                 </li>
@@ -712,7 +715,7 @@
                                 <i class="fa-solid fa-history text-emerald-400"></i>
                                 Events <span id="response-count" class="">0</span>
                             </h2>
-                            <div id="task-activity" class="text-xs text-slate-500">0 active, 0 success, 0 fail.
+                            <div class="text-xs text-slate-500">Responses from the triggered actions.
                             </div>
                         </div>
                     </div>
@@ -768,12 +771,11 @@
                             <div class="mb-1">
                                 <div class="text-center">
                                     <div id="ch1-label" class="channel-label">CH1 (T3)</div>
-                                    <div id="ch1-value" class="data-value font-semibold metric-value">12.4
-                                    </div>
+                                    <div id="ch1-value" class="data-value font-semibold metric-value">0</div>
                                 </div>
                                 <div class="text-center">
                                     <div class="text-[10px] text-slate-500">µV</div>
-                                    <div id="ch1-bar" class="w-8 h-1.5 rounded mt-1" style="width: 45%">
+                                    <div id="ch1-bar" class="w-8 h-1.5 rounded mt-1" style="width: 0%">
                                     </div>
                                 </div>
                             </div>
@@ -783,13 +785,11 @@
                             <div class="mb-1">
                                 <div class="text-center">
                                     <div id="ch2-label" class="channel-label">CH2 (T4)</div>
-                                    <div id="ch2-value" class="data-value font-semibold metric-value">-8.7
-                                    </div>
+                                    <div id="ch2-value" class="data-value font-semibold metric-value">0</div>
                                 </div>
                                 <div class="text-center">
                                     <div class="text-[10px] text-slate-500">µV</div>
-                                    <div id="ch2-bar" class="w-8 h-1.5 rounded mt-1" style="width: 32%">
-                                    </div>
+                                    <div id="ch2-bar" class="w-8 h-1.5 rounded mt-1" style="width: 0%"></div>
                                 </div>
                             </div>
                         </div>
@@ -798,11 +798,11 @@
                             <div class="mb-1">
                                 <div class="text-center">
                                     <div id="ch3-label" class="channel-label">CH3 (O1)</div>
-                                    <div id="ch3-value" class="data-value font-semibold metric-value">4.2</div>
+                                    <div id="ch3-value" class="data-value font-semibold metric-value">0</div>
                                 </div>
                                 <div class="text-center">
                                     <div class="text-[10px] text-slate-500">µV</div>
-                                    <div id="ch3-bar" class="w-8 h-1.5 rounded mt-1" style="width: 67%">
+                                    <div id="ch3-bar" class="w-8 h-1.5 rounded mt-1" style="width: 0%">
                                     </div>
                                 </div>
                             </div>
@@ -812,12 +812,11 @@
                             <div class="mb-1">
                                 <div class="text-center">
                                     <div id="ch4-label" class="channel-label">CH4 (O2)</div>
-                                    <div id="ch4-value" class="data-value font-semibold metric-value">-19.3
-                                    </div>
+                                    <div id="ch4-value" class="data-value font-semibold metric-value">0</div>
                                 </div>
                                 <div class="text-center">
                                     <div class="text-[10px] text-slate-500">µV</div>
-                                    <div id="ch4-bar" class="w-8 h-1.5 rounded mt-1" style="width: 28%">
+                                    <div id="ch4-bar" class="w-8 h-1.5 rounded mt-1" style="width: 0%">
                                     </div>
                                 </div>
                             </div>
@@ -907,7 +906,7 @@
                         class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
                 </div>
 
-                <div class="space-y-5 overflow-auto space-y-2 custom-scroll" style="max-height: 70vh;">
+                <div class="space-y-5 pr-3 overflow-auto space-y-2 custom-scroll" style="max-height: 70vh;">
 
                     <div>
                         <div>
@@ -994,13 +993,13 @@
 
                         <select id="action-type" onchange="updateActionFields()"
                             class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-3 text-sm mb-3">
-                            <option value="js">JavaScript - Runs JavaScript in the browser context</option>
-                            <option value="shell">OS Shell - Sends a command to a device (local or remote)</option>
+                            <option value="js">JavaScript - Runs JavaScript inside browser</option>
+                            <option value="shell">OS Shell - Sends OS command to device</option>
                             <option value="url">URL - Sends data to a web app</option>
                             <option value="sdk">SDK - Runs an internal SDK feature</option>
-                            <option value="udp">UDP - Sends data to an UDP server</option>
-                            <option value="socket">WebSocket - Sends a message to a web socket server</option>
-                            <option value="mqtt">MQTT - Sends a message to a message queue topic</option>
+                            <option value="udp">UDP - Sends data to an UDP host</option>
+                            <option value="socket">WebSocket - Sends message to WebSocket host</option>
+                            <option value="mqtt">MQTT - Sends message to a queue topic</option>
                         </select>
 
                         <!-- JS Action -->
