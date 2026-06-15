@@ -273,7 +273,7 @@ function renderPatternsList() {
                     <button id="clone-pattern-btn" title="Clone pattern" onclick="clonePattern('${pattern.id}')" 
                         class="px-2 py-1.5 text-indigo-400 hover:bg-slate-700 rounded-xl"><i class="fa-solid fa-copy fa-sm"></i></button>
 
-                                            <button id="clone-pattern-btn" title="Clone pattern" onclick="patternDialog.editPattern('${pattern.id}')" 
+                    <button id="edit-pattern-btn" title="Edit pattern" onclick="patternDialog.editPattern('${pattern.id}')" 
                         class="px-2 py-1.5 text-indigo-400 hover:bg-slate-700 rounded-xl"><i class="fa-solid fa-edit fa-sm"></i></button>
 
                     <button id="test-pattern-btn" title="Test pattern" onclick="testPattern('${pattern.id}');" 
@@ -286,6 +286,7 @@ function renderPatternsList() {
         `;
 
         container.appendChild(div);
+        filterPatterns();
         byId('pattern-search-count').innerHTML = ++count;
         byId('pattern-count').innerHTML = count;
     });
@@ -315,17 +316,29 @@ function filterPatterns(filter) {
     let count = 0;
     Array.from(patternRows).forEach(row => {
         const pattern = findPattern(row.id);
-        const isIncluded = (pattern.name.toLowerCase().includes(searchTerm) ||
-            pattern.description.toLowerCase().includes(searchTerm) ||
-            pattern.action.type.toLowerCase().includes(searchTerm) ||
-            pattern.alias.toLowerCase().includes(searchTerm)) ||
-            getConditionSummary(pattern).toLowerCase().includes(searchTerm);
-
-        setVisibility(row, isIncluded);
-        if (isIncluded) { count++; }
+        const matched = matchesPatternFilter(pattern, searchTerm);
+        setVisibility(row, matched);
+        if (matched) { count++; }
     });
 
     byId('pattern-search-count').innerHTML = count;
+}
+
+/**
+ * Validates that the pattern matches the pattern filter
+ * @param {*} searchTerm 
+ * @param {*} pattern 
+ * @returns {void}
+ */
+function matchesPatternFilter(pattern, searchTerm) {
+    const term = (!searchTerm) ? byId('pattern-search-input').value : searchTerm;
+    searchTerm = term.toLowerCase();
+
+    return (pattern.name.toLowerCase().includes(searchTerm) ||
+        pattern.description.toLowerCase().includes(searchTerm) ||
+        pattern.action.type.toLowerCase().includes(searchTerm) ||
+        pattern.alias.toLowerCase().includes(searchTerm)) ||
+        getConditionSummary(pattern).toLowerCase().includes(searchTerm);
 }
 
 /**
@@ -483,7 +496,15 @@ async function loadSavedPatterns() {
  * @returns {void}
  */
 function toggleAllPatternEnabled(enabled) {
-    patterns.forEach(p => p.enabled = enabled);
+    const visiblePatterns = [];
+
+    patterns.forEach(p => {
+
+        const elem = byId(p.id);
+        if (!elem.classList.contains('hidden')) {
+            p.enabled = enabled;
+        }
+    });
     renderPatternsList();
 }
 

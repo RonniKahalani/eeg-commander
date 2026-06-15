@@ -32,32 +32,25 @@ SOFTWARE.
  */
 
 /**
- * Gets an EEG device via the BrainBit client
+ * Shows a Bluetooth connect dialog and connects to an EEG device via the BrainBit client
  */
-async function getEegDevice() {
+async function connectToEegDevice() {
 
     const brainbitClient = new BrainbitClient();
     await brainbitClient.connect();
+
     brainbitClient.eegStream.subscribe((data) => {
         // data = { val0_ch1, val0_ch2, ... }
-        addEegData(data);
+        const processed = {
+            ch1: data.val0_ch1,
+            ch2: data.val0_ch2,
+            ch3: data.val0_ch3,
+            ch4: data.val0_ch4
+        };
+
+        addToBuffer(processed);
+        console.log(data)
     });
 
     await brainbitClient.startEEGStream();
-}
-
-/**
- * Adds the EEG data to the EEG buffer.
- * @param {*} data 
- */
-function addEegData(data) {
-    const processed = {
-        ch1: data.val0_ch1,
-        ch2: data.val0_ch2,
-        ch3: data.val0_ch3,
-        ch4: data.val0_ch4
-    };
-
-    //addToBuffer(data);
-    console.log(data)
 }

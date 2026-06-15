@@ -90,6 +90,7 @@ const server = http.createServer((req, res) => {
     const isUsageRequest = req.method === 'GET' && req.url === '/';
     const isHealthRequest = req.method === 'GET' && req.url === '/health';
     const isSystemRequest = req.method === 'GET' && req.url === '/system';
+    const isEchoRequest = req.url === '/echo';
 
     if (isCommandRequest) {
         let action = '';
@@ -101,6 +102,10 @@ const server = http.createServer((req, res) => {
         handleHealth(req, res);
     } else if (isSystemRequest) {
         handleSystem(req, res);
+    } else if (isEchoRequest) {
+        let action = '';
+        req.on('data', chunk => action += chunk.toString());
+        req.on('end', () => handleEcho(JSON.parse(action || '{}'), req, res));       
     } else { handleNotFound(req, res); }
 });
 
@@ -477,6 +482,18 @@ function handleHealth(req, res) {
         status: 'healthy',
         uptime: process.uptime()
     }));
+}
+
+/**
+ * Handles echo endpoint
+ * @param {*} action 
+ * @param {*} req 
+ * @param {*} res 
+ * @return {void} 
+ */
+function handleEcho(action, req, res) {
+    res.writeHead(200);
+    res.end(JSON.stringify(action));
 }
 
 /**
