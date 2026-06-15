@@ -318,7 +318,7 @@ function filterPatterns(filter) {
         const pattern = findPattern(row.id);
         const matched = matchesPatternFilter(pattern, searchTerm);
         setVisibility(row, matched);
-        if(matched) { count++; }
+        if (matched) { count++; }
     });
 
     byId('pattern-search-count').innerHTML = count;
@@ -335,10 +335,10 @@ function matchesPatternFilter(pattern, searchTerm) {
     searchTerm = term.toLowerCase();
 
     return (pattern.name.toLowerCase().includes(searchTerm) ||
-            pattern.description.toLowerCase().includes(searchTerm) ||
-            pattern.action.type.toLowerCase().includes(searchTerm) ||
-            pattern.alias.toLowerCase().includes(searchTerm)) ||
-            getConditionSummary(pattern).toLowerCase().includes(searchTerm);
+        pattern.description.toLowerCase().includes(searchTerm) ||
+        pattern.action.type.toLowerCase().includes(searchTerm) ||
+        pattern.alias.toLowerCase().includes(searchTerm)) ||
+        getConditionSummary(pattern).toLowerCase().includes(searchTerm);
 }
 
 /**
@@ -496,7 +496,15 @@ async function loadSavedPatterns() {
  * @returns {void}
  */
 function toggleAllPatternEnabled(enabled) {
-    patterns.forEach(p => p.enabled = enabled);
+    const visiblePatterns = [];
+
+    patterns.forEach(p => {
+
+        const elem = byId(p.id);
+        if (!elem.classList.contains('hidden')) {
+            p.enabled = enabled;
+        }
+    });
     renderPatternsList();
 }
 
