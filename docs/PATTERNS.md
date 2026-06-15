@@ -33,7 +33,7 @@ There are different types of actions, but common for them all is that they perfo
 
 ### Action types
 - [JavaScript](/docs/ACTIONS_JAVASCRIPT.md)
-- [Url (Web/HTTP)](/docs/ACTIONS_URL.md)
+- [URL](/docs/ACTIONS_URL.md)
 - [WebSocket](/docs/ACTIONS_WEBSOCKET.md)
 - [UDP](/docs/ACTIONS_UDP.md)
 - [MQTT](/docs/ACTIONS_MQTT.md)

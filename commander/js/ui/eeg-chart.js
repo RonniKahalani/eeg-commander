@@ -379,20 +379,25 @@ connectDeviceBtn.addEventListener('pointerup', async (event) => await connectDev
 async function connectDevice(event) {
     event.preventDefault();
 
-    connectDeviceBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin fa-fw mr-2"></i> Connecting...`;
-    connectDeviceBtn.disabled = true;
+    const bluetoothSupported = navigator.bluetooth ? true : false;
+    if (!bluetoothSupported) {
+        alert(`Current browser ${navigator.appName} v${navigator.appVersion} does not support the Bluetooth Web API.`)
+    } else {
 
-    let eegDevice;
-    try {
-        eegDevice = await getEegDevice(event);
+        connectDeviceBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin fa-fw mr-2"></i> Connecting...`;
+        connectDeviceBtn.disabled = true;
 
-    } catch (e) {
-        connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
-        alert(e.message);
+        let eegDevice;
+        try {
+            eegDevice = await getEegDevice(event);
+
+        } catch (e) {
+            connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
+            alert(e.message);
+        }
     }
 
-    if (!eegDevice) {
-
+    if (!bluetoothSupported || !eegDevice) {
 
         if (confirm('Do you want to use EEG simulation?')) {
             doSimulation();
