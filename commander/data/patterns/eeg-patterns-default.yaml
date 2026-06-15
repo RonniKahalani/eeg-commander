@@ -57,7 +57,7 @@ patterns:
       type: url
       payload:
         method: POST
-        url: https://echo.free.beeceptor.com
+        url: http://127.0.0.1:3000/echo
         authorization: Bearer sk_live_demo1234567890abcdef
         contentType: application/json
         body: {"event":"high_focus","source":"Commander","intensity":"high"}

@@ -60,7 +60,7 @@
                     <h1 class="font-display text-3xl font-semibold tracking-tighter">EEG <span
                             class="sdk-badge">Commander</span></h1>
                     <div id="task-activity" class="text-xs text-slate-500">0 active, 0 success, 0 fail.
-                            </div>
+                    </div>
                 </div>
             </div>
 
@@ -103,7 +103,7 @@
 
     <main>
 
-        <div class="max-w-screen-2xl mx-auto px-6 pt-6 pb-12">
+        <div class="max-w-screen-2xl mx-auto px-6 pt-6 pb-3">
 
             <!-- Connection Status Bar -->
             <div class="p-0 mb-0 flex flex-col lg:flex-row lg:items-center gap-4">
@@ -874,24 +874,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Real SDK Integration Note -->
-            <div
-                class="mt-6 px-5 py-4 bg-slate-900 border border-slate-700 rounded-3xl text-xs flex flex-col md:flex-row md:items-center gap-3">
-                <div class="flex items-center gap-x-2 text-amber-400">
-                    <i class="fa-solid fa-info-circle fa-fw"></i>
-                    <span class="font-semibold">Real Hardware Mode</span>
-                </div>
-                <div class="text-slate-400 flex-1">
-                    This demo uses simulated EEG data. For real BrainBit headband,
-                    <a href="https://gitlab.com/brainbit-inc/brainbit-web" target="_blank"
-                        class="underline hover:text-indigo-400">install web-neurosdk-brainbit</a>
-                    and replace simulation code (see console or edit this file).
-                </div>
-                <button id="sdk-instructions-btn" title="Show SDK Instructions" onclick="showSDKInstructions()"
-                    class="px-4 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 rounded-2xl whitespace-nowrap">Show
-                    Integration Code</button>
-            </div>
         </div>
 
         <!-- Add/Edit Pattern Modal -->
@@ -1293,12 +1275,22 @@
 
     </main>
 
-    <footer class="text-center py-8 text-[10px] text-slate-500">
-        Built with BrainBit Web SDK • For research &amp; prototyping only • Not for medical use
+    <footer class="text-center pb-3 text-sm text-slate-500">
+        <p>Built with BrainBit Web SDK • For research &amp; prototyping only • Not for medical use.</p>
+        <p>All made possible by<br><a href="http://brainbit.com" target="_blank"
+                class="underline text-blue-600 hover:text-blue-800 visited:text-purple-60">brainbit.com</a> & <a
+                href="http://learningisliving.dk" target="_blank"
+                class="underline text-blue-600 hover:text-blue-800 visited:text-purple-60">learningisliving.dk</a></p>
+
+        <div class="flex justify-center items-center p-3">
+            <div class="flex gap-8">
+                <img title="Visit BrainBit.com" src="img/brainbit.png" class="w-[64px] h-[64px]">
+                <img title="Visit LearningIsLiving.dk" src="img/learningisliving.png" class="w-[64px] h-[64px]">
+
+            </div>
+        </div>
     </footer>
 
-    <!-- Used for testing the headband -->
-    <button id="headband-start">Start</button>
 </body>
 
 </html>
