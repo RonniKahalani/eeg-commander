@@ -389,7 +389,7 @@ async function connectDevice(event) {
 
         let eegDevice;
         try {
-            eegDevice = await getEegDevice(event);
+            eegDevice = await connectToEegDevice(event);
 
         } catch (e) {
             connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
