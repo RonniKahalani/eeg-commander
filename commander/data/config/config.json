@@ -1,14 +1,16 @@
 {
   "app": "EEG Commander",
   "version": "1.0.0.0",
-  "server": "http://localhost:3000",
   "patterns": "/commander/data/patterns/eeg-patterns-default.yaml",
+  "shell": {
+    "host": "http://localhost:3000"
+  },
   "eeg": {
     "averageMultpleSamplePerBlock": false,
-    "valueMultiplier": 1000,
-    "hub": {
-      "host": "ws://localhost:8885",
-      "id": "Ronni PC"
-    }
+    "valueMultiplier": 1000
+  },
+  "hub": {
+    "host": "ws://localhost:8885",
+    "id": "Ronni PC"
   }
 }

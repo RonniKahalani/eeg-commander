@@ -352,26 +352,32 @@ function downloadEEG() {
 function sendToHub(data) {
 
     if (!hubServer) return;
+    const deviceId = (isSimulating) ? crypto.randomUUID() : deviceInfo ? deviceInfo.deviceId : 'Unknown';
+    const id = `${config.hub.id}-${deviceId}`;
 
-    const commasData = `${config.eeg.pulse.id},${data.timestamp},${data.ch1},${data.ch2},${data.ch3},${data.ch4}`
-    hubServer.send(commasData);
+    const message = { id, ...data};
+
+    //hubServer.send(`${ config.hub.id }, ${ data.timestamp }, ${ data.ch1 }, ${ data.ch2 }, ${ data.ch3 }, ${ data.ch4 }`);
+    hubServer.send(JSON.stringify(message));
 }
 
 /**
  * Initializes the hub socket
  */
 function initHub() {
-    if (isEmpty(config.eeg.hub.host)) return;
+    const hubHost = config.hub.host;
+    if (isEmpty(hubHost)) return;
 
-    hubServer = new WebSocket(config.eeg.hub.host);
+    hubServer = new WebSocket(hubHost);
     hubServer.onopen = () => {
 
         hubServer.onmessage = (event) => {
-            console.log('Pulse event: ' + event)
+            console.log('Pulse event: ' + event.data)
         };
     };
 
     hubServer.onerror = (err) => {
+        console.error('Failed in hub server: ' + err.message)
         hubServer.close();
     };
 }

@@ -196,18 +196,19 @@ function showToast(title, detail, millis = 4000) {
  */
 async function checkShellServerHealth() {
 
-    addLogEntry(`Connecting to Shell Server at ${config.server}...`, ACTION_TYPE_SHELL);
+    const shellHost = config.shell.host;
+    addLogEntry(`Connecting to Shell Server at ${shellHost}...`, ACTION_TYPE_SHELL);
 
     try {
-        const response = await fetch(config.server + '/health');
+        const response = await fetch(shellHost + '/health');
 
         if (response.ok) {
             const data = await response.json();
-            addLogEntry(`Connected to Shell Server: ${data.hostname} at ${config.server}`, ACTION_TYPE_SHELL);
+            addLogEntry(`Connected to Shell Server: ${data.hostname} at ${shellHost}`, ACTION_TYPE_SHELL);
         }
 
     } catch (e) {
-        addLogEntry(`[Shell]: Server unreachable at ${config.server}. ${e.message}. It might be offline or misconfigured. Try starting the server with: node shell-server.js`, LOG_TYPE_ERROR);
+        addLogEntry(`[Shell]: Server unreachable at ${shellHost}. ${e.message}. It might be offline or misconfigured. Try starting the server with: node shell-server.js`, LOG_TYPE_ERROR);
     }
 }
 
