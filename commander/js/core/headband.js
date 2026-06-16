@@ -60,7 +60,7 @@ async function connectToEegDevice() {
 
     isConnected = true;
     showConnection();
-    
+
     deviceInfo = await brainbitClient.deviceInfo();
 
     byId('firmware-text').innerHTML = deviceInfo.firmwareVersion;
@@ -69,21 +69,33 @@ async function connectToEegDevice() {
     brainbitClient.eegStream.subscribe((data) => {
         // data = { val0_ch1, val0_ch2, ... }
 
-        const factor = 1000;
-        addToBuffer({
-            ch1: data.val0_ch1 * factor,
-            ch2: data.val0_ch2 * factor,
-            ch3: data.val0_ch3 * factor,
-            ch4: data.val0_ch4 * factor
-        });
+        const factor = config.eeg.valueMultiplier;
 
-        addToBuffer({
-            ch1: data.val1_ch1 * factor,
-            ch2: data.val1_ch2 * factor,
-            ch3: data.val1_ch3 * factor,
-            ch4: data.val1_ch4 * factor
-        });
+        if (!config.eeg.averageMultpleSamplePerBlock) {
 
+            addToBuffer({
+                ch1: data.val0_ch1 * factor,
+                ch2: data.val0_ch2 * factor,
+                ch3: data.val0_ch3 * factor,
+                ch4: data.val0_ch4 * factor
+            });
+
+            addToBuffer({
+                ch1: data.val1_ch1 * factor,
+                ch2: data.val1_ch2 * factor,
+                ch3: data.val1_ch3 * factor,
+                ch4: data.val1_ch4 * factor
+            });
+
+        } else {
+
+            addToBuffer({
+                ch1: (data.val0_ch1 + data.val1_ch1) / 2 * factor,
+                ch2: (data.val0_ch2 + data.val1_ch2) / 2 * factor,
+                ch3: (data.val0_ch3 + data.val1_ch3) / 2 * factor,
+                ch4: (data.val0_ch4 + data.val1_ch4) / 2 * factor
+            });
+        }
         //console.log(data)
     });
 
@@ -93,7 +105,7 @@ async function connectToEegDevice() {
         byId('battery-bar').style.width = batteryChargeValue;
         byId('battery-text').innerHTML = batteryChargeValue;
 
-       // console.log('statusData', data);
+        // console.log('statusData', data);
     });
 
     brainbitClient.eventMarkers.subscribe((event) => {

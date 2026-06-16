@@ -37,6 +37,22 @@
         "legend": {
           "display": false
         },
+        "zoom": {
+          "pan": {
+            "enabled": true,
+            "mode": "xy"
+          },
+          "zoom": {
+            "wheel": {
+              "enabled": true,
+              "speed": 0.1
+            },
+            "pinch": {
+              "enabled": true
+            },
+            "mode": "xy"
+          }
+        },
         "tooltip": {
           "mode": "index",
           "intersect": false

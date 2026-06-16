@@ -24,17 +24,18 @@
     <script type='text/javascript' defer
         src="/commander/node_modules/web-neurosdk-brainbit/dist/brainbitClient.umd.js"></script>
 
+    <script type='text/javascript' defer src="/commander/js/core/log.js"></script>
     <script type='text/javascript' defer src="/commander/js/core/utils.js"></script>
     <script type='text/javascript' defer src="/commander/js/core/tasks.js"></script>
     <script type='text/javascript' defer src="/commander/js/core/actions.js"></script>
     <script type='text/javascript' defer src="/commander/js/core/patterns.js"></script>
-    <script type='text/javascript' defer src="/commander/js/core/log.js"></script>
     <script type='text/javascript' defer src="/commander/js/core/events.js"></script>
     <script type='text/javascript' defer src="/commander/js/core/http-status.js"></script>
     <script type='text/javascript' defer src="/commander/js/core/headband.js"></script>
 
     <script type='text/javascript' defer src="/commander/js/ui/three.js"></script>
     <script type='text/javascript' defer src="/commander/js/ui/eeg-chart.js"></script>
+    <script type='text/javascript' defer src="/commander/js/ui/eeg-simulation.js"></script>
     <script type='text/javascript' defer src="/commander/js/ui/dialogs.js"></script>
 
     <script type='text/javascript' defer src="/commander/js/helper/three-helper.js"></script>
@@ -828,9 +829,13 @@
                         <canvas id="eeg-chart"></canvas>
                     </div>
 
-                    <div class="mt-3 text-xs text-slate-500 italic">Values are simulated for demo purposes. Connect
-                        an
-                        headband and start streaming real EEG data.</div>
+                    <div class="pt-2 flex gap-x-2">
+                        <button id="eeg-download-btn" title="Download EEG buffer" onclick="downloadEEG()"
+                            class="flex-1 py-2.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-3xl flex items-center justify-center gap-x-2">
+                            <i class="fa-solid fa-trash fa-fw"></i>
+                            <span>Download</span>
+                        </button>
+                    </div>
 
                     <div class="mt-3 text-xs text-slate-500 italic">
                         Average (across all channels): <span id="eeg-avg">0.0</span>

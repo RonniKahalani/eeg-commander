@@ -26,8 +26,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-const FILE_SIMULATION = './data/config/eeg-simulation.json';
-
 const ch1Value = byId('ch1-value');
 const ch2Value = byId('ch2-value');
 const ch3Value = byId('ch3-value');
@@ -41,20 +39,20 @@ const ch4Bar = byId('ch4-bar');
 let chart = null;
 let eegBuffer = []; // {timestamp, ch1, ch2, ch3, ch4}
 
-let eegSimulationConfig = null;
-let simulationInterval = null;
 let isConnected = false;
-let isSimulating = false;
 
 let eegHighestPeak = 0;
 let eegLowestTrough = 0;
+
+let hubServer;
 
 /**
  * This script handles the simulation chart UI.
  * @returns {void}
  */
 async function initChart() {
-    eegSimulationConfig = await loadUrlAsObject(FILE_SIMULATION);
+
+    await initSimulation();
 
     const ctx = byId('eeg-chart');
     const datasets = [];
@@ -187,8 +185,11 @@ function updateStats(data) {
  * @returns {void}
  */
 function addToBuffer(data) {
+
     const timestamp = Date.now();
-    eegBuffer.push({ timestamp, ...data });
+    const eegData = { timestamp, ...data };
+    eegBuffer.push(eegData);
+    sendToHub(eegData);
     trimEegBuffer(timestamp);
 
     // Update chart and metrics
@@ -208,121 +209,6 @@ function addToBuffer(data) {
 function trimEegBuffer(timestamp) {
     const cutoff = timestamp - (eegSimulationConfig.simulation.maxBufferSeconds * 1000);
     eegBuffer = eegBuffer.filter(d => d.timestamp > cutoff);
-}
-
-/**
- * Generates simulated EEG data.
- * @param {Object} config - The EEG simulation configuration object.
- * @returns {Object} Simulated EEG data for each channel.
- */
-function generateSimulatedEEG(config) {
-    if (!config) throw new Error('EEG simulation config not loaded');
-
-    const t = Date.now() / 1000 * config.simulation.timeScale;
-
-    const noise = () => (Math.random() - 0.5) * config.simulation.noise.amplitude;
-
-    // Channel signals
-    const c = config.channels;
-
-    let ch1 = Math.sin(t * c.ch1.lowFrequency) * c.ch1.lowAmplitude +
-        Math.sin(t * c.ch1.highFrequency) * c.ch1.highAmplitude + noise();
-
-    let ch2 = Math.sin(t * c.ch2.lowFrequency) * c.ch2.lowAmplitude +
-        Math.sin(t * c.ch2.highFrequency) * c.ch2.highAmplitude + noise();
-
-    let ch3 = Math.sin(t * c.ch3.lowFrequency) * c.ch3.lowAmplitude +
-        Math.sin(t * c.ch3.highFrequency) * c.ch3.highAmplitude + noise();
-
-    let ch4 = Math.sin(t * c.ch4.lowFrequency) * c.ch4.lowAmplitude +
-        Math.sin(t * c.ch4.highFrequency) * c.ch4.highAmplitude + noise();
-
-    // Blink / high-amplitude artifact
-    const blink = config.artifacts.blink;
-    if (Math.random() < blink.probability) {
-        const spike = (Math.random() - 0.5) * blink.amplitude;
-        ch1 += spike * blink.channelMultipliers.ch1;
-        ch2 += spike * blink.channelMultipliers.ch2;
-        ch3 += spike * blink.channelMultipliers.ch3;
-        ch4 += spike * blink.channelMultipliers.ch4;
-    }
-
-    // Slow drift
-    const drift = config.artifacts.drift;
-    if (Math.random() < drift.probability) {
-        ch1 += (Math.random() - 0.5) * drift.amplitudes.ch1;
-        ch4 += (Math.random() - 0.5) * drift.amplitudes.ch4;
-    }
-
-    return {
-        ch1: parseFloat(ch1.toFixed(1)),
-        ch2: parseFloat(ch2.toFixed(1)),
-        ch3: parseFloat(ch3.toFixed(1)),
-        ch4: parseFloat(ch4.toFixed(1))
-    };
-}
-
-/**
- * Starts the EEG simulation.
- * @returns {void}
- */
-function startSimulation() {
-    if (isSimulating) return;
-
-    isSimulating = true;
-    byId('sim-text').textContent = 'Stop';
-    byId('sim-icon').classList.remove('fa-play');
-    byId('sim-icon').classList.add('fa-stop', 'text-red-400');
-
-    // Simulate device connection if not connected
-    if (!isConnected) {
-        showConnection();
-    }
-
-    simulationInterval = setInterval(() => {
-        if (!isSimulating) return;
-
-        const data = generateSimulatedEEG(eegSimulationConfig);
-        addToBuffer(data);
-
-        // Occasionally update "sample rate"
-        if (Math.random() < 0.1) {
-            const rate = 248 + Math.floor(Math.random() * 5);
-            byId('sample-rate').textContent = rate + ' Hz';
-        }
-    }, 1000 / eegSimulationConfig.simulation.sampleRate * 4); // ~62.5ms per packet (4 samples simulated)
-
-    addLogEntry('Simulation started — generating synthetic EEG data', 'system');
-}
-
-/**
- * Stops the EEG simulation.
- * @returns {void}
- */
-function stopSimulation() {
-    if (!isSimulating) return;
-
-    isSimulating = false;
-    clearInterval(simulationInterval);
-    simulationInterval = null;
-
-    byId('sim-text').textContent = 'Simulate';
-    byId('sim-icon').classList.add('fa-play');
-    byId('sim-icon').classList.remove('fa-stop', 'text-red-400');
-
-    addLogEntry('Simulation stopped', 'system');
-}
-
-/**
- * Toggles the EEG simulation on or off.
- * @returns {void}
- */
-function toggleSimulation() {
-    if (isSimulating) {
-        stopSimulation();
-    } else {
-        startSimulation();
-    }
 }
 
 /**
@@ -353,20 +239,16 @@ function showConnection() {
     byId('disconnect-btn').classList.remove('hidden');
     byId('device-info').classList.remove('hidden');
 
-    if(isSimulating) {
-    // Fake device info
-    byId('battery-bar').style.width = '82%';
-    byId('battery-text').textContent = '82%';
-    byId('firmware-text').textContent = '2.4.1';
-    byId('device-name').innerHTML = 'BrainBit 2 Pro';
-    byId('device-channels').innerHTML = `<span class="px-2 py-0.5 bg-emerald-900/60 text-emerald-400 text-sm font-bold rounded">4CH</span>`;
-    addLogEntry('Connected to BrainBit headband (simulated)', 'success');
+    if (isSimulating) {
+        // Fake device info
+        byId('battery-bar').style.width = '82%';
+        byId('battery-text').textContent = '82%';
+        byId('firmware-text').textContent = '2.4.1';
+        byId('device-name').innerHTML = 'BrainBit 2 Pro';
+        byId('device-channels').innerHTML = `<span class="px-2 py-0.5 bg-emerald-900/60 text-emerald-400 text-sm font-bold rounded">4CH</span>`;
+        addLogEntry('Connected to BrainBit headband (simulated)', 'success');
     }
 }
-
-
-const connectDeviceBtn = byId('connect-btn')
-connectDeviceBtn.addEventListener('pointerup', async (event) => await connectDevice(event));
 
 /**
  * Handles device connection by updating the UI and stopping any ongoing simulations or data processing.
@@ -398,25 +280,6 @@ async function connectDevice(event) {
             doSimulation();
         }
     }
-}
-
-/**
- * Prepares for a simulation
- */
-function doSimulation() {
-
-    setTimeout(() => {
-
-        showConnection();
-        connectDeviceBtn.disabled = false;
-        connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
-        connectDeviceBtn.classList.add('hidden');
-
-        // Auto-start simulation if not already
-        if (!isSimulating) {
-            startSimulation();
-        }
-    }, 850);
 }
 
 /**
@@ -463,4 +326,52 @@ function disconnectDevice() {
     connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
 
     addLogEntry('Disconnected from headband', 'system');
+}
+
+/**
+ * Eables the user to download current EEG buffer
+ */
+function downloadEEG() {
+    const csvContent = "timestamp,ch1,ch2,ch3,ch4\n" +
+        eegBuffer.map(row =>
+            `${row.timestamp},${row.ch1},${row.ch2},${row.ch3},${row.ch4}`
+        ).join("\n");
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `eeg_recording_${new Date().toISOString()}.csv`;
+    link.click();
+}
+
+/**
+ * Sends data to a central WebSocket server hub
+ * @param {*} data 
+ */
+function sendToHub(data) {
+
+    if (!hubServer) return;
+
+    const commasData = `${config.eeg.pulse.id},${data.timestamp},${data.ch1},${data.ch2},${data.ch3},${data.ch4}`
+    hubServer.send(commasData);
+}
+
+/**
+ * Initializes the hub socket
+ */
+function initHub() {
+    if (isEmpty(config.eeg.hub.host)) return;
+
+    hubServer = new WebSocket(config.eeg.hub.host);
+    hubServer.onopen = () => {
+
+        hubServer.onmessage = (event) => {
+            console.log('Pulse event: ' + event)
+        };
+    };
+
+    hubServer.onerror = (err) => {
+        hubServer.close();
+    };
 }
