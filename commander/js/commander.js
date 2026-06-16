@@ -38,6 +38,9 @@ let currentEditingId = null;
 let lastDataTime = Date.now();
 let config;
 
+const connectDeviceBtn = byId('connect-btn');
+connectDeviceBtn.addEventListener('pointerup', async (event) => await connectDevice(event));
+
 /**
  * Displays instructions for integrating the real BrainBit Web SDK.
  * @returns {void}
@@ -186,6 +189,7 @@ async function initializeEverything() {
 
     initMuted();
     initLog();
+    initHub();
     initChart();
     initTaskInterval();
     initKeyboardListener();

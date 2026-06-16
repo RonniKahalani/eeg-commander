@@ -27,7 +27,7 @@ SOFTWARE.
 */
 
 /**
- * BrainBit Shell Server
+ * Shell Server
  * 
  * A simple HTTP server that listens for shell command execution requests and returns the output.
  */
@@ -555,6 +555,7 @@ server.listen(PORT, '0.0.0.0', () => {
     console.log('GET /health - Health check');
     console.log('GET /system - System information');
     console.log('POST /execute - Execute a shell command');
+    console.log('* /echo - Echo response');        
     console.log('--------------------------------------------------------------');
     console.log("Server is up. Let's make some noise!.");
 });

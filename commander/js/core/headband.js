@@ -31,26 +31,95 @@ SOFTWARE.
  * This script handles connection to the BrainBit EEG device.
  */
 
+const brainbitClient = new BrainbitClient();
+
+let deviceStatusData = [];
+let deviceResistanceData = [];
+let deviceEventMarkers = [];
+let deviceInfo;
+let deviceStatus;
+
+/**
+ * Disconnects the BrainBit client
+ */
+async function disconnectFromEegDevice() {
+    const status = await brainbitClient.connectionStatus;
+    if (brainbitClient) {
+        brainbitClient.stopEEGStream();
+        //brainbitClient.stopResistanceData();
+        brainbitClient.disconnect();
+    }
+}
+
 /**
  * Shows a Bluetooth connect dialog and connects to an EEG device via the BrainBit client
  */
 async function connectToEegDevice() {
 
-    const brainbitClient = new BrainbitClient();
     await brainbitClient.connect();
+
+    isConnected = true;
+    showConnection();
+
+    deviceInfo = await brainbitClient.deviceInfo();
+
+    byId('firmware-text').innerHTML = deviceInfo.firmwareVersion;
+    byId('device-name').innerHTML = deviceInfo.name;
 
     brainbitClient.eegStream.subscribe((data) => {
         // data = { val0_ch1, val0_ch2, ... }
-        const processed = {
-            ch1: data.val0_ch1,
-            ch2: data.val0_ch2,
-            ch3: data.val0_ch3,
-            ch4: data.val0_ch4
-        };
 
-        addToBuffer(processed);
-        console.log(data)
+        const factor = config.eeg.valueMultiplier;
+
+        if (!config.eeg.averageMultpleSamplePerBlock) {
+
+            addToBuffer({
+                ch1: data.val0_ch1 * factor,
+                ch2: data.val0_ch2 * factor,
+                ch3: data.val0_ch3 * factor,
+                ch4: data.val0_ch4 * factor
+            });
+
+            addToBuffer({
+                ch1: data.val1_ch1 * factor,
+                ch2: data.val1_ch2 * factor,
+                ch3: data.val1_ch3 * factor,
+                ch4: data.val1_ch4 * factor
+            });
+
+        } else {
+
+            addToBuffer({
+                ch1: (data.val0_ch1 + data.val1_ch1) / 2 * factor,
+                ch2: (data.val0_ch2 + data.val1_ch2) / 2 * factor,
+                ch3: (data.val0_ch3 + data.val1_ch3) / 2 * factor,
+                ch4: (data.val0_ch4 + data.val1_ch4) / 2 * factor
+            });
+        }
+        //console.log(data)
+    });
+
+    brainbitClient.statusData.subscribe((data) => {
+        deviceStatus = data;
+        const batteryChargeValue = deviceStatus.batteryCharge + '%';
+        byId('battery-bar').style.width = batteryChargeValue;
+        byId('battery-text').innerHTML = batteryChargeValue;
+
+        // console.log('statusData', data);
+    });
+
+    brainbitClient.eventMarkers.subscribe((event) => {
+        deviceEventMarkers.push(event);
+        console.log('eventMarkers', event);
+    });
+
+    brainbitClient.resistanceData.subscribe((data) => {
+        deviceResistanceData.push(data);
+        console.log('resistanceData', data);
     });
 
     await brainbitClient.startEEGStream();
+    //await brainbitClient.startResistanceData();
+
+    return true;
 }
