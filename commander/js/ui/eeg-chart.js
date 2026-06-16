@@ -68,8 +68,11 @@ async function initChart() {
 
     channelColors.forEach((color, index) => {
         const label = byId(`ch${index + 1}-label`);
+        const value = byId(`ch${index + 1}-value`);
         const bar = byId(`ch${index + 1}-bar`);
+
         if (label) label.style.color = color;
+        if (value) value.style.color = color;
         if (bar) bar.style.backgroundColor = color;
 
         datasets.push({
@@ -144,15 +147,6 @@ function updateLiveMetrics(data) {
     ch2Bar.style.width = norm(data.ch2) + '%';
     ch3Bar.style.width = norm(data.ch3) + '%';
     ch4Bar.style.width = norm(data.ch4) + '%';
-
-    // Color code values
-    const colorValue = (val, el) => {
-        el.style.color = Math.abs(val) > 50 ? '#f43f5e' : (Math.abs(val) > 25 ? '#f59e0b' : '#64748b');
-    };
-    colorValue(data.ch1, ch1Value);
-    colorValue(data.ch2, ch2Value);
-    colorValue(data.ch3, ch3Value);
-    colorValue(data.ch4, ch4Value);
 
     updateStats(data);
 }
@@ -282,7 +276,7 @@ function startSimulation() {
 
     // Simulate device connection if not connected
     if (!isConnected) {
-        simulateConnection();
+        showConnection();
     }
 
     simulationInterval = setInterval(() => {
@@ -332,11 +326,11 @@ function toggleSimulation() {
 }
 
 /**
- * Simulates a device connection by updating the UI to show connected status and fake device info.
+ * Shows a device connection by updating the UI to show connected status and fake device info.
  * In a real application, this would be replaced by actual Bluetooth connection logic using the BrainBit Web SDK.
  * @returns {void}
  */
-function simulateConnection() {
+function showConnection() {
     isConnected = true;
 
     const statusEl = byId('connection-status');
@@ -352,13 +346,14 @@ function simulateConnection() {
 
     text.textContent = 'Connected';
     text.classList.add('text-emerald-400');
-    byId('device-name').textContent = 'BrainBit 2 Pro';
+    //byId('device-name').textContent = 'BrainBit 2 Pro';
     byId('device-channels').innerHTML = `<span class="px-2 py-0.5 bg-emerald-900/60 text-emerald-400 text-sm font-bold rounded">4CH</span>`;
 
     byId('connect-btn').classList.add('hidden');
     byId('disconnect-btn').classList.remove('hidden');
     byId('device-info').classList.remove('hidden');
 
+    if(isSimulating) {
     // Fake device info
     byId('battery-bar').style.width = '82%';
     byId('battery-text').textContent = '82%';
@@ -366,6 +361,7 @@ function simulateConnection() {
     byId('device-name').innerHTML = 'BrainBit 2 Pro';
     byId('device-channels').innerHTML = `<span class="px-2 py-0.5 bg-emerald-900/60 text-emerald-400 text-sm font-bold rounded">4CH</span>`;
     addLogEntry('Connected to BrainBit headband (simulated)', 'success');
+    }
 }
 
 
@@ -373,14 +369,13 @@ const connectDeviceBtn = byId('connect-btn')
 connectDeviceBtn.addEventListener('pointerup', async (event) => await connectDevice(event));
 
 /**
- * Handles device disconnection by updating the UI and stopping any ongoing simulations or data processing.
+ * Handles device connection by updating the UI and stopping any ongoing simulations or data processing.
  * @returns {void}
  */
 async function connectDevice(event) {
     event.preventDefault();
 
-    let eegDevice;
-    const bluetoothSupported = navigator.bluetooth ? true : false;
+    const bluetoothSupported = isBluetoothSupported();
     if (!bluetoothSupported) {
         alert(`The current browser does not support the Bluetooth Web API. But you can use EEG simulation instead.`)
     } else {
@@ -389,7 +384,7 @@ async function connectDevice(event) {
         connectDeviceBtn.disabled = true;
 
         try {
-            eegDevice = await connectToEegDevice(event);
+            isConnected = await connectToEegDevice(event);
 
         } catch (e) {
             connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
@@ -397,7 +392,7 @@ async function connectDevice(event) {
         }
     }
 
-    if (!bluetoothSupported || !eegDevice) {
+    if (!bluetoothSupported) {
 
         if (confirm('Press Ok to use EEG simulation instead.')) {
             doSimulation();
@@ -412,7 +407,7 @@ function doSimulation() {
 
     setTimeout(() => {
 
-        simulateConnection();
+        showConnection();
         connectDeviceBtn.disabled = false;
         connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
         connectDeviceBtn.classList.add('hidden');
@@ -422,7 +417,14 @@ function doSimulation() {
             startSimulation();
         }
     }, 850);
+}
 
+/**
+ * 
+ * @returns {boolean} True if Bluetooth is supported by the browser.
+ */
+function isBluetoothSupported() {
+    return navigator.bluetooth ? true : false;
 }
 
 /**
@@ -432,8 +434,14 @@ function doSimulation() {
  */
 function disconnectDevice() {
     isConnected = false;
-    stopSimulation();
+    if (!isSimulating) {
 
+        if (isBluetoothSupported()) {
+            disconnectFromEegDevice();
+        }
+    } else {
+        stopSimulation();
+    }
     const statusEl = byId('connection-status');
     const icon = byId('status-icon');
     const text = byId('status-text');
@@ -451,6 +459,8 @@ function disconnectDevice() {
     byId('connect-btn').classList.remove('hidden');
     byId('disconnect-btn').classList.add('hidden');
     byId('device-info').classList.add('hidden');
+
+    connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
 
     addLogEntry('Disconnected from headband', 'system');
 }
