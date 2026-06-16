@@ -27,7 +27,7 @@ SOFTWARE.
 */
 
 /**
- * BrainBit Shell Server
+ * Shell Server
  * 
  * A simple HTTP server that listens for shell command execution requests and returns the output.
  */
