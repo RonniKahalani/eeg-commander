@@ -38,13 +38,15 @@ let deviceResistanceData = [];
 let deviceEventMarkers = [];
 let deviceInfo;
 let deviceStatus;
+let isDeviceConnected = false;
 
 /**
  * Disconnects the BrainBit client
  */
 async function disconnectFromEegDevice() {
     const status = await brainbitClient.connectionStatus;
-    if (brainbitClient) {
+    if (brainbitClient && isDeviceConnected) {
+        isDeviceConnected = false;
         brainbitClient.stopEEGStream();
         //brainbitClient.stopResistanceData();
         brainbitClient.disconnect();
@@ -59,6 +61,8 @@ async function connectToEegDevice() {
     await brainbitClient.connect();
 
     isConnected = true;
+    isDeviceConnected = true;
+
     showConnection();
 
     deviceInfo = await brainbitClient.deviceInfo();
@@ -68,6 +72,10 @@ async function connectToEegDevice() {
 
     brainbitClient.eegStream.subscribe((data) => {
         handleDeviceAddToBuffer(data);
+    });
+
+    brainbitClient.connectionStatus.subscribe((isConnected) => {
+        isDeviceConnected = isConnected;
     });
 
     brainbitClient.statusData.subscribe((data) => {

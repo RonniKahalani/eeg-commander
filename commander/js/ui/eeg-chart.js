@@ -235,8 +235,11 @@ function showConnection() {
     //byId('device-name').textContent = 'BrainBit 2 Pro';
     byId('device-channels').innerHTML = `<span class="px-2 py-0.5 bg-emerald-900/60 text-emerald-400 text-sm font-bold rounded">4CH</span>`;
 
-    byId('connect-btn').classList.add('hidden');
-    byId('disconnect-btn').classList.remove('hidden');
+    //byId('connect-btn').classList.add('hidden');
+    setVisibility(connectDeviceBtn, false);
+    setVisibility(disconnectDeviceBtn, true);
+    //byId('disconnect-btn').classList.remove('hidden');
+
     byId('device-info').classList.remove('hidden');
 
     if (isSimulating) {
@@ -250,12 +253,17 @@ function showConnection() {
     }
 }
 
-
+/**
+ * Shows we're connecting
+ */
 function showConnecting() {
         connectDeviceBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin fa-fw mr-2"></i> Connecting...`;
         connectDeviceBtn.disabled = true;
 }
 
+/**
+ * Shows we're not connected
+ */
 function showNotConnected() {
         connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
 }

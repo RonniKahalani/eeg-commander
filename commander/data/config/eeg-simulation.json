@@ -29,8 +29,8 @@
             },
             "stepSize": 30
           },
-          "min": -80,
-          "max": 80
+          "min": -200,
+          "max": 200
         }
       },
       "plugins": {

@@ -41,6 +41,9 @@ let config;
 const connectDeviceBtn = byId('connect-btn');
 connectDeviceBtn.addEventListener('pointerup', async (event) => await connectDevice(event));
 
+const disconnectDeviceBtn = byId('disconnect-btn');
+disconnectDeviceBtn.addEventListener('pointerup', async (event) => await disconnectDevice(event));
+
 /**
  * Displays instructions for integrating the real BrainBit Web SDK.
  * @returns {void}
