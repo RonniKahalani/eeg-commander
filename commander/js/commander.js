@@ -192,7 +192,7 @@ async function initializeEverything() {
 
     initMuted();
     initLog();
-    initHub();
+    initHubClient();
     initChart();
     initTaskInterval();
     initKeyboardListener();
