@@ -83,20 +83,18 @@ wss.on('connection', (ws, req) => {
             }
             clients.set(id, entry);
             file.write(`timestamp, ch1, ch2, ch3, ch4\n`)
-            console.log(`Client connected: ${ws.deviceId} | Registered clients: ${clients.size}`);
+            addLogEntry(`Client connected: ${ws.deviceId} | Registered clients: ${clients.size}`);
         } else {
             entry = clients.get(id);
         }
         entry.messages.push(message);
-
-        //addLogEntry
         entry.file.write(`${message.timestamp}, ${message.ch1}, ${message.ch2}, ${message.ch3}, ${message.ch4}\n`);
     });
 
     ws.on('close', () => {
         if (ws.deviceId) {
             clients.delete(ws.deviceId);
-            console.log(`Client disconnected: ${ws.deviceId} | Registered clients: ${clients.size}`);
+            addLogEntry(`Client disconnected: ${ws.deviceId} | Registered clients: ${clients.size}`);
         }
     });
 });
@@ -126,9 +124,9 @@ function createFileDateFormat(date = new Date()) {
  * @param {*} message 
  * @param {*} logType 
  */
-function addLogEntry(id, message, logType = 'info') {
+function addLogEntry(message, logType = 'info') {
     const timestamp = new Date().toISOString();
-    console.log(`[${timestamp}] [${logType.toUpperCase()}] [${id.replaceAll('http://', '').replaceAll('https://', '')}] ${message}`);
+    console.log(`[${timestamp}] [${logType.toUpperCase()}] ${message}`);
 }
 
 /**
