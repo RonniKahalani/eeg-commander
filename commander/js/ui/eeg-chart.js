@@ -42,7 +42,6 @@ let chart = null;
 let eegBuffer = []; // {timestamp, ch1, ch2, ch3, ch4}
 let eegHighestPeak = 0;
 let eegLowestTrough = 0;
-let hubServer;
 let deviceInterval;
 
 /**
@@ -337,43 +336,4 @@ function downloadEEG() {
     link.href = url;
     link.download = `eeg_recording_${new Date().toISOString()}.csv`;
     link.click();
-}
-
-/**
- * Sends data to a central WebSocket server hub
- * @param {*} data 
- */
-function sendToHub(data) {
-
-    if (!hubServer) return;
-
-    const deviceId = (isSimulating) ? `simulation-${clientUNID}` : deviceInfo ? `${deviceInfo.name}-${deviceInfo.deviceId}` : 'Unknown';
-    const id = `${config.hub.id}-${deviceId}`;
-
-    if (hubServer.readyState === 3) {
-        initHub();
-    } else if (hubServer.readyState === 1) {
-        hubServer.send(JSON.stringify({ id, ...data }));
-    }
-}
-
-/**
- * Initializes the hub socket
- */
-function initHub() {
-    const hubHost = config.hub.host;
-    if (isEmpty(hubHost)) return;
-
-    hubServer = new WebSocket(hubHost);
-    hubServer.onopen = () => {
-
-        hubServer.onmessage = (event) => {
-            console.log('Pulse event: ' + event.data)
-        };
-    };
-
-    hubServer.onerror = (err) => {
-        console.error('Failed in hub server: ' + err.message)
-        hubServer.close();
-    };
 }

@@ -87,6 +87,7 @@ wss.on('connection', (ws, req) => {
 
     ws.on('close', () => {
         if (ws.deviceId) {
+            clients.get(ws.deviceId).file.close();
             clients.delete(ws.deviceId);
             addLogEntry(`Client disconnected: ${ws.deviceId} | Registered clients: ${clients.size}`);
         }
