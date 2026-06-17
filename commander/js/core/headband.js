@@ -67,59 +67,112 @@ async function connectToEegDevice() {
     byId('device-name').innerHTML = deviceInfo.name;
 
     brainbitClient.eegStream.subscribe((data) => {
-        // data = { val0_ch1, val0_ch2, ... }
-
-        const factor = config.eeg.valueMultiplier;
-
-        if (!config.eeg.averageMultpleSamplePerBlock) {
-
-            addToBuffer({
-                ch1: data.val0_ch1 * factor,
-                ch2: data.val0_ch2 * factor,
-                ch3: data.val0_ch3 * factor,
-                ch4: data.val0_ch4 * factor
-            });
-
-            addToBuffer({
-                ch1: data.val1_ch1 * factor,
-                ch2: data.val1_ch2 * factor,
-                ch3: data.val1_ch3 * factor,
-                ch4: data.val1_ch4 * factor
-            });
-
-        } else {
-
-            addToBuffer({
-                ch1: (data.val0_ch1 + data.val1_ch1) / 2 * factor,
-                ch2: (data.val0_ch2 + data.val1_ch2) / 2 * factor,
-                ch3: (data.val0_ch3 + data.val1_ch3) / 2 * factor,
-                ch4: (data.val0_ch4 + data.val1_ch4) / 2 * factor
-            });
-        }
-        //console.log(data)
+        handleDeviceAddToBuffer(data);
     });
 
     brainbitClient.statusData.subscribe((data) => {
-        deviceStatus = data;
-        const batteryChargeValue = deviceStatus.batteryCharge + '%';
-        byId('battery-bar').style.width = batteryChargeValue;
-        byId('battery-text').innerHTML = batteryChargeValue;
-
-        // console.log('statusData', data);
+        handleDeviceStatusData(data);
     });
 
     brainbitClient.eventMarkers.subscribe((event) => {
-        deviceEventMarkers.push(event);
-        console.log('eventMarkers', event);
+        handleDeviceEventMakers(event);
     });
 
     brainbitClient.resistanceData.subscribe((data) => {
-        deviceResistanceData.push(data);
-        console.log('resistanceData', data);
+        handleDeviceResistanceData(data);
     });
 
     await brainbitClient.startEEGStream();
     //await brainbitClient.startResistanceData();
 
     return true;
+}
+
+/**
+ * Handles the device resistance data
+ * @param {*} event 
+ */
+function handleDeviceResistanceData(data) {
+    deviceResistanceData.push(data);
+    console.log('resistanceData', data);
+}
+
+/**
+ * Handles the device event maker data
+ * @param {*} event 
+ */
+function handleDeviceEventMakers(event) {
+    deviceEventMarkers.push(event);
+    console.log('eventMarkers', event);
+}
+/**
+ * Handles the device status data
+ * @param {*} data 
+ */
+function handleDeviceStatusData(data) {
+    deviceStatus = data;
+    const batteryChargeValue = deviceStatus.batteryCharge + '%';
+    byId('battery-bar').style.width = batteryChargeValue;
+    byId('battery-text').innerHTML = batteryChargeValue;
+}
+
+/**
+ * Handles adding new device EEG data to the buffer
+ * @param {*} data 
+ */
+function handleDeviceAddToBuffer(data) {
+    if (!config.eeg.ignoreNextSample) {
+        if (!config.eeg.averageNextSample) {
+            addToBufferAverage(data);
+        } else { addToBufferBoth(data); }
+
+    } else {
+        addToBufferSingle(data);
+    }
+}
+
+/**
+ * Only adds the current channel
+ * @param {*} data 
+ */
+function addToBufferSingle(data) {
+    addToBuffer({
+        ch1: data.val0_ch1 * config.eeg.valueMultiplier,
+        ch2: data.val0_ch2 * config.eeg.valueMultiplier,
+        ch3: data.val0_ch3 * config.eeg.valueMultiplier,
+        ch4: data.val0_ch4 * config.eeg.valueMultiplier
+    });
+}
+
+/**
+ * Adds both the current and the next sample as seperate entries
+ * @param {*} data 
+ */
+function addToBufferBoth(data) {
+    addToBuffer({
+        ch1: data.val0_ch1 * config.eeg.valueMultiplier,
+        ch2: data.val0_ch2 * config.eeg.valueMultiplier,
+        ch3: data.val0_ch3 * config.eeg.valueMultiplier,
+        ch4: data.val0_ch4 * config.eeg.valueMultiplier
+    });
+
+    addToBuffer({
+        ch1: data.val1_ch1 * config.eeg.valueMultiplier,
+        ch2: data.val1_ch2 * config.eeg.valueMultiplier,
+        ch3: data.val1_ch3 * config.eeg.valueMultiplier,
+        ch4: data.val1_ch4 * config.eeg.valueMultiplier
+    });
+}
+
+/**
+ * Adds the average two samples
+ * @param {*} data 
+ */
+function addToBufferAverage(data) {
+    addToBuffer({
+        ch1: (data.val0_ch1 + data.val1_ch1) / 2 * config.eeg.valueMultiplier,
+        ch2: (data.val0_ch2 + data.val1_ch2) / 2 * config.eeg.valueMultiplier,
+        ch3: (data.val0_ch3 + data.val1_ch3) / 2 * config.eeg.valueMultiplier,
+        ch4: (data.val0_ch4 + data.val1_ch4) / 2 * config.eeg.valueMultiplier
+    });
 }

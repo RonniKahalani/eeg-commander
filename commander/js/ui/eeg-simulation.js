@@ -142,6 +142,7 @@ function stopSimulation() {
     byId('sim-icon').classList.add('fa-play');
     byId('sim-icon').classList.remove('fa-stop', 'text-red-400');
 
+    showNotConnected();
     addLogEntry('Simulation stopped', 'system');
 }
 

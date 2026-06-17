@@ -250,8 +250,18 @@ function showConnection() {
     }
 }
 
+
+function showConnecting() {
+        connectDeviceBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin fa-fw mr-2"></i> Connecting...`;
+        connectDeviceBtn.disabled = true;
+}
+
+function showNotConnected() {
+        connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
+}
+
 /**
- * Handles device connection by updating the UI and stopping any ongoing simulations or data processing.
+ * Handles device connection by updating the UI.
  * @returns {void}
  */
 async function connectDevice(event) {
@@ -262,14 +272,13 @@ async function connectDevice(event) {
         alert(`The current browser does not support the Bluetooth Web API. But you can use EEG simulation instead.`)
     } else {
 
-        connectDeviceBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin fa-fw mr-2"></i> Connecting...`;
-        connectDeviceBtn.disabled = true;
+        showConnecting();
 
         try {
             isConnected = await connectToEegDevice(event);
 
         } catch (e) {
-            connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
+            showNotConnected();
             alert(e.message);
         }
     }
@@ -323,7 +332,7 @@ function disconnectDevice() {
     byId('disconnect-btn').classList.add('hidden');
     byId('device-info').classList.add('hidden');
 
-    connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
+    showNotConnected();
 
     addLogEntry('Disconnected from headband', 'system');
 }

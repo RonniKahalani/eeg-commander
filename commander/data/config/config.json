@@ -6,7 +6,8 @@
     "host": "http://localhost:3000"
   },
   "eeg": {
-    "averageMultpleSamplePerBlock": false,
+    "ignoreNextSample": false,
+    "averageNextSample": true,
     "valueMultiplier": 1000
   },
   "hub": {
