@@ -36,6 +36,8 @@ const ch2Bar = byId('ch2-bar');
 const ch3Bar = byId('ch3-bar');
 const ch4Bar = byId('ch4-bar');
 
+const clientUNID = crypto.randomUUID();
+
 let chart = null;
 let eegBuffer = []; // {timestamp, ch1, ch2, ch3, ch4}
 let eegHighestPeak = 0;
@@ -264,6 +266,7 @@ function showNotConnected() {
     setVisibility(connectDeviceBtn, true);
     setVisibility(disconnectDeviceBtn, false);
 
+    clearBatteryCharge();
     byId('device-info').classList.add('hidden');
 }
 
@@ -313,11 +316,8 @@ function isBluetoothSupported() {
 function disconnectDevice() {
 
     if (isBluetoothSupported() && isDeviceConnected) {
-        clearDeviceInterval();
         disconnectFromEegDevice();
     }
-
-    showNotConnected();
 
     addLogEntry('Disconnected from headband', 'system');
 }
@@ -347,10 +347,14 @@ function sendToHub(data) {
 
     if (!hubServer) return;
 
-    const deviceId = (isSimulating) ? crypto.randomUUID() : deviceInfo ? deviceInfo.deviceId : 'Unknown';
+    const deviceId = (isSimulating) ? `simulation-${clientUNID}` : deviceInfo ? `${deviceInfo.name}-${deviceInfo.deviceId}` : 'Unknown';
     const id = `${config.hub.id}-${deviceId}`;
 
-    hubServer.send(JSON.stringify({ id, ...data }));
+    if (hubServer.readyState === 3) {
+        initHub();
+    } else if (hubServer.readyState === 1) {
+        hubServer.send(JSON.stringify({ id, ...data }));
+    }
 }
 
 /**
