@@ -61,6 +61,7 @@ wss.on('connection', (ws, req) => {
         const dataStr = data.toString();
         const message = JSON.parse(dataStr);
         const id = message.id;
+        ws.deviceId = id;
 
         const logDir = config.logFolder;
 
@@ -82,7 +83,7 @@ wss.on('connection', (ws, req) => {
             }
             clients.set(id, entry);
             file.write(`timestamp, ch1, ch2, ch3, ch4\n`)
-
+            console.log(`Client connected: ${ws.deviceId} | Registered clients: ${clients.size}`);
         } else {
             entry = clients.get(id);
         }
@@ -93,8 +94,10 @@ wss.on('connection', (ws, req) => {
     });
 
     ws.on('close', () => {
-        // TODO: Handle client disconnect if needed
-        console.log('Close called')
+        if (ws.deviceId) {
+            clients.delete(ws.deviceId);
+            console.log(`Client disconnected: ${ws.deviceId} | Registered clients: ${clients.size}`);
+        }
     });
 });
 
@@ -104,17 +107,17 @@ wss.on('connection', (ws, req) => {
  * @returns {string} A date in a file name friendly format
  */
 function createFileDateFormat(date = new Date()) {
-    
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
 
-  // Format: 2025-06-17_19-45-33
-  const dateFormat = `${year}${month}${day}_${hours}${minutes}${seconds}`;
-  return dateFormat;
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    // Format: 2025-06-17_19-45-33
+    const dateFormat = `${year}${month}${day}_${hours}${minutes}${seconds}`;
+    return dateFormat;
 }
 
 /**
