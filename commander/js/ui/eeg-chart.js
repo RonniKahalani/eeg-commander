@@ -38,13 +38,10 @@ const ch4Bar = byId('ch4-bar');
 
 let chart = null;
 let eegBuffer = []; // {timestamp, ch1, ch2, ch3, ch4}
-
-let isConnected = false;
-
 let eegHighestPeak = 0;
 let eegLowestTrough = 0;
-
 let hubServer;
+let deviceInterval;
 
 /**
  * This script handles the simulation chart UI.
@@ -96,6 +93,27 @@ async function initChart() {
 }
 
 /**
+ * Starts the device interval
+ */
+function startDeviceInterval() {
+    deviceInterval = setInterval(() => {
+        if (!isDeviceConnected || !deviceData) return;
+
+        handleDeviceAddToBuffer(deviceData);
+
+    }, 1000 / eegSimulationConfig.simulation.sampleRate * 4); // ~62.5ms per packet (4 samples simulated)
+}
+
+/**
+ * Clears the device interval
+ */
+function clearDeviceInterval() {
+    if (deviceInterval) {
+        clearInterval(deviceInterval);
+    }
+}
+
+/**
  * Updates the simulation chart with new data.
  * @param {*} newData 
  * @returns {void}
@@ -138,7 +156,7 @@ function updateLiveMetrics(data) {
     ch4Value.textContent = data.ch4.toFixed(1);
 
     // Update bars (normalized to 0-100%)
-    const maxVal = eegSimulationConfig.simulation.options.scales.y.max;
+    const maxVal = eegSimulationConfig.simulation.options.scales.y.suggestedMax;
     const norm = v => Math.min(100, Math.max(5, Math.abs(v) / maxVal * 100));
 
     ch1Bar.style.width = norm(data.ch1) + '%';
@@ -217,55 +235,36 @@ function trimEegBuffer(timestamp) {
  * @returns {void}
  */
 function showConnection() {
-    isConnected = true;
 
-    const statusEl = byId('connection-status');
-    const icon = byId('status-icon');
-    const text = byId('status-text');
-    const sub = byId('status-subtext');
-
-    statusEl.classList.remove('border-slate-700');
-    statusEl.classList.add('border-emerald-500/60', 'bg-emerald-900/20');
-
-    icon.classList.remove('fa-plug', 'text-amber-400');
-    icon.classList.add('fa-link', 'text-emerald-400');
-
-    text.textContent = 'Connected';
-    text.classList.add('text-emerald-400');
-    //byId('device-name').textContent = 'BrainBit 2 Pro';
     byId('device-channels').innerHTML = `<span class="px-2 py-0.5 bg-emerald-900/60 text-emerald-400 text-sm font-bold rounded">4CH</span>`;
 
-    //byId('connect-btn').classList.add('hidden');
     setVisibility(connectDeviceBtn, false);
     setVisibility(disconnectDeviceBtn, true);
-    //byId('disconnect-btn').classList.remove('hidden');
 
     byId('device-info').classList.remove('hidden');
-
-    if (isSimulating) {
-        // Fake device info
-        byId('battery-bar').style.width = '82%';
-        byId('battery-text').textContent = '82%';
-        byId('firmware-text').textContent = '2.4.1';
-        byId('device-name').innerHTML = 'BrainBit 2 Pro';
-        byId('device-channels').innerHTML = `<span class="px-2 py-0.5 bg-emerald-900/60 text-emerald-400 text-sm font-bold rounded">4CH</span>`;
-        addLogEntry('Connected to BrainBit headband (simulated)', 'success');
-    }
 }
 
 /**
  * Shows we're connecting
  */
 function showConnecting() {
-        connectDeviceBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin fa-fw mr-2"></i> Connecting...`;
-        connectDeviceBtn.disabled = true;
+    connectDeviceBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin fa-fw mr-2"></i> Connecting...`;
+    connectDeviceBtn.disabled = true;
 }
 
 /**
  * Shows we're not connected
  */
 function showNotConnected() {
-        connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
+    connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
+
+    byId('device-name').innerHTML = 'Not connected';
+    byId('device-channels').innerHTML = '';
+
+    setVisibility(connectDeviceBtn, true);
+    setVisibility(disconnectDeviceBtn, false);
+
+    byId('device-info').classList.add('hidden');
 }
 
 /**
@@ -283,14 +282,13 @@ async function connectDevice(event) {
         showConnecting();
 
         try {
-            isConnected = await connectToEegDevice(event);
+            await connectToEegDevice(event);
 
         } catch (e) {
             showNotConnected();
             alert(e.message);
         }
     }
-
     if (!bluetoothSupported) {
 
         if (confirm('Press Ok to use EEG simulation instead.')) {
@@ -313,32 +311,11 @@ function isBluetoothSupported() {
  * @returns {void}
  */
 function disconnectDevice() {
-    isConnected = false;
-    if (!isSimulating) {
 
-        if (isBluetoothSupported()) {
-            disconnectFromEegDevice();
-        }
-    } else {
-        stopSimulation();
+    if (isBluetoothSupported() && isDeviceConnected) {
+        clearDeviceInterval();
+        disconnectFromEegDevice();
     }
-    const statusEl = byId('connection-status');
-    const icon = byId('status-icon');
-    const text = byId('status-text');
-
-    statusEl.classList.remove('border-emerald-500/60', 'bg-emerald-900/20');
-    statusEl.classList.add('border-slate-700');
-
-    icon.classList.remove('fa-link', 'text-emerald-400');
-    icon.classList.add('fa-plug', 'text-amber-400');
-
-    text.textContent = 'Disconnected';
-    text.classList.remove('text-emerald-400');
-    byId('device-name').innerHTML = 'Not connected';
-    byId('device-channels').innerHTML = '';
-    byId('connect-btn').classList.remove('hidden');
-    byId('disconnect-btn').classList.add('hidden');
-    byId('device-info').classList.add('hidden');
 
     showNotConnected();
 
@@ -369,13 +346,11 @@ function downloadEEG() {
 function sendToHub(data) {
 
     if (!hubServer) return;
+
     const deviceId = (isSimulating) ? crypto.randomUUID() : deviceInfo ? deviceInfo.deviceId : 'Unknown';
     const id = `${config.hub.id}-${deviceId}`;
 
-    const message = { id, ...data};
-
-    //hubServer.send(`${ config.hub.id }, ${ data.timestamp }, ${ data.ch1 }, ${ data.ch2 }, ${ data.ch3 }, ${ data.ch4 }`);
-    hubServer.send(JSON.stringify(message));
+    hubServer.send(JSON.stringify({ id, ...data }));
 }
 
 /**

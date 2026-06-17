@@ -39,17 +39,39 @@ let deviceEventMarkers = [];
 let deviceInfo;
 let deviceStatus;
 let isDeviceConnected = false;
+let deviceData;
 
 /**
  * Disconnects the BrainBit client
  */
 async function disconnectFromEegDevice() {
     const status = await brainbitClient.connectionStatus;
+
     if (brainbitClient && isDeviceConnected) {
         isDeviceConnected = false;
-        brainbitClient.stopEEGStream();
-        //brainbitClient.stopResistanceData();
-        brainbitClient.disconnect();
+        const sampleRate = byId('sample-rate');
+
+        setVisibility(sampleRate, false);
+        byId('firmware-text').innerHTML = 'N/A';
+        byId('device-name').innerHTML = 'Not connected';
+
+        clearBatteryCharge();
+
+        try {
+
+            await brainbitClient.stopEEGStream().catch(() => { });
+            await brainbitClient.stopResistanceData().catch(() => { });
+
+            await brainbitClient.disconnect();
+
+            console.log("BrainBit disconnected successfully");
+        } catch (error) {
+            if (error.message.includes("GATT Server is disconnected")) {
+                console.log("Device already disconnected or in cleanup phase.");
+            } else {
+                console.error("Disconnect error:", error);
+            }
+        }
     }
 }
 
@@ -60,18 +82,21 @@ async function connectToEegDevice() {
 
     await brainbitClient.connect();
 
-    isConnected = true;
     isDeviceConnected = true;
 
     showConnection();
 
     deviceInfo = await brainbitClient.deviceInfo();
 
+    const sampleRate = byId('sample-rate');
+    sampleRate.textContent = eegSimulationConfig.simulation.sampleRate + ' Hz';
+    setVisibility(sampleRate, true);
+
     byId('firmware-text').innerHTML = deviceInfo.firmwareVersion;
     byId('device-name').innerHTML = deviceInfo.name;
 
     brainbitClient.eegStream.subscribe((data) => {
-        handleDeviceAddToBuffer(data);
+        deviceData = data;
     });
 
     brainbitClient.connectionStatus.subscribe((isConnected) => {
@@ -92,6 +117,8 @@ async function connectToEegDevice() {
 
     await brainbitClient.startEEGStream();
     //await brainbitClient.startResistanceData();
+
+    startDeviceInterval();
 
     return true;
 }
@@ -119,9 +146,26 @@ function handleDeviceEventMakers(event) {
  */
 function handleDeviceStatusData(data) {
     deviceStatus = data;
+    updateBatteryCharge();
+}
+
+/**
+ * Clears the battery charge elements
+ */
+function clearBatteryCharge() {
+    const batteryChargeValue = '0%';
+    byId('battery-bar').style.width = batteryChargeValue;
+    byId('battery-text').innerHTML = batteryChargeValue;
+}
+
+/**
+ * Sets the battery charge elements
+ */
+function updateBatteryCharge() {
     const batteryChargeValue = deviceStatus.batteryCharge + '%';
     byId('battery-bar').style.width = batteryChargeValue;
     byId('battery-text').innerHTML = batteryChargeValue;
+
 }
 
 /**
@@ -130,13 +174,9 @@ function handleDeviceStatusData(data) {
  */
 function handleDeviceAddToBuffer(data) {
     if (!config.eeg.ignoreNextSample) {
-        if (!config.eeg.averageNextSample) {
-            addToBufferAverage(data);
-        } else { addToBufferBoth(data); }
-
-    } else {
-        addToBufferSingle(data);
-    }
+        if (!config.eeg.averageNextSample) { addToBufferAverage(data); }
+        else { addToBufferBoth(data); }
+    } else { addToBufferSingle(data); }
 }
 
 /**
@@ -144,11 +184,14 @@ function handleDeviceAddToBuffer(data) {
  * @param {*} data 
  */
 function addToBufferSingle(data) {
+
+    const multiplier = parseInt(config.eeg.valueMultiplier);
+
     addToBuffer({
-        ch1: data.val0_ch1 * config.eeg.valueMultiplier,
-        ch2: data.val0_ch2 * config.eeg.valueMultiplier,
-        ch3: data.val0_ch3 * config.eeg.valueMultiplier,
-        ch4: data.val0_ch4 * config.eeg.valueMultiplier
+        ch1: data.val0_ch1 * multiplier,
+        ch2: data.val0_ch2 * multiplier,
+        ch3: data.val0_ch3 * multiplier,
+        ch4: data.val0_ch4 * multiplier
     });
 }
 
@@ -157,18 +200,21 @@ function addToBufferSingle(data) {
  * @param {*} data 
  */
 function addToBufferBoth(data) {
+
+    const multiplier = parseInt(config.eeg.valueMultiplier);
+
     addToBuffer({
-        ch1: data.val0_ch1 * config.eeg.valueMultiplier,
-        ch2: data.val0_ch2 * config.eeg.valueMultiplier,
-        ch3: data.val0_ch3 * config.eeg.valueMultiplier,
-        ch4: data.val0_ch4 * config.eeg.valueMultiplier
+        ch1: data.val0_ch1 * multiplier,
+        ch2: data.val0_ch2 * multiplier,
+        ch3: data.val0_ch3 * multiplier,
+        ch4: data.val0_ch4 * multiplier
     });
 
     addToBuffer({
-        ch1: data.val1_ch1 * config.eeg.valueMultiplier,
-        ch2: data.val1_ch2 * config.eeg.valueMultiplier,
-        ch3: data.val1_ch3 * config.eeg.valueMultiplier,
-        ch4: data.val1_ch4 * config.eeg.valueMultiplier
+        ch1: data.val1_ch1 * multiplier,
+        ch2: data.val1_ch2 * multiplier,
+        ch3: data.val1_ch3 * multiplier,
+        ch4: data.val1_ch4 * multiplier
     });
 }
 
@@ -177,10 +223,13 @@ function addToBufferBoth(data) {
  * @param {*} data 
  */
 function addToBufferAverage(data) {
+
+    const multiplier = parseInt(config.eeg.valueMultiplier);
+
     addToBuffer({
-        ch1: (data.val0_ch1 + data.val1_ch1) / 2 * config.eeg.valueMultiplier,
-        ch2: (data.val0_ch2 + data.val1_ch2) / 2 * config.eeg.valueMultiplier,
-        ch3: (data.val0_ch3 + data.val1_ch3) / 2 * config.eeg.valueMultiplier,
-        ch4: (data.val0_ch4 + data.val1_ch4) / 2 * config.eeg.valueMultiplier
+        ch1: (data.val0_ch1 + data.val1_ch1) / 2 * multiplier,
+        ch2: (data.val0_ch2 + data.val1_ch2) / 2 * multiplier,
+        ch3: (data.val0_ch3 + data.val1_ch3) / 2 * multiplier,
+        ch4: (data.val0_ch4 + data.val1_ch4) / 2 * multiplier
     });
 }
