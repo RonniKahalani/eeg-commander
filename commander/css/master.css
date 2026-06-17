@@ -14,10 +14,7 @@ body {
 }
 
 .neuro-card {
-    /*    background: #1E293B;
-    border: 1px solid #334155;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    */
+    display: block;
 }
 
 .toast,

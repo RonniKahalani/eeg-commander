@@ -347,10 +347,14 @@ function sendToHub(data) {
 
     if (!hubServer) return;
 
-    const deviceId = (isSimulating) ? clientUNID : deviceInfo ? deviceInfo.deviceId : 'Unknown';
+    const deviceId = (isSimulating) ? `simulation-${clientUNID}` : deviceInfo ? `${deviceInfo.name}-${deviceInfo.deviceId}` : 'Unknown';
     const id = `${config.hub.id}-${deviceId}`;
 
-    hubServer.send(JSON.stringify({ id, ...data }));
+    if (hubServer.readyState === 3) {
+        initHub();
+    } else if (hubServer.readyState === 1) {
+        hubServer.send(JSON.stringify({ id, ...data }));
+    }
 }
 
 /**
