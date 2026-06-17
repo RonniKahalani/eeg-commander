@@ -35,21 +35,18 @@ import { WebSocketServer } from 'ws';
 import os from 'os';
 import { getLocalIpAddress } from '../shared/network.js';
 
-const VERSION = '1.0.0';
-const PORT = 8885;
-const wss = new WebSocketServer({ port: PORT });
-
+const config = loadConfig();
 console.clear();
 console.log('--------------------------------------------------------------');
-console.log(`Hub Server v${VERSION}`);
+console.log(`v${config.app} v${config.version}`);
 console.log('--------------------------------------------------------------');
-console.log(`Endpoint: http://${getLocalIpAddress()}:${PORT}`);
+console.log(`Endpoint: http://${getLocalIpAddress()}:${config.port}`);
 console.log('Hostname: ' + os.hostname());
 console.log('--------------------------------------------------------------');
 
 let clients = new Map();
-const config = loadConfig();
 
+const wss = new WebSocketServer({ port: config.port || 8885 });
 wss.on('connection', (ws, req) => {
 
     ws.on('open', () => {
@@ -63,17 +60,14 @@ wss.on('connection', (ws, req) => {
         const id = message.id;
         ws.deviceId = id;
 
-        const logDir = config.logFolder;
-
-        // Create logs folder if it doesn't exist
-        if (!fs.existsSync(logDir)) {
-            fs.mkdirSync(logDir, { recursive: true });
+        if (!fs.existsSync(config.logFolder)) {
+            fs.mkdirSync(config.logFolder, { recursive: true });
         }
 
         let entry;
         if (!clients.has(id)) {
 
-            const logFilePath = path.join(logDir, `eeg-hub-${id}-${createFileDateFormat()}.log`);
+            const logFilePath = path.join(config.logFolder, `eeg-hub-${id}-${createFileDateFormat()}.log`);
             const file = fs.createWriteStream(logFilePath, { flags: 'a' }) // 'a' = append
 
             entry = {

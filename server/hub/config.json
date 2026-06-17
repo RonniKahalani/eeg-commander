@@ -1,3 +1,6 @@
 {
-    "logFolder": "c:\\code\\logs"
+    "app": "Hub Server",
+    "version": "0.0.1",
+    "logFolder": "c:\\code\\logs",
+    "port": 8885
 }

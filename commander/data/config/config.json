@@ -1,6 +1,6 @@
 {
   "app": "EEG Commander",
-  "version": "1.0.0.0",
+  "version": "0.0.0.1",
   "patterns": "/commander/data/patterns/eeg-patterns-default.yaml",
   "shell": {
     "host": "http://localhost:3000"
