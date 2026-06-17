@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EEG Chart - Fixed Height</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      padding: 20px; 
+      margin: 0;
+    }
+    .chart-container {
+      position: relative;
+      height: 500px;        /* ← Fixed height here */
+      width: 100%;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+    }
+    select { 
+      padding: 10px; 
+      font-size: 16px; 
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>EEG Live Chart - Y Axis Scale Control</h2>
+  
+  <label for="yScale">Y-Axis Range (± µV):</label>
+  <select id="yScale">
+    <option value="10">±10 µV</option>
+    <option value="50">±50 µV</option>
+    <option value="100" selected>±100 µV</option>
+    <option value="200">±200 µV</option>
+    <option value="500">±500 µV</option>
+    <option value="1000">±1000 µV</option>
+  </select>
+
+  <div class="chart-container">
+    <canvas id="eegChart"></canvas>
+  </div>
+
+  <script>
+    let eegChart;
+
+    function initChart() {
+      const ctx = document.getElementById('eegChart').getContext('2d');
+      
+      eegChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            { label: 'Ch1 (O1)', borderColor: '#ff0000', data: [], tension: 0.1 },
+            { label: 'Ch2 (O2)', borderColor: '#0000ff', data: [], tension: 0.1 },
+            { label: 'Ch3 (T3)', borderColor: '#00aa00', data: [], tension: 0.1 },
+            { label: 'Ch4 (T4)', borderColor: '#ff8800', data: [], tension: 0.1 }
+          ]
+        },
+        options: {
+          animation: false,
+          responsive: true,
+          maintainAspectRatio: false,   // Important: false + fixed container height
+          scales: {
+            y: {
+              suggestedMin: -100,
+              suggestedMax: 100,
+              title: {
+                display: true,
+                text: 'Amplitude (µV)'
+              },
+              ticks: {
+                stepSize: 20
+              }
+            },
+            x: {
+              display: true,
+              title: {
+                display: true,
+                text: 'Samples'
+              }
+            }
+          },
+          plugins: {
+            legend: { position: 'top' }
+          }
+        }
+      });
+    }
+
+    function updateYScale(scaleValue) {
+      if (!eegChart) return;
+      
+      const max = parseInt(scaleValue);
+      
+      eegChart.options.scales.y.suggestedMin = -max;
+      eegChart.options.scales.y.suggestedMax = max;
+      eegChart.options.scales.y.ticks.stepSize = Math.max(10, Math.floor(max / 10));
+      
+      eegChart.update('none');
+    }
+
+    // Event listener
+    document.getElementById('yScale').addEventListener('change', (e) => {
+      updateYScale(e.target.value);
+    });
+
+    // Simulate EEG data
+    function simulateEegData() {
+      if (!eegChart) return;
+      
+      let sampleCount = 0;
+
+      setInterval(() => {
+        const newLabels = [];
+        eegChart.data.datasets.forEach(dataset => {
+          const newValue = (Math.random() * 60 - 30); // simulate realistic EEG
+          dataset.data.push(newValue);
+          newLabels.push(sampleCount);
+
+          // Keep only last 300 points
+          if (dataset.data.length > 300) {
+            dataset.data.shift();
+          }
+        });
+
+        eegChart.data.labels = newLabels;
+        eegChart.update('none');
+
+        sampleCount++;
+      }, 30); // ~33 updates per second
+    }
+
+    // Initialize
+    window.onload = () => {
+      initChart();
+      simulateEegData();
+    };
+  </script>
+
+</body>
+</html>

@@ -6,9 +6,7 @@
     "options": {
       "responsive": true,
       "maintainAspectRatio": false,
-      "animation": {
-        "duration": 0
-      },
+      "animation": false,
       "scales": {
         "x": {
           "display": false,
@@ -29,8 +27,11 @@
             },
             "stepSize": 30
           },
-          "min": -80,
-          "max": 80
+          "suggestedMin": -100,
+          "sugestedMax": 100,
+          "min": -100,
+          "max": 100
+
         }
       },
       "plugins": {

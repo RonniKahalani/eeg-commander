@@ -55,15 +55,20 @@ wss.on('connection', (ws, req) => {
 
     ws.on('message', (data) => {
 
-        const message = data.toString();
-        const id = message.split(',')[0];
-
+        const dataStr = data.toString();
+        const message = JSON.parse(dataStr);
+        const id = message.id;
         if(!clients.has(id)) {
-            clients.set(id, [message]);
+            const entry = {
+                messages: [message],
+                socket: ws
+            }
+            clients.set(id, entry);
         } else {
-            clients.get(id).push(message);
+            clients.get(id).messages.push(message);
         }
-        addLogEntry(id, message, 'info');
+
+        addLogEntry(id, `${message.timestamp}, ${message.ch1}, ${message.ch2}, ${message.ch3}, ${message.ch4}`, 'info');
     });
 
     ws.on('close', () => {

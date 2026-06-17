@@ -35,6 +35,18 @@ let eegSimulationConfig = null;
 let simulationInterval = null;
 let isSimulating = false;
 
+const yScaleBtn = document.getElementById('yScale');
+yScaleBtn.addEventListener('change', (e) => {
+
+    const value = parseInt(e.target.value);
+    chart.options.scales.y.suggestedMin = -value;
+    chart.options.scales.y.suggestedMax = value;
+    chart.options.scales.y.min = -value;
+    chart.options.scales.y.max = value;
+    // chart.options.scales.y.ticks.stepSize = Math.max(10, Math.floor(value / 10));
+    chart.update('none');
+});
+
 /**
  * Initializes the EEG simulator
  */
@@ -106,9 +118,10 @@ function startSimulation() {
     byId('sim-icon').classList.remove('fa-play');
     byId('sim-icon').classList.add('fa-stop', 'text-red-400');
 
-    // Simulate device connection if not connected
-    if (!isConnected) {
-        showConnection();
+    if (isDeviceConnected) {
+        if (confirm("A Bluetooth device is connected.\n\nPress Ok to disconnect from device and use simulation.")) {
+            disconnectDevice();
+        }
     }
 
     simulationInterval = setInterval(() => {
@@ -117,11 +130,6 @@ function startSimulation() {
         const data = generateSimulatedEEG(eegSimulationConfig);
         addToBuffer(data);
 
-        // Occasionally update "sample rate"
-        if (Math.random() < 0.1) {
-            const rate = 248 + Math.floor(Math.random() * 5);
-            byId('sample-rate').textContent = rate + ' Hz';
-        }
     }, 1000 / eegSimulationConfig.simulation.sampleRate * 4); // ~62.5ms per packet (4 samples simulated)
 
     addLogEntry('Simulation started — generating synthetic EEG data', 'system');
