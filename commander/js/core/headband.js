@@ -45,6 +45,8 @@ let deviceData;
  * Disconnects the BrainBit client
  */
 async function disconnectFromEegDevice() {
+
+    clearDeviceInterval();
     const status = await brainbitClient.connectionStatus;
 
     if (brainbitClient && isDeviceConnected) {
@@ -55,8 +57,6 @@ async function disconnectFromEegDevice() {
         byId('firmware-text').innerHTML = 'N/A';
         byId('device-name').innerHTML = 'Not connected';
 
-        clearBatteryCharge();
-
         try {
 
             await brainbitClient.stopEEGStream().catch(() => { });
@@ -65,7 +65,12 @@ async function disconnectFromEegDevice() {
             await brainbitClient.disconnect();
 
             console.log("BrainBit disconnected successfully");
+
+            clearBatteryCharge();
+            showNotConnected();
+            
         } catch (error) {
+
             if (error.message.includes("GATT Server is disconnected")) {
                 console.log("Device already disconnected or in cleanup phase.");
             } else {
