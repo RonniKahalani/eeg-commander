@@ -139,8 +139,7 @@
                         <div id="device-name" class="font-medium text-sm">Not connected</div>
                     </div>
 
-                    <div
-                        class="flex items-center gap-x-1.5">
+                    <div class="flex items-center gap-x-1.5">
                         <div class="font-mono text-emerald-400" id="sample-rate"></div>
                     </div>
 
@@ -831,20 +830,28 @@
                         </button>
                     </div>
 
-                    <div class="mt-3 text-xs text-slate-500 italic">
-                        Average (across all channels): <span id="eeg-avg">0.0</span>
+                    <div class="pt-2 flex gap-x-2 justify-center text-center">
+                        <div class="flex-1 mt-3 text-xs">
+                            Average (of all channels)
+                        </div>
+
+                        <div class="flex-1 mt-3 text-xs">
+                            Any Channel Peek
+                        </div>
+
+                        <div class="flex-1 mt-3 text-xs">
+                            Any Channel Trough
+                        </div>
                     </div>
 
-                    <div class="mt-3 text-xs text-slate-500 italic">
-                        Any Channel Peek : <span id="eeg-peak">0.0</span>
+                    <div class="pt-2 flex gap-x-2 justify-center text-center">
+                        <span id="eeg-avg" class="flex-1 mt-3 text-xs">0.0</span>
+                        <span id="eeg-peak" class="flex-1 mt-3 text-xs">0.0</span>
+                        <span id="eeg-trough" class="flex-1 mt-3 text-xs">0.0</span>
                     </div>
 
-                    <div class="mt-3 text-xs text-slate-500 italic">
-                        Any Channel Trough : <span id="eeg-trough">0.0</span>
-                    </div>
                 </div>
             </div>
-
 
             <div class="flex flex-row gap-6 my-0">
 
