@@ -42,6 +42,7 @@ let chart = null;
 let eegBuffer = []; // {timestamp, ch1, ch2, ch3, ch4}
 let eegHighestPeak = 0;
 let eegLowestTrough = 0;
+let lastDataTime = Date.now();
 
 /**
  * This script handles the simulation chart UI.

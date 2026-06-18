@@ -617,7 +617,7 @@
                                     <i class="fa-solid fa-magic text-violet-400"></i>
                                     Patterns <span id="pattern-count">0</span>
                                 </h2>
-                                <p class="text-xs text-slate-500">Wiring brain signals to real-world actions</p>
+                                <p class="text-xs text-slate-500">Turning EEG signals into real-world actions</p>
                             </div>
 
                             <button id="add-pattern-btn" title="Add Pattern" onclick="patternDialog.addPattern()"
@@ -701,7 +701,7 @@
                                 <i class="fa-solid fa-history text-emerald-400"></i>
                                 Events <span id="response-count" class="">0</span>
                             </h2>
-                            <div class="text-xs text-slate-500">Responses from the triggered actions.
+                            <div class="text-xs text-slate-500">Events from triggered actions.
                             </div>
                         </div>
                     </div>
@@ -853,11 +853,13 @@
 
                 <!-- ACTIVITY LOG -->
                 <div class="flex-1 neuro-card rounded-3xl py-6">
-                    <div class="flex items-center justify-between mb-3">
+
+                    <div>
                         <h2 class="font-semibold text-lg flex items-center gap-x-2">
                             <i class="fa-solid fa-history text-emerald-400"></i>
                             Trigger Log
                         </h2>
+                        <p class="text-xs text-slate-500">A simple console log</p>
                     </div>
 
                     <div id="log-container"

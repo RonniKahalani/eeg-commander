@@ -34,8 +34,6 @@ const LOCAL_STORAGE_PATTERNS = 'patterns';
 const LOCAL_STORAGE_MUTED = 'muted';
 
 let isMuted = false;
-let currentEditingId = null;
-let lastDataTime = Date.now();
 let config;
 
 /**
