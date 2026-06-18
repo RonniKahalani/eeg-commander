@@ -51,22 +51,15 @@ async function disconnectFromEegDevice() {
 
     if (brainbitClient && isDeviceConnected) {
         isDeviceConnected = false;
-        const sampleRate = byId('sample-rate');
-
-        setVisibility(sampleRate, false);
-        byId('firmware-text').innerHTML = 'N/A';
-        byId('device-name').innerHTML = 'Not connected';
+        setVisibility(sampleRateElem, false);
+        firmwareTextElem.innerHTML = 'N/A';
+        deviceNameElem.innerHTML = 'Not connected';
 
         try {
-
             await brainbitClient.stopEEGStream().catch(() => { });
             await brainbitClient.stopResistanceData().catch(() => { });
-
             await brainbitClient.disconnect();
 
-            console.log("BrainBit disconnected successfully");
-
-            clearBatteryCharge();
             showNotConnected();
             
         } catch (error) {
@@ -88,17 +81,14 @@ async function connectToEegDevice() {
     await brainbitClient.connect();
 
     isDeviceConnected = true;
-
+    deviceInfo = await brainbitClient.deviceInfo();
     showConnection();
 
-    deviceInfo = await brainbitClient.deviceInfo();
+    sampleRateElem.textContent = eegSimulationConfig.simulation.sampleRate + ' Hz';
+    setVisibility(sampleRateElem, true);
 
-    const sampleRate = byId('sample-rate');
-    sampleRate.textContent = eegSimulationConfig.simulation.sampleRate + ' Hz';
-    setVisibility(sampleRate, true);
-
-    byId('firmware-text').innerHTML = deviceInfo.firmwareVersion;
-    byId('device-name').innerHTML = deviceInfo.name;
+    firmwareTextElem.innerHTML = deviceInfo.firmwareVersion;
+    deviceNameElem.innerHTML = deviceInfo.name;
 
     brainbitClient.eegStream.subscribe((data) => {
         deviceData = data;
@@ -159,8 +149,8 @@ function handleDeviceStatusData(data) {
  */
 function clearBatteryCharge() {
     const batteryChargeValue = '0%';
-    byId('battery-bar').style.width = batteryChargeValue;
-    byId('battery-text').innerHTML = batteryChargeValue;
+    batteryBarElem.style.width = batteryChargeValue;
+    batteryTextElem.innerHTML = batteryChargeValue;
 }
 
 /**
@@ -168,8 +158,8 @@ function clearBatteryCharge() {
  */
 function updateBatteryCharge() {
     const batteryChargeValue = deviceStatus.batteryCharge + '%';
-    byId('battery-bar').style.width = batteryChargeValue;
-    byId('battery-text').innerHTML = batteryChargeValue;
+    batteryBarElem.style.width = batteryChargeValue;
+    batteryTextElem.innerHTML = batteryChargeValue;
 
 }
 

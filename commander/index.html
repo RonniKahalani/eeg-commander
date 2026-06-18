@@ -34,6 +34,7 @@
     <script type='text/javascript' defer src="/commander/js/core/http-status.js"></script>
     <script type='text/javascript' defer src="/commander/js/core/headband.js"></script>
 
+    <script type='text/javascript' defer src="/commander/js/ui/elements.js"></script>
     <script type='text/javascript' defer src="/commander/js/ui/three.js"></script>
     <script type='text/javascript' defer src="/commander/js/ui/eeg-chart.js"></script>
     <script type='text/javascript' defer src="/commander/js/ui/eeg-simulation.js"></script>
@@ -140,7 +141,7 @@
 
                     <div
                         class="flex items-center gap-x-1.5">
-                        <span class="font-mono text-emerald-400" id="sample-rate"></span>
+                        <div class="font-mono text-emerald-400" id="sample-rate"></div>
                     </div>
 
                 </div>
@@ -632,12 +633,12 @@
                         <div class="flex-1 overflow-hidden space-y-2  pt-0">
                             <div class="pb-0 mb-0">
 
-                                <input id="pattern-search-input" type="search" placeholder="Input search term."
+                                <input id="pattern-filter-input" type="search" placeholder="Input search term."
                                     spellcheck="false" oninput="filterPatterns(this.value)" value=""
                                     class="w-full mb-0 bg-slate-900 border border-slate-700 rounded-2xl p-4 py-2 text-sm outline-none"
                                     title="Filters through pattern name, description, alias, condition & type. (ESC = clear input)">
 
-                                <div class="text-right text-sm py-2"><span id="pattern-search-count"></span> matches
+                                <div class="text-right text-sm py-2"><span id="pattern-filter-count"></span> matches
                                 </div>
 
                             </div>
@@ -1262,7 +1263,7 @@
                         class="flex-1 py-3 text-sm font-semibold bg-slate-900 hover:bg-slate-700 rounded-3xl">Cancel</button>
 
                     <button id="clipboard-copy" title="Copy to clipboard"
-                        onclick="copyResponseToClipboard(document.getElementById('response-details-id').innerText)"
+                        onclick="copyResponseToClipboard(responseDetailsIdElem.innerText)"
                         class="flex-1 py-3 text-sm font-semibold bg-orange-900 hover:bg-orange-700 shadow-orange-900/30 transition-all active:scale-[0.985] hover:brightness-110 rounded-3xl">Copy
                         To
                         clipboard</button>
