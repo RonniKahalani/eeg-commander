@@ -90,3 +90,37 @@ function onPatternFail(response) {
 
     target.innerHTML = replaceLinebreaks(escapeHtml(getAsString(response.error)));
 }
+
+/**
+ * Event handler for device connection
+ * @param {*} device 
+ */
+function onDeviceConnected(deviceInfo) {
+    console.log(`EEG Device connected: ${deviceInfo.name}`);
+
+    showConnection();
+    showToast(`${deviceInfo.name} connected`, `Successfully connected to device: ${deviceInfo.name}`);
+
+    sampleRateElem.textContent = eegSimulationConfig.simulation.sampleRate + ' Hz';
+    setVisibility(sampleRateElem, true);
+
+    firmwareTextElem.innerHTML = deviceInfo.firmwareVersion;
+    deviceNameElem.innerHTML = deviceInfo.name;
+}
+
+/**
+ * Event handler for device connecting...
+ * @param {*} deviceInfo 
+ */
+function onDeviceConnecting(deviceInfo) {
+    console.log(`EEG Device connecting...`);
+}
+
+/**
+ * Event handler for device disconnected
+ * @param {*} deviceInfo 
+ */
+function onDeviceDisconnected(deviceInfo) {
+    console.log(`EEG Device disconnected: ${deviceInfo.name}`);
+    
+}
