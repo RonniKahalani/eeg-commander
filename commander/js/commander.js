@@ -38,12 +38,6 @@ let currentEditingId = null;
 let lastDataTime = Date.now();
 let config;
 
-const connectDeviceBtn = byId('connect-btn');
-connectDeviceBtn.addEventListener('pointerup', async (event) => await connectDevice(event));
-
-const disconnectDeviceBtn = byId('disconnect-btn');
-disconnectDeviceBtn.addEventListener('pointerup', async (event) => await disconnectDevice(event));
-
 /**
  * Displays instructions for integrating the real BrainBit Web SDK.
  * @returns {void}
@@ -111,7 +105,7 @@ function initMuted() {
  * Initializes the pattern filter
  */
 function initPatternFilter() {
-    byId('pattern-search-input').value = '';    
+    patternFilterInput.value = '';    
 }
 
 /**
@@ -167,9 +161,8 @@ function initKeyboardListener() {
 function initLog() {
 
     setTimeout(() => {
-        const container = byId('log-container');
-        if (container.children.length <= 1) {
-            container.innerHTML = `<div class="px-3 py-2 text-xs text-slate-500">Ready. Start simulation or connect a real device to begin pattern detection.</div>`;
+        if (logContainer.children.length <= 1) {
+            logContainer.innerHTML = `<div class="px-3 py-2 text-xs text-slate-500">Ready. Start simulation or connect a real device to begin pattern detection.</div>`;
         }
         checkShellServerHealth();
     }, 200);

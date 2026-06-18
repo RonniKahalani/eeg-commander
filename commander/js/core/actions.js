@@ -146,7 +146,7 @@ async function executeUDPAction(pattern, eeg) {
     }
 
     try {
-        const response = await fetch(config.server + '/execute', settings);
+        const response = await fetch(config.shell.host + '/execute', settings);
         const data = await response.json();
         if (response.ok) {
             addResponse(task, pattern, data);

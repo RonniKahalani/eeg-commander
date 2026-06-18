@@ -63,16 +63,8 @@ class PatternDialog {
      * @returns {void}
      */
     savePattern() {
-        const name = byId('pattern-name').value.trim() || 'Unnamed Pattern';
-        const alias = byId('pattern-alias').value.trim() || 'Unnamed Alias';
-        const description = byId('pattern-description').value.trim() || '';
-        const channel = byId('condition-channel').value;
-        const operator = byId('condition-operator').value;
-        const threshold = parseFloat(byId('condition-threshold').value);
-        const duration = parseFloat(byId('condition-duration').value);
-        const cooldown = parseFloat(byId('condition-cooldown').value) || 5;
-        const enabled = byId('pattern-enabled').checked;
-        const actionType = byId('action-type').value;
+
+        const actionType = patternActionTypeElem.value;
         let actionPayload = '';
 
         // TODO: Add the missing cases for UDP and Socket actions
@@ -90,12 +82,22 @@ class PatternDialog {
 
         const newPattern = {
             id: currentEditingId || ('p' + Date.now()),
-            name,
-            alias,
-            enabled,
-            condition: { channel, metric: (channel === 'any' ? 'peak' : 'moving_avg_abs'), operator, threshold, duration },
-            action: { type: actionType, payload: actionPayload },
-            cooldown,
+            name: patternNameElem.value.trim() || 'Unnamed Pattern',
+            alias: patternAliasElem.value.trim() || 'Unnamed Alias',
+            description : patternDescriptionElem.value.trim() || '',
+            enabled : patternEnabledElem.checked,
+            condition: { 
+                channel: patternConditionChannelElem.value, 
+                metric: (patternConditionChannelElem.value === 'any' ? 'peak' : 'moving_avg_abs'), 
+                operator: patternConditionOperatorElem.value, 
+                threshold: parseInt(patternConditionThresholdElem.value), 
+                duration: parseInt(patternConditionDurationElem.value) 
+            },
+            action: { 
+                type: actionType, 
+                payload: actionPayload 
+            },
+            cooldown: parseInt(patternConditionCooldownElem.value) || 5,
             lastTriggered: 0,
             triggerCount: currentEditingId ? (findPattern(currentEditingId)?.triggerCount || 0) : 0
         };

@@ -70,30 +70,33 @@ wss.on('connection', (ws, req) => {
             const logFilePath = path.join(config.logFolder, `eeg-hub-${id}-${createFileDateFormat()}.log`);
             const file = fs.createWriteStream(logFilePath, { flags: 'a' }) // 'a' = append
 
-            entry = {
-                messages: [],
-                socket: ws,
-                file: file
-            }
+            entry = { messages: [], socket: ws, file: file };
             clients.set(id, entry);
             file.write(`timestamp, ch1, ch2, ch3, ch4\n`)
             addLogEntry(`Client connected: ${ws.deviceId} | Registered clients: ${clients.size}`);
+
         } else {
             entry = clients.get(id);
         }
+
         entry.messages.push(message);
         entry.file.write(`${message.timestamp}, ${message.ch1}, ${message.ch2}, ${message.ch3}, ${message.ch4}\n`);
     });
 
-    ws.on('close', () => {
-        if (ws.deviceId) {
-            clients.get(ws.deviceId).file.close();
-            clients.delete(ws.deviceId);
-            addLogEntry(`Client disconnected: ${ws.deviceId} | Registered clients: ${clients.size}`);
-        }
-    });
+    ws.on('close', () => handleClientDisconnect(ws.deviceId));
 });
 
+/**
+ * Removes the client from the list, closes its file
+ * @param {*} id 
+ */
+function handleClientDisconnect(id) {
+    if (id) {
+        clients.get(id).file.close();
+        clients.delete(id);
+        addLogEntry(`Client disconnected: ${id} | Registered clients: ${clients.size}`);
+    }
+}
 /**
  * Creates a file name friendly date format
  * @param {*} date 

@@ -187,9 +187,7 @@ function updateEventsUI() {
 </div>`;
 
         responseList.innerHTML = responseHtml + responseList.innerHTML;
-        byId('response-count').innerHTML = responses.length;
-
-
+        responseCountElem.innerHTML = responses.length;
     })
 }
 
@@ -199,9 +197,8 @@ function updateEventsUI() {
 function clearResponses() {
     responses = [];
     tasks = [];
-    const responseList = byId('responses-list');
-    responseList.innerHTML = NO_TRIGGER_RESPONSES;
-    byId('response-count').innerHTML = 0;
+    responsesListElem.innerHTML = NO_TRIGGER_RESPONSES;
+    responseCountElem.innerHTML = 0;
 }
 
 /**
@@ -227,7 +224,7 @@ function getActionTypeColor(type) {
  * @returns {void}
  */
 function renderPatternsList() {
-    const container = byId('patterns-list');
+    const container = patternsListElem;
     container.innerHTML = '';
 
     if (!patterns.length) {
@@ -287,8 +284,8 @@ function renderPatternsList() {
 
         container.appendChild(div);
         filterPatterns();
-        byId('pattern-search-count').innerHTML = ++count;
-        byId('pattern-count').innerHTML = count;
+        patternFilterCountElem.innerHTML = ++count;
+        patternCountElem.innerHTML = count;
     });
 }
 
@@ -307,11 +304,9 @@ function getConditionSummary(pattern) {
  * @param {*} filter 
  */
 function filterPatterns(filter) {
-    const term = (!filter) ? byId('pattern-search-input').value : filter;
+    const term = (!filter) ? patternFilterInput.value : filter;
     const searchTerm = term.toLowerCase();
-
-    const container = byId('patterns-list');
-    const patternRows = container.getElementsByClassName('pattern-row');
+    const patternRows = patternsListElem.getElementsByClassName('pattern-row');
 
     let count = 0;
     Array.from(patternRows).forEach(row => {
@@ -321,7 +316,7 @@ function filterPatterns(filter) {
         if (matched) { count++; }
     });
 
-    byId('pattern-search-count').innerHTML = count;
+    patternFilterCountElem.innerHTML = count;
 }
 
 /**
@@ -331,7 +326,7 @@ function filterPatterns(filter) {
  * @returns {void}
  */
 function matchesPatternFilter(pattern, searchTerm) {
-    const term = (!searchTerm) ? byId('pattern-search-input').value : searchTerm;
+    const term = (!searchTerm) ? patternFilterInput.value : searchTerm;
     searchTerm = term.toLowerCase();
 
     return (pattern.name.toLowerCase().includes(searchTerm) ||

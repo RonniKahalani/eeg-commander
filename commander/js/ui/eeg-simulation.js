@@ -35,17 +35,14 @@ let eegSimulationConfig = null;
 let simulationInterval = null;
 let isSimulating = false;
 
-const yScaleBtn = document.getElementById('yScale');
-yScaleBtn.addEventListener('change', (e) => {
-
-    const value = parseInt(e.target.value);
+function changeYScale(value) {
     chart.options.scales.y.suggestedMin = -value;
     chart.options.scales.y.suggestedMax = value;
     chart.options.scales.y.min = -value;
     chart.options.scales.y.max = value;
-    // chart.options.scales.y.ticks.stepSize = Math.max(10, Math.floor(value / 10));
+    chart.options.scales.y.ticks.stepSize = Math.max(10, Math.floor(value / 10));
     chart.update('none');
-});
+}
 
 /**
  * Initializes the EEG simulator
@@ -114,9 +111,9 @@ function startSimulation() {
     if (isSimulating) return;
 
     isSimulating = true;
-    byId('sim-text').textContent = 'Stop';
-    byId('sim-icon').classList.remove('fa-play');
-    byId('sim-icon').classList.add('fa-stop', 'text-red-400');
+    simTextElem.textContent = 'Stop';
+    simIconElem.classList.remove('fa-play');
+    simIconElem.classList.add('fa-stop', 'text-red-400');
 
     if (isDeviceConnected) {
         if (confirm("A Bluetooth device is connected.\n\nPress Ok to disconnect from device and use simulation.")) {
@@ -146,9 +143,9 @@ function stopSimulation() {
     clearInterval(simulationInterval);
     simulationInterval = null;
 
-    byId('sim-text').textContent = 'Simulate';
-    byId('sim-icon').classList.add('fa-play');
-    byId('sim-icon').classList.remove('fa-stop', 'text-red-400');
+    simTextElem.textContent = 'Simulate';
+    simIconElem.classList.add('fa-play');
+    simIconElem.classList.remove('fa-stop', 'text-red-400');
 
     addLogEntry('Simulation stopped', 'system');
 }

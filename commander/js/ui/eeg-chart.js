@@ -174,26 +174,23 @@ function updateLiveMetrics(data) {
  * @returns {void}
  */
 function updateStats(data) {
-    const eegAvg = byId('eeg-avg');
-    if (eegAvg) {
-        eegAvg.innerHTML = ((data.ch1 + data.ch2 + data.ch3 + data.ch4) / 4).toFixed(1);
+    if (eegAvgElem) {
+        eegAvgElem.innerHTML = ((data.ch1 + data.ch2 + data.ch3 + data.ch4) / 4).toFixed(1);
     }
 
-    const eegPeak = byId('eeg-peak');
-    if (eegPeak) {
+    if (eegPeakElem) {
         const maxValue = Math.max(data.ch1, data.ch2, data.ch3, data.ch4);
         if (maxValue > eegHighestPeak) {
             eegHighestPeak = maxValue;
-            eegPeak.innerHTML = maxValue.toFixed(1);
+            eegPeakElem.innerHTML = maxValue.toFixed(1);
         }
     }
 
-    const eegTrough = byId('eeg-trough');
-    if (eegTrough) {
+    if (eegTroughElem) {
         const minValue = Math.min(data.ch1, data.ch2, data.ch3, data.ch4);
         if (minValue < eegLowestTrough) {
             eegLowestTrough = minValue;
-            eegTrough.innerHTML = minValue.toFixed(1);
+            eegTroughElem.innerHTML = minValue.toFixed(1);
         }
     }
 }
@@ -236,13 +233,10 @@ function trimEegBuffer(timestamp) {
  * @returns {void}
  */
 function showConnection() {
-
-    byId('device-channels').innerHTML = `<span class="px-2 py-0.5 bg-emerald-900/60 text-emerald-400 text-sm font-bold rounded">4CH</span>`;
-
+    deviceChannelsElem.innerHTML = `<span class="px-2 py-0.5 bg-emerald-900/60 text-emerald-400 text-sm font-bold rounded">4CH</span>`;
     setVisibility(connectDeviceBtn, false);
     setVisibility(disconnectDeviceBtn, true);
-
-    byId('device-info').classList.remove('hidden');
+    setVisibility(deviceInfoElem, true);
 }
 
 /**
@@ -258,15 +252,13 @@ function showConnecting() {
  */
 function showNotConnected() {
     connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
-
-    byId('device-name').innerHTML = 'Not connected';
-    byId('device-channels').innerHTML = '';
-
+    deviceNameElem.innerHTML = 'Not connected';
+    deviceChannelsElem.innerHTML = '';
     setVisibility(connectDeviceBtn, true);
     setVisibility(disconnectDeviceBtn, false);
+    setVisibility(deviceInfoElem, false);
 
     clearBatteryCharge();
-    byId('device-info').classList.add('hidden');
 }
 
 /**
