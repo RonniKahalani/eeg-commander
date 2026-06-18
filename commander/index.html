@@ -394,9 +394,9 @@
                             <p class="mb-2">Posts data via an URL to an external web app or REST API.</p>
 
                             <ul class="list-disc pl-6 pt-3">
-                                <li>Posts data to the web app <code>https://httpbin.org/post</code>.
+                                <li>Posts data to <code>http://127.0.0.1:3000/echo</code>.
                                 </li>
-                                <li>Gets a response with some metadata and echo of the message sent.
+                                <li>Gets an echo response with the message that was sent.
                                 </li>
                             </ul>
                         </div>
@@ -805,8 +805,7 @@
                     </div>
 
                     <div class="text-center justify-center pb-3">
-                        <label for="yScale" class="text-xs">Y-Axis Range</label>
-                        <select id="yScale"
+                        <select title="Y-Axis Range" id="yScale"
                             class="bg-slate-900 border border-slate-700 rounded-2xl px-3 py-1.5 text-xs">
                             <option value="10">±10 µV</option>
                             <option value="50">±50 µV</option>
