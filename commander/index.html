@@ -105,45 +105,41 @@
 
             </div>
         </div>
+
+        <div class="flex items-center gap-x-2 mx-2">
+            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
+                <div title="Battery" id="battery-bar" class="h-full text-sm bg-emerald-400 transition-all"
+                    style="width: 0%">
+                </div>
+            </div>
+            <span id="battery-text" class="font-mono text-sm w-8 text-emerald-400">0%</span>
+        </div>
+
     </nav>
 
     <main>
 
-        <div class="max-w-screen-2xl mx-auto px-6 pt-6 pb-3">
+        <div class="mx-auto px-6 pt-6 pb-3">
 
             <!-- Connection Status Bar -->
             <div class="p-0 mb-0 flex flex-col lg:flex-row lg:items-center gap-4 justify-center">
 
                 <!-- Device Info -->
-                <div id="device-info" class="hidden lg:flex items-center gap-x-6 text-sm">
-                    <div class="flex items-center gap-x-2">
-                        <span class="text-sm text-slate-400">Battery</span>
-                        <div class="w-24 h-2 bg-slate-800 rounded-full overflow-hidden">
-                            <div id="battery-bar" class="h-full text-sm bg-emerald-400 transition-all"
-                                style="width: 0%">
-                            </div>
-                        </div>
-                        <span id="battery-text" class="font-mono text-sm w-8 text-emerald-400">0%</span>
-                    </div>
-
-                    <div class="h-3 w-px bg-slate-700"></div>
-
-                    <div>
-                        <span class="text-slate-400 text-xs">FW</span>
-                        <span id="firmware-text" class="font-mono text-sm ml-1">N/A</span>
-                    </div>
-
-                    <div class="h-3 w-px bg-slate-700"></div>
+                <div id="device-info" class="lg:flex items-center gap-x-6 justify-center">
 
                     <div class="flex items-center gap-x-1.5">
                         <div id="device-channels" class="font-medium text-sm"></div>
                         <div id="device-name" class="font-medium text-sm">Not connected</div>
                     </div>
 
-                    <div class="flex items-center gap-x-1.5">
-                        <div class="font-mono text-emerald-400 text-sm" id="sample-rate"></div>
+                    <div class="flex items-center gap-x-1.5 hidden">
+                        <div class="font-mono text-emerald-400 text-sm" id="sample-rate">250 Hz</div>
                     </div>
 
+                    <button title="Show device info" id="device-info-btn" 
+                        class="w-3 h-3 flex items-center justify-center bg-blue-900 hover:bg-blue-400 text-white rounded-2xl transition-all">
+                        <i class="fas fa-info-circle text-xl"></i>
+                    </button>
                 </div>
             </div>
 
@@ -706,8 +702,7 @@
                         </div>
                     </div>
 
-                    <div id="responses-list"
-                        class="overflow-auto space-y-2 custom-scroll">
+                    <div id="responses-list" class="overflow-auto space-y-2 custom-scroll">
                         <div class="text-xs text-center text-gray-500">No trigger events yet.</div>
                     </div>
 
@@ -862,8 +857,7 @@
                         <p class="text-xs text-slate-500">A simple console log</p>
                     </div>
 
-                    <div id="log-container"
-                        class="overflow-auto text-sm custom-scroll">
+                    <div id="log-container" class="overflow-auto text-sm custom-scroll">
                         <div class="text-slate-500 italic px-2">No triggers yet. Define patterns and start streaming
                             to
                             see activity.</div>
@@ -904,15 +898,16 @@
 
                         <div>
                             <label class="text-sm text-slate-500">Alias</label>
-                            <input title="A unique alias that can be used to reference it. Like an id" id="pattern-alias" type="text" value=""
+                            <input title="A unique alias that can be used to reference it. Like an id"
+                                id="pattern-alias" type="text" value=""
                                 class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 rounded-2xl px-4 py-3 text-sm outline-none"
                                 spellcheck="false">
                         </div>
 
                         <div>
                             <label class="text-sm text-slate-500">Description</label>
-                            <textarea title="A description of the pattern" id="pattern-description" rows="2" spellcheck="false"
-                                placeholder='Example: This pattern...'
+                            <textarea title="A description of the pattern" id="pattern-description" rows="2"
+                                spellcheck="false" placeholder='Example: This pattern...'
                                 class="w-full font-mono text-sm bg-slate-900 border border-slate-700 rounded-2xl p-4"></textarea>
                         </div>
 
@@ -947,8 +942,9 @@
                                         <option value=">=" title="Greater than or equal to">&gt;=</option>
                                         <option value="<=" title="Less than or equal to">&lt;=</option>
                                     </select>
-                                    <input title="The threshold value to measure." id="condition-threshold" style="width:100px;" type="number" value="45"
-                                        step="0.5" onkeypress="preventNonNumericalInput(event)"
+                                    <input title="The threshold value to measure." id="condition-threshold"
+                                        style="width:100px;" type="number" value="45" step="0.5"
+                                        onkeypress="preventNonNumericalInput(event)"
                                         class="flex-1 bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2.5 text-sm"
                                         spellcheck="false">
                                 </div>
@@ -958,14 +954,17 @@
                         <div class="mt-3 grid grid-cols-2 gap-3">
                             <div>
                                 <label class="text-sm text-slate-500">Duration (seconds)</label>
-                                <input title="The duration of the condition before triggering an action." id="condition-duration" type="number" value="1.8" step="0.1" min="0.2"
+                                <input title="The duration of the condition before triggering an action."
+                                    id="condition-duration" type="number" value="1.8" step="0.1" min="0.2"
                                     onkeypress="preventNonNumericalInput(event)"
                                     class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2.5 text-sm"
                                     spellcheck="false">
                             </div>
                             <div>
                                 <label class="text-sm text-slate-500">Cooldown (seconds)</label>
-                                <input title="The time the pattern has to wait (cooldown) for, before being able to trigger again." id="condition-cooldown" type="number" value="4" step="1" min="0"
+                                <input
+                                    title="The time the pattern has to wait (cooldown) for, before being able to trigger again."
+                                    id="condition-cooldown" type="number" value="4" step="1" min="0"
                                     onkeypress="preventNonNumericalInput(event)"
                                     class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2.5 text-sm"
                                     spellcheck="false">

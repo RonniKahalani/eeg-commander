@@ -169,7 +169,7 @@ function doSimulation() {
 
     setTimeout(() => {
 
-        showConnection();
+        showConnected();
         connectDeviceBtn.disabled = false;
         connectDeviceBtn.innerHTML = `<i class="fa-solid fa-link fa-fw mr-2"></i> <span>Connect</span>`;
         connectDeviceBtn.classList.add('hidden');

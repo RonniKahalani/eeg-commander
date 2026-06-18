@@ -47,14 +47,14 @@ function initMuted() {
  * Initializes the pattern filter
  */
 function initPatternFilter() {
-    patternFilterInput.value = '';    
+    patternFilterInput.value = '';
 }
 
 /**
  * Initializes a logo click listener for an easter egg
  */
 function initLogoListener() {
-        // Easter egg: click logo to trigger random pattern
+    // Easter egg: click logo to trigger random pattern
     const logo = document.querySelector('.fa-brain');
     if (logo) {
         logo.style.cursor = 'pointer';
@@ -101,11 +101,56 @@ function initKeyboardListener() {
  * Initializes the log and tests the Shell Server
  */
 function initLog() {
+    if (logContainer.children.length <= 1) {
+        logContainer.innerHTML = `<div class="px-3 py-2 text-xs text-slate-500">Ready. Start simulation or connect a real device to begin pattern detection.</div>`;
+    }
+}
+
+/**
+ * Shows the device info
+ */
+function showDeviceInfo() {
+
+    if (!isDeviceConnected) {
+        alert('No device connected.')
+        return;
+    }
+
+    const info = `Name: ${deviceInfo.name}\nId: ${deviceInfo.deviceId}\nFirmware version: ${deviceInfo.firmwareVersion}\nHardware revision: ${deviceInfo.hardwareRevision}\nModel: ${deviceInfo.model}\nState: ${deviceInfo.state}`;
+    alert(info);
+}
+
+/**
+ * Checks the health of the Shell Server and logs the result.
+ * @returns {void}
+ */
+async function checkShellServerHealth() {
+    if (isEmpty(config.shell.host)) return;
+    
+    const shellHost = config.shell.host;
+    addLogEntry(`Looking for Shell Server at ${shellHost}...`, ACTION_TYPE_SHELL);
+
+    try {
+        const response = await fetch(shellHost + '/health');
+
+        if (response.ok) {
+            const data = await response.json();
+            addLogEntry(`Connected to Shell Server: ${data.hostname} at ${shellHost}`, ACTION_TYPE_SHELL);
+        }
+
+    } catch (e) {
+        addLogEntry(`[Shell]: Server unreachable at ${shellHost}. ${e.message}. It might be offline or misconfigured. Try starting the server with: node shell-server.js`, LOG_TYPE_ERROR);
+    }
+}
+
+/**
+ * Initializes the shell client
+ * @returns {void}
+ */
+function initShellClient() {
+    if (isEmpty(config.shell.host)) return;
 
     setTimeout(() => {
-        if (logContainer.children.length <= 1) {
-            logContainer.innerHTML = `<div class="px-3 py-2 text-xs text-slate-500">Ready. Start simulation or connect a real device to begin pattern detection.</div>`;
-        }
         checkShellServerHealth();
     }, 200);
 }
@@ -127,6 +172,7 @@ async function initializeEverything() {
 
     initMuted();
     initLog();
+    initShellClient();
     initHubClient();
     initChart();
     initTaskInterval();

@@ -30,7 +30,6 @@ const deviceInfoElem = byId('device-info');
 const deviceNameElem = byId('device-name');
 const deviceChannelsElem = byId('device-channels');
 const sampleRateElem = byId('sample-rate');
-const firmwareTextElem = byId('firmware-text');
 const batteryBarElem = byId('battery-bar');
 const batteryTextElem = byId('battery-text');
 
@@ -62,6 +61,9 @@ connectDeviceBtn.addEventListener('pointerup', async (event) => await connectDev
 
 const disconnectDeviceBtn = byId('disconnect-btn');
 disconnectDeviceBtn.addEventListener('pointerup', async (event) => await disconnectDevice(event));
+
+const deviceInfoBtn = byId('device-info-btn');
+deviceInfoBtn.addEventListener('pointerup', async (event) => showDeviceInfo());
 
 const patternNameElem = byId('pattern-name');
 const patternAliasElem = byId('pattern-alias');

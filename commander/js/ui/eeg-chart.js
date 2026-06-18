@@ -211,7 +211,7 @@ function trimEegBuffer(timestamp) {
  * In a real application, this would be replaced by actual Bluetooth connection logic using the BrainBit Web SDK.
  * @returns {void}
  */
-function showConnection() {
+function showConnected() {
     deviceChannelsElem.innerHTML = `<span class="px-2 py-0.5 bg-emerald-900/60 text-emerald-400 text-sm font-bold rounded">4CH</span>`;
     setVisibility(connectDeviceBtn, false);
     setVisibility(disconnectDeviceBtn, true);
@@ -296,6 +296,11 @@ function disconnectDevice() {
  * Eables the user to download current EEG buffer
  */
 function downloadEEG() {
+    const info = `You're about to download ${eegBuffer.length} EEG data records.\nPress Ok to download the data.`;
+    if(!confirm(info)) {
+        return;
+    }
+
     const csvContent = "timestamp,ch1,ch2,ch3,ch4\n" +
         eegBuffer.map(row =>
             `${row.timestamp},${row.ch1},${row.ch2},${row.ch3},${row.ch4}`
@@ -307,4 +312,26 @@ function downloadEEG() {
     link.href = url;
     link.download = `eeg_recording_${new Date().toISOString()}.csv`;
     link.click();
+}
+
+/**
+ * Returns a color based on an EEG data record
+ * @param {*} data 
+ * @returns {string} The string representation of a CSS color
+ */
+function eegToColor(data) {
+  // Normalize values (assuming typical EEG range ≈ -100 to +100)
+  const normalize = (val) => Math.max(-80, Math.min(80, val)) / 80; // -1 to 1
+
+  const n1 = normalize(data.ch1);
+  const n2 = normalize(data.ch2);
+  const n3 = normalize(data.ch3);
+  const n4 = normalize(data.ch4);
+
+  // Create dynamic color
+  const hue = ((n1 + n2) * 30 + 180) % 360;        // Main color (around blue-purple-cyan)
+  const saturation = 65 + (n3 * 25);               // More active = more saturated
+  const lightness = 45 + (n4 * 20);                // Higher amplitude = brighter
+
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }

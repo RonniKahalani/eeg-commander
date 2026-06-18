@@ -191,28 +191,6 @@ function showToast(title, detail, millis = 4000) {
 }
 
 /**
- * Checks the health of the Shell Server and logs the result.
- * @returns {void}
- */
-async function checkShellServerHealth() {
-
-    const shellHost = config.shell.host;
-    addLogEntry(`Looking for Shell Server at ${shellHost}...`, ACTION_TYPE_SHELL);
-
-    try {
-        const response = await fetch(shellHost + '/health');
-
-        if (response.ok) {
-            const data = await response.json();
-            addLogEntry(`Connected to Shell Server: ${data.hostname} at ${shellHost}`, ACTION_TYPE_SHELL);
-        }
-
-    } catch (e) {
-        addLogEntry(`[Shell]: Server unreachable at ${shellHost}. ${e.message}. It might be offline or misconfigured. Try starting the server with: node shell-server.js`, LOG_TYPE_ERROR);
-    }
-}
-
-/**
  * Checks if a property is empty (null, undefined, or empty string)
  * @param {*} property 
  * @returns {boolean} True if the property is empty, false otherwise

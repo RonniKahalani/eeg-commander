@@ -52,16 +52,12 @@ async function disconnectFromEegDevice() {
 
     if (brainbitClient && isDeviceConnected) {
         isDeviceConnected = false;
-        setVisibility(sampleRateElem, false);
-        firmwareTextElem.innerHTML = 'N/A';
-        deviceNameElem.innerHTML = 'Not connected';
 
         try {
             await brainbitClient.stopEEGStream().catch(() => { });
             await brainbitClient.stopResistanceData().catch(() => { });
             await brainbitClient.disconnect();
 
-            showNotConnected();
             onDeviceDisconnected(deviceInfo);
 
         } catch (error) {
