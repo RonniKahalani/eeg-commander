@@ -62,16 +62,20 @@ function initHubClient() {
     const hubHost = config.hub.host;
     if (isEmpty(hubHost)) return;
 
+    addLogEntry(`Looking for Hub Server: ${hubHost}...`, LOG_TYPE_SYSTEM);
+
     hubClient = new WebSocket(hubHost);
     hubClient.onopen = () => {
 
+        addLogEntry(`Connected to Hub Server: ${hubHost}`, LOG_TYPE_SYSTEM);
+
         hubClient.onmessage = (event) => {
-            console.log('Hub event: ' + event.data)
+            addLogEntry(`Got message from Hub Server: ${hubHost} ${event.data}`, LOG_TYPE_SYSTEM);
         };
     };
 
     hubClient.onerror = (err) => {
-        console.error('Failed in hub server: ' + err.message)
+        addLogEntry(`Hub Server error: ${hubHost} ${err.message}`, LOG_TYPE_SYSTEM);
         hubClient.close();
     };
 }

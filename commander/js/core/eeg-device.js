@@ -40,6 +40,7 @@ let deviceInfo;
 let deviceStatus;
 let isDeviceConnected = false;
 let deviceData;
+let deviceInterval;
 
 /**
  * Disconnects the BrainBit client
@@ -221,4 +222,26 @@ function addToBufferAverage(data) {
         ch3: (data.val0_ch3 + data.val1_ch3) / 2 * multiplier,
         ch4: (data.val0_ch4 + data.val1_ch4) / 2 * multiplier
     });
+}
+
+
+/**
+ * Starts the device interval
+ */
+function startDeviceInterval() {
+    deviceInterval = setInterval(() => {
+        if (!isDeviceConnected || !deviceData) return;
+
+        handleDeviceAddToBuffer(deviceData);
+
+    }, 1000 / eegSimulationConfig.simulation.sampleRate * 4); // ~62.5ms per packet (4 samples simulated)
+}
+
+/**
+ * Clears the device interval
+ */
+function clearDeviceInterval() {
+    if (deviceInterval) {
+        clearInterval(deviceInterval);
+    }
 }

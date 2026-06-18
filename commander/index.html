@@ -69,22 +69,6 @@
 
             <div class="flex items-center gap-x-4">
 
-                <div class="flex items-center gap-x-2">
-                    <button title="Connect Device" id="connect-btn"
-                        class="cursor-pointer px-3 py-1.5 bg-orange-800 hover:bg-orange-700 active:bg-orange-600 transition-all text-xs font-semibold rounded-3xl flex items-center gap-x-2 shadow-lg shadow-orange-400/30">
-                        <i class="fa-solid fa-link fa-fw"></i>
-                        <span id="connect-text">Connect</span>
-                        <div class="text-[10px] text-slate-500"></div>
-                    </button>
-
-                    <button title="Disconnect Device" id="disconnect-btn"
-                        class="hidden cursor-pointer px-3 py-1.5 bg-slate-800 hover:bg-red-900/50 text-red-400 text-xs font-semibold rounded-3xl flex items-center gap-x-2 border border-slate-700">
-                        <i class="fa-solid fa-unlink fa-fw"></i>
-                        <span>Disconnect</span>
-                    </button>
-                </div>
-
-
                 <button onclick="toggleMute()" title="Toggle mute audio"
                     class="text-gray-500 dark:text-gray-400 hover:text-blue-400 transition-colors"
                     :class="{ 'text-blue-400': isMuted }">
@@ -103,6 +87,22 @@
                         </path>
                     </svg>
                 </button>
+
+                <div class="flex items-center gap-x-2">
+                    <button title="Connect Device" id="connect-btn"
+                        class="cursor-pointer px-3 py-1.5 bg-orange-800 hover:bg-orange-700 active:bg-orange-600 transition-all text-xs font-semibold rounded-3xl flex items-center gap-x-2 shadow-lg shadow-orange-400/30">
+                        <i class="fa-solid fa-link fa-fw"></i>
+                        <span id="connect-text">Connect</span>
+                        <div class="text-[10px] text-slate-500"></div>
+                    </button>
+
+                    <button title="Disconnect Device" id="disconnect-btn"
+                        class="hidden cursor-pointer px-3 py-1.5 bg-slate-800 hover:bg-red-900/50 text-red-400 text-xs font-semibold rounded-3xl flex items-center gap-x-2 border border-slate-700">
+                        <i class="fa-solid fa-unlink fa-fw"></i>
+                        <span>Disconnect</span>
+                    </button>
+                </div>
+
             </div>
         </div>
     </nav>
@@ -119,7 +119,8 @@
                     <div class="flex items-center gap-x-2">
                         <span class="text-sm text-slate-400">Battery</span>
                         <div class="w-24 h-2 bg-slate-800 rounded-full overflow-hidden">
-                            <div id="battery-bar" class="h-full text-sm bg-emerald-400 transition-all" style="width: 0%">
+                            <div id="battery-bar" class="h-full text-sm bg-emerald-400 transition-all"
+                                style="width: 0%">
                             </div>
                         </div>
                         <span id="battery-text" class="font-mono text-sm w-8 text-emerald-400">0%</span>
@@ -622,7 +623,7 @@
                             </div>
 
                             <button id="add-pattern-btn" title="Add Pattern" onclick="patternDialog.addPattern()"
-                                class="px-4 py-2 bg-orange-900 hover:bg-orange-700 text-sm font-semibold rounded-3xl flex items-center gap-x-2 shadow-lg shadow-orange-900/30 transition-all active:scale-[0.985]">
+                                class="cursor-pointer flex items-center cursor-pointer px-3 py-1.5 bg-orange-800 hover:bg-orange-700 active:bg-orange-600 transition-all text-xs font-semibold rounded-3xl flex items-center gap-x-2 shadow-lg">
                                 <i class="fa-solid fa-plus fa-fw"></i>
                                 <span>New Pattern</span>
                             </button>
@@ -632,7 +633,7 @@
                         <div class="flex-1 overflow-hidden space-y-2  pt-0">
                             <div class="pb-0 mb-0">
 
-                                <input id="pattern-filter-input" type="search" placeholder="Input search term."
+                                <input id="pattern-filter-input" type="search" placeholder="Input filter term."
                                     spellcheck="false" oninput="filterPatterns(this.value)" value=""
                                     class="w-full mb-0 bg-slate-900 border border-slate-700 rounded-2xl p-4 py-2 text-sm outline-none"
                                     title="Filters through pattern name, description, alias, condition & type. (ESC = clear input)">
@@ -643,7 +644,7 @@
                             </div>
                         </div>
 
-                        <div class=" bg-slate-900 rounded-2xl border border-slate-700 p-6">
+                        <div class="p-0">
                             <div class="text-right pr-3">
                                 <label title="Toggle enabled for all patterns"
                                     class="relative inline-flex items-center cursor-pointer">
@@ -708,7 +709,7 @@
                     </div>
 
                     <div id="responses-list"
-                        class="overflow-auto space-y-2 custom-scroll bg-slate-900 rounded-2xl border border-slate-700 p-3">
+                        class="overflow-auto space-y-2 custom-scroll">
                         <div class="text-xs text-center text-gray-500">No trigger events yet.</div>
                     </div>
 
@@ -720,8 +721,6 @@
                         </button>
                     </div>
                 </div>
-
-
             </div>
 
             <!-- EEG TAB -->
@@ -739,7 +738,7 @@
 
                         <div class="flex items-center gap-x-2">
                             <div title="Toggle Simulation" onclick="toggleSimulation()" id="sim-toggle"
-                                class="cursor-pointer flex items-center gap-x-2 px-3 py-1 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-3xl text-xs font-medium">
+                                class="cursor-pointer flex items-center cursor-pointer px-3 py-1.5 bg-orange-800 hover:bg-orange-700 active:bg-orange-600 transition-all text-xs font-semibold rounded-3xl flex items-center gap-x-2 shadow-lg">
                                 <i class="fa-solid fa-play fa-fw text-emerald-400" id="sim-icon"></i>
                                 <span id="sim-text">Simulate</span>
                             </div>
@@ -747,8 +746,8 @@
                     </div>
 
                     <!-- Current Metrics -->
-                    <div class="grid grid-cols-4 gap-3 mt-4 mb-4">
-                        <div class="bg-slate-900 rounded-2xl p-3 border border-slate-700">
+                    <div class="grid grid-cols-4 gap-3 m-0">
+                        <div class="">
                             <div class="mb-1">
                                 <div class="text-center">
                                     <div id="ch1-label" class="channel-label">CH1 (T3)</div>
@@ -762,7 +761,7 @@
                             </div>
                         </div>
 
-                        <div class="bg-slate-900 rounded-2xl p-3 border border-slate-700">
+                        <div class="">
                             <div class="mb-1">
                                 <div class="text-center">
                                     <div id="ch2-label" class="channel-label">CH2 (T4)</div>
@@ -775,7 +774,7 @@
                             </div>
                         </div>
 
-                        <div class="bg-slate-900 rounded-2xl p-3 border border-slate-700">
+                        <div class="">
                             <div class="mb-1">
                                 <div class="text-center">
                                     <div id="ch3-label" class="channel-label">CH3 (O1)</div>
@@ -789,7 +788,7 @@
                             </div>
                         </div>
 
-                        <div class="bg-slate-900 rounded-2xl p-3 border border-slate-700">
+                        <div class="">
                             <div class="mb-1">
                                 <div class="text-center">
                                     <div id="ch4-label" class="channel-label">CH4 (O2)</div>
@@ -804,7 +803,7 @@
                         </div>
                     </div>
 
-                    <div class="text-center justify-center pb-3">
+                    <div class="text-right justify-right mt-1">
                         <select title="Y-Axis Range" id="yScale"
                             class="bg-slate-900 border border-slate-700 rounded-2xl px-3 py-1.5 text-xs">
                             <option value="10">±10 µV</option>
@@ -817,8 +816,8 @@
                     </div>
 
                     <!-- EEG Chart -->
-                    <div class="bg-slate-900 rounded-2xl p-3 border border-slate-700" style="height: 500px;">
-                        <canvas id="eeg-chart"></canvas>
+                    <div class="" style="height: 500px;">
+                        <canvas id="eeg-chart" class="p-3 mt-3"></canvas>
                     </div>
 
                     <div class="pt-2 flex gap-x-2">
@@ -864,7 +863,7 @@
                     </div>
 
                     <div id="log-container"
-                        class="bg-slate-900 rounded-2xl border border-slate-700 h-40 overflow-auto p-6 text-xs font-mono custom-scroll">
+                        class="overflow-auto text-sm custom-scroll">
                         <div class="text-slate-500 italic px-2">No triggers yet. Define patterns and start streaming
                             to
                             see activity.</div>
@@ -898,21 +897,21 @@
                     <div>
                         <div>
                             <label class="text-sm text-slate-500">Name</label>
-                            <input id="pattern-name" type="text" value=""
+                            <input title="A pattern name or title" id="pattern-name" type="text" value=""
                                 class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 rounded-2xl px-4 py-3 text-sm outline-none"
                                 spellcheck="false">
                         </div>
 
                         <div>
                             <label class="text-sm text-slate-500">Alias</label>
-                            <input id="pattern-alias" type="text" value=""
+                            <input title="A unique alias that can be used to reference it. Like an id" id="pattern-alias" type="text" value=""
                                 class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 rounded-2xl px-4 py-3 text-sm outline-none"
                                 spellcheck="false">
                         </div>
 
                         <div>
                             <label class="text-sm text-slate-500">Description</label>
-                            <textarea id="pattern-description" rows="2" spellcheck="false"
+                            <textarea title="A description of the pattern" id="pattern-description" rows="2" spellcheck="false"
                                 placeholder='Example: This pattern...'
                                 class="w-full font-mono text-sm bg-slate-900 border border-slate-700 rounded-2xl p-4"></textarea>
                         </div>
@@ -927,7 +926,7 @@
                             <!-- Channel -->
                             <div>
                                 <label class="text-sm text-slate-500">Channel / Metric</label>
-                                <select id="condition-channel"
+                                <select title="Select a channel or metric." id="condition-channel"
                                     class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-3 py-2.5 text-sm">
                                     <option value="avg">Average (All Channels)</option>
                                     <option value="ch1">CH1 (T3)</option>
@@ -941,14 +940,14 @@
                             <div>
                                 <label class="text-sm text-slate-500">Operator &amp; Threshold (µV)</label>
                                 <div class="flex gap-x-2">
-                                    <select id="condition-operator"
+                                    <select title="Select an operator" id="condition-operator"
                                         class="bg-slate-900 border border-slate-700 rounded-2xl px-3 py-2.5 text-sm w-20">
                                         <option value=">" title="Greater than">&gt;</option>
                                         <option value="<" title="Less than">&lt;</option>
                                         <option value=">=" title="Greater than or equal to">&gt;=</option>
                                         <option value="<=" title="Less than or equal to">&lt;=</option>
                                     </select>
-                                    <input id="condition-threshold" style="width:100px;" type="number" value="45"
+                                    <input title="The threshold value to measure." id="condition-threshold" style="width:100px;" type="number" value="45"
                                         step="0.5" onkeypress="preventNonNumericalInput(event)"
                                         class="flex-1 bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2.5 text-sm"
                                         spellcheck="false">
@@ -959,14 +958,14 @@
                         <div class="mt-3 grid grid-cols-2 gap-3">
                             <div>
                                 <label class="text-sm text-slate-500">Duration (seconds)</label>
-                                <input id="condition-duration" type="number" value="1.8" step="0.1" min="0.2"
+                                <input title="The duration of the condition before triggering an action." id="condition-duration" type="number" value="1.8" step="0.1" min="0.2"
                                     onkeypress="preventNonNumericalInput(event)"
                                     class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2.5 text-sm"
                                     spellcheck="false">
                             </div>
                             <div>
                                 <label class="text-sm text-slate-500">Cooldown (seconds)</label>
-                                <input id="condition-cooldown" type="number" value="4" step="1" min="0"
+                                <input title="The time the pattern has to wait (cooldown) for, before being able to trigger again." id="condition-cooldown" type="number" value="4" step="1" min="0"
                                     onkeypress="preventNonNumericalInput(event)"
                                     class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2.5 text-sm"
                                     spellcheck="false">
@@ -1023,10 +1022,17 @@
                                 <div>
                                     <label class="text-sm text-slate-500">Method</label>
                                     <select id="action-url-method"
-                                        class="bg-slate-900 border border-slate-700 rounded-2xl px-3 py-2 text-sm w-24"
+                                        class="bg-slate-900 border border-slate-700 rounded-2xl px-3 py-2 text-sm"
                                         onchange="patternDialog.handleUrlMethodSection(this.value)">
                                         <option value="GET">GET</option>
                                         <option value="POST" selected>POST</option>
+                                        <option value="PUT">PUT</option>
+                                        <option value="PATCH">PATCH</option>
+                                        <option value="DELETE">DELETE</option>
+                                        <option value="HEAD">HEAD</option>
+                                        <option value="OPTIONS">OPTIONS</option>
+                                        <option value="TRACE">TRACE</option>
+                                        <option value="CONNECT">CONNECT</option>
                                     </select>
                                 </div>
 
