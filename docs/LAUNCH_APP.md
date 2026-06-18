@@ -2,7 +2,7 @@
 Go through these steps to launch the app in a browser.
 
 ## Notice
-Only Chrome, Edge and Opera browsers supports the needed Bluetooth Web API.
+Only Chrome, Edge and Opera browsers supports the needed Bluetooth Web API used to connect to the EEG device (BrainBit Headband).
 
 Firefox does not support the Bluetooth Web API and will not connect to a device, but you can still use the EEG simulator and play with the app as if you had a device.
 
@@ -14,7 +14,9 @@ Firefox does not support the Bluetooth Web API and will not connect to a device,
 ## Start a Shell server
 - Can be ignored if you're not using Shell or UDP actions.
 - Open the <code>/server/shell</code> folder in a terminal window.
-- Run the command<code>node shell-server</code>
+- Run the command <code>node shell-server</code>
+
+If you're running the shell server on a device remote from the Commander app, you have to point to it via the <code>shell.host</code> property in the <code>config.json</code> file.
 
 ## Launch the web app
 - Select the file <code>/commander/index.html</code>
