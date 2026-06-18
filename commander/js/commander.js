@@ -34,65 +34,7 @@ const LOCAL_STORAGE_PATTERNS = 'patterns';
 const LOCAL_STORAGE_MUTED = 'muted';
 
 let isMuted = false;
-let currentEditingId = null;
-let lastDataTime = Date.now();
 let config;
-
-/**
- * Displays instructions for integrating the real BrainBit Web SDK.
- * @returns {void}
- */
-function showSDKInstructions() {
-    const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-black/80 z-[200] flex items-center justify-center p-6';
-    modal.innerHTML = `
-        <div class="neuro-card max-w-2xl w-full rounded-3xl p-8 border border-slate-600 bg-slate-800">
-            <div class="flex justify-between mb-6">
-                <h3 class="font-semibold text-xl flex items-center gap-x-3"><i class="fa-brands fa-js text-yellow-400"></i> Real BrainBit Web SDK Integration</h3>
-                <button onclick="this.closest('.fixed').remove()" class="text-3xl text-slate-400 hover:text-white">&times;</button>
-            </div>
-            
-            <div class="prose prose-sm prose-invert text-slate-300">
-                <p class="text-sm">To use with a real BrainBit headband:</p>
-                
-                <ol class="list-decimal pl-5 space-y-2 text-sm">
-                    <li>Install: <code class="bg-slate-800 px-2 py-px rounded">npm install web-neurosdk-brainbit</code></li>
-                    <li>Import and initialize the client in your bundler (Vite, Webpack, etc.)</li>
-                    <li>Replace the simulation functions with real SDK calls</li>
-                </ol>
-                
-                <pre class="bg-slate-950 p-4 rounded-2xl text-xs overflow-auto border border-slate-700"><code>import BrainbitClient from 'web-neurosdk-brainbit';
-
-const brainbitClient = new BrainbitClient();
-
-// Connect
-await brainbitClient.connect();
-
-// Subscribe to EEG
-brainbitClient.eegStream.subscribe((data) => {
-// data = { val0_ch1, val0_ch2, ... }
-const processed = {
-ch1: data.val0_ch1,
-ch2: data.val0_ch2,
-ch3: data.val0_ch3,
-ch4: data.val0_ch4
-};
-addToBuffer(processed);   // reuse existing function
-});
-
-// Start streaming
-await brainbitClient.startEEGStream();</code></pre>
-                
-                <p class="text-xs text-amber-400 mt-4">Note: Web Bluetooth requires HTTPS and user gesture for connection. The full library supports resistance, status, and markers.</p>
-            </div>
-            
-            <div class="mt-6 flex justify-end">
-                <button onclick="this.closest('.fixed').remove()" class="px-6 py-2.5 bg-slate-700 hover:bg-slate-600 rounded-3xl text-sm">Close</button>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(modal);
-}
 
 /**
  * Initializes the mute feature
@@ -105,14 +47,14 @@ function initMuted() {
  * Initializes the pattern filter
  */
 function initPatternFilter() {
-    patternFilterInput.value = '';    
+    patternFilterInput.value = '';
 }
 
 /**
  * Initializes a logo click listener for an easter egg
  */
 function initLogoListener() {
-        // Easter egg: click logo to trigger random pattern
+    // Easter egg: click logo to trigger random pattern
     const logo = document.querySelector('.fa-brain');
     if (logo) {
         logo.style.cursor = 'pointer';
@@ -159,11 +101,56 @@ function initKeyboardListener() {
  * Initializes the log and tests the Shell Server
  */
 function initLog() {
+    if (logContainer.children.length <= 1) {
+        logContainer.innerHTML = `<div class="px-3 py-2 text-xs text-slate-500">Ready. Start simulation or connect a real device to begin pattern detection.</div>`;
+    }
+}
+
+/**
+ * Shows the device info
+ */
+function showDeviceInfo() {
+
+    if (!isDeviceConnected) {
+        alert('No device connected.\nMake sure the device is already paired with your computer.\nClick the Connect button to connect your device.')
+        return;
+    }
+
+    const info = `Name: ${deviceInfo.name}\nId: ${deviceInfo.deviceId}\nFirmware version: ${deviceInfo.firmwareVersion}\nHardware revision: ${deviceInfo.hardwareRevision}\nModel: ${deviceInfo.model}\nState: ${deviceInfo.state}`;
+    alert(info);
+}
+
+/**
+ * Checks the health of the Shell Server and logs the result.
+ * @returns {void}
+ */
+async function checkShellServerHealth() {
+    if (isEmpty(config.shell.host)) return;
+
+    const shellHost = config.shell.host;
+    addLogEntry(`Looking for Shell Server at ${shellHost}...`, ACTION_TYPE_SHELL);
+
+    try {
+        const response = await fetch(shellHost + '/health');
+
+        if (response.ok) {
+            const data = await response.json();
+            addLogEntry(`Connected to Shell Server: ${data.hostname} at ${shellHost}`, ACTION_TYPE_SHELL);
+        }
+
+    } catch (e) {
+        addLogEntry(`[Shell]: Server unreachable at ${shellHost}. ${e.message}. It might be offline or misconfigured. Try starting the server with: node shell-server.js`, LOG_TYPE_ERROR);
+    }
+}
+
+/**
+ * Initializes the shell client
+ * @returns {void}
+ */
+function initShellClient() {
+    if (isEmpty(config.shell.host)) return;
 
     setTimeout(() => {
-        if (logContainer.children.length <= 1) {
-            logContainer.innerHTML = `<div class="px-3 py-2 text-xs text-slate-500">Ready. Start simulation or connect a real device to begin pattern detection.</div>`;
-        }
         checkShellServerHealth();
     }, 200);
 }
@@ -185,6 +172,7 @@ async function initializeEverything() {
 
     initMuted();
     initLog();
+    initShellClient();
     initHubClient();
     initChart();
     initTaskInterval();

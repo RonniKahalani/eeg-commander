@@ -30,7 +30,7 @@
     <script type='text/javascript' defer src="/commander/js/core/tasks.js"></script>
     <script type='text/javascript' defer src="/commander/js/core/actions.js"></script>
     <script type='text/javascript' defer src="/commander/js/core/patterns.js"></script>
-    <script type='text/javascript' defer src="/commander/js/core/events.js"></script>
+    <script type='text/javascript' defer src="/commander/js/core/callbacks.js"></script>
     <script type='text/javascript' defer src="/commander/js/core/http-status.js"></script>
     <script type='text/javascript' defer src="/commander/js/core/eeg-device.js"></script>
 
@@ -105,43 +105,40 @@
 
             </div>
         </div>
+
+        <div class="flex items-center gap-x-2 mx-2">
+            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
+                <div title="Battery" id="battery-bar" class="h-full text-sm bg-emerald-400 transition-all"
+                    style="width: 0%">
+                </div>
+            </div>
+            <span id="battery-text" class="font-mono text-sm w-8 text-emerald-400">0%</span>
+        </div>
+
     </nav>
 
     <main>
 
-        <div class="max-w-screen-2xl mx-auto px-6 pt-6 pb-3">
+        <div class="mx-auto px-6 pt-2 pb-3">
 
             <!-- Connection Status Bar -->
-            <div class="p-0 mb-0 flex flex-col lg:flex-row lg:items-center gap-4 justify-center">
+            <div class="p-4 mb-0 flex flex-col lg:flex-row lg:items-center gap-4 justify-center">
 
                 <!-- Device Info -->
-                <div id="device-info" class="hidden lg:flex items-center gap-x-6 text-sm">
-                    <div class="flex items-center gap-x-2">
-                        <span class="text-sm text-slate-400">Battery</span>
-                        <div class="w-24 h-2 bg-slate-800 rounded-full overflow-hidden">
-                            <div id="battery-bar" class="h-full text-sm bg-emerald-400 transition-all"
-                                style="width: 0%">
-                            </div>
-                        </div>
-                        <span id="battery-text" class="font-mono text-sm w-8 text-emerald-400">0%</span>
-                    </div>
-
-                    <div class="h-3 w-px bg-slate-700"></div>
-
-                    <div>
-                        <span class="text-slate-400 text-xs">FW</span>
-                        <span id="firmware-text" class="font-mono text-sm ml-1">N/A</span>
-                    </div>
-
-                    <div class="h-3 w-px bg-slate-700"></div>
+                <div id="device-info" class="lg:flex items-center gap-x-6 justify-center">
 
                     <div class="flex items-center gap-x-1.5">
                         <div id="device-channels" class="font-medium text-sm"></div>
-                        <div id="device-name" class="font-medium text-sm">Not connected</div>
+                        <div id="device-name" class="font-medium text-sm">No device connected</div>
+                        
+                    <button title="Show device info" id="device-info-btn" 
+                        class="pl-2 w-3 h-3 flex items-center justify-center bg-blue-900 hover:bg-blue-400 text-white rounded-2xl transition-all">
+                        <i class="fas fa-info-circle text-xl"></i>
+                    </button>
                     </div>
 
-                    <div class="flex items-center gap-x-1.5">
-                        <div class="font-mono text-emerald-400 text-sm" id="sample-rate"></div>
+                    <div class="flex items-center gap-x-1.5 hidden">
+                        <div class="font-mono text-emerald-400 text-sm" id="sample-rate">250 Hz</div>
                     </div>
 
                 </div>
@@ -153,23 +150,23 @@
 
                     <li class="me-2">
                         <a href="#" onclick="showTab('tab-playground')"
-                            class="inline-block p-4 text-fg-brand border-b border-orange-400 rounded-t-base active"
+                            class="inline-block px-4 pb-4 text-fg-brand border-b border-orange-400 rounded-t-base active"
                             aria-current="page">Playground</a>
                     </li>
 
                     <li class="me-2">
                         <a href="#" onclick="showTab('tab-patterns')"
-                            class="inline-block p-4 border-b border-orange-400 rounded-t-base hover:text-fg-brand hover:border-brand">Patterns</a>
+                            class="inline-block px-4 pb-4 border-b border-orange-400 rounded-t-base hover:text-fg-brand hover:border-brand">Patterns</a>
                     </li>
 
                     <li class="me-2">
                         <a href="#" onclick="showTab('tab-events')"
-                            class="inline-block p-4 border-b border-orange-400 rounded-t-base hover:text-fg-brand hover:border-brand">Events</a>
+                            class="inline-block px-4 pb-4 border-b border-orange-400 rounded-t-base hover:text-fg-brand hover:border-brand">Events</a>
                     </li>
 
                     <li class="me-2">
                         <a href="#" onclick="showTab('tab-eeg')"
-                            class="inline-block p-4 border-b border-orange-400 rounded-t-base hover:text-fg-brand hover:border-brand">EEG</a>
+                            class="inline-block px-4 pb-4 border-b border-orange-400 rounded-t-base hover:text-fg-brand hover:border-brand">EEG</a>
                     </li>
 
                 </ul>
@@ -183,8 +180,6 @@
                     <div class="flex-1 p-0 mb-0">
                         <img src="/commander/img/playground-banner.png" alt="Playground Banner"
                             class="w-full h-full object-cover rounded-3xl opacgity-0 border border-slate-800">
-                        <!-- <h1 class="font-semibold text-3xl text-orange-400">Playground</h1>
-<p class="text-2xl">Turn your brainwaves into real-world actions. The ultimate creative playground for your mind.</p> -->
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-2 p-2">
@@ -619,7 +614,7 @@
                                     <i class="fa-solid fa-magic text-violet-400"></i>
                                     Patterns <span id="pattern-count">0</span>
                                 </h2>
-                                <p class="text-xs text-slate-500">Wiring brain signals to real-world actions</p>
+                                <p class="text-xs text-slate-500">Turning EEG signals into real-world actions</p>
                             </div>
 
                             <button id="add-pattern-btn" title="Add Pattern" onclick="patternDialog.addPattern()"
@@ -703,13 +698,12 @@
                                 <i class="fa-solid fa-history text-emerald-400"></i>
                                 Events <span id="response-count" class="">0</span>
                             </h2>
-                            <div class="text-xs text-slate-500">Responses from the triggered actions.
+                            <div class="text-xs text-slate-500">Events from triggered actions.
                             </div>
                         </div>
                     </div>
 
-                    <div id="responses-list"
-                        class="overflow-auto space-y-2 custom-scroll">
+                    <div id="responses-list" class="overflow-auto space-y-2 custom-scroll">
                         <div class="text-xs text-center text-gray-500">No trigger events yet.</div>
                     </div>
 
@@ -855,15 +849,16 @@
 
                 <!-- ACTIVITY LOG -->
                 <div class="flex-1 neuro-card rounded-3xl py-6">
-                    <div class="flex items-center justify-between mb-3">
+
+                    <div>
                         <h2 class="font-semibold text-lg flex items-center gap-x-2">
                             <i class="fa-solid fa-history text-emerald-400"></i>
                             Trigger Log
                         </h2>
+                        <p class="text-xs text-slate-500">A simple console log</p>
                     </div>
 
-                    <div id="log-container"
-                        class="overflow-auto text-sm custom-scroll">
+                    <div id="log-container" class="overflow-auto text-sm custom-scroll">
                         <div class="text-slate-500 italic px-2">No triggers yet. Define patterns and start streaming
                             to
                             see activity.</div>
@@ -904,15 +899,16 @@
 
                         <div>
                             <label class="text-sm text-slate-500">Alias</label>
-                            <input title="A unique alias that can be used to reference it. Like an id" id="pattern-alias" type="text" value=""
+                            <input title="A unique alias that can be used to reference it. Like an id"
+                                id="pattern-alias" type="text" value=""
                                 class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 rounded-2xl px-4 py-3 text-sm outline-none"
                                 spellcheck="false">
                         </div>
 
                         <div>
                             <label class="text-sm text-slate-500">Description</label>
-                            <textarea title="A description of the pattern" id="pattern-description" rows="2" spellcheck="false"
-                                placeholder='Example: This pattern...'
+                            <textarea title="A description of the pattern" id="pattern-description" rows="2"
+                                spellcheck="false" placeholder='Example: This pattern...'
                                 class="w-full font-mono text-sm bg-slate-900 border border-slate-700 rounded-2xl p-4"></textarea>
                         </div>
 
@@ -947,8 +943,9 @@
                                         <option value=">=" title="Greater than or equal to">&gt;=</option>
                                         <option value="<=" title="Less than or equal to">&lt;=</option>
                                     </select>
-                                    <input title="The threshold value to measure." id="condition-threshold" style="width:100px;" type="number" value="45"
-                                        step="0.5" onkeypress="preventNonNumericalInput(event)"
+                                    <input title="The threshold value to measure." id="condition-threshold"
+                                        style="width:100px;" type="number" value="45" step="0.5"
+                                        onkeypress="preventNonNumericalInput(event)"
                                         class="flex-1 bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2.5 text-sm"
                                         spellcheck="false">
                                 </div>
@@ -958,14 +955,17 @@
                         <div class="mt-3 grid grid-cols-2 gap-3">
                             <div>
                                 <label class="text-sm text-slate-500">Duration (seconds)</label>
-                                <input title="The duration of the condition before triggering an action." id="condition-duration" type="number" value="1.8" step="0.1" min="0.2"
+                                <input title="The duration of the condition before triggering an action."
+                                    id="condition-duration" type="number" value="1.8" step="0.1" min="0.2"
                                     onkeypress="preventNonNumericalInput(event)"
                                     class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2.5 text-sm"
                                     spellcheck="false">
                             </div>
                             <div>
                                 <label class="text-sm text-slate-500">Cooldown (seconds)</label>
-                                <input title="The time the pattern has to wait (cooldown) for, before being able to trigger again." id="condition-cooldown" type="number" value="4" step="1" min="0"
+                                <input
+                                    title="The time the pattern has to wait (cooldown) for, before being able to trigger again."
+                                    id="condition-cooldown" type="number" value="4" step="1" min="0"
                                     onkeypress="preventNonNumericalInput(event)"
                                     class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-2.5 text-sm"
                                     spellcheck="false">

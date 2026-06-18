@@ -98,13 +98,12 @@ function onPatternFail(response) {
 function onDeviceConnected(deviceInfo) {
     console.log(`EEG Device connected: ${deviceInfo.name}`);
 
-    showConnection();
+    showConnected();
     showToast(`${deviceInfo.name} connected`, `Successfully connected to device: ${deviceInfo.name}`);
 
     sampleRateElem.textContent = eegSimulationConfig.simulation.sampleRate + ' Hz';
     setVisibility(sampleRateElem, true);
-
-    firmwareTextElem.innerHTML = deviceInfo.firmwareVersion;
+    
     deviceNameElem.innerHTML = deviceInfo.name;
 }
 
@@ -122,5 +121,9 @@ function onDeviceConnecting(deviceInfo) {
  */
 function onDeviceDisconnected(deviceInfo) {
     console.log(`EEG Device disconnected: ${deviceInfo.name}`);
-    
+
+    setVisibility(sampleRateElem, false);
+    deviceNameElem.innerHTML = 'No device connected';
+    showNotConnected();
+
 }

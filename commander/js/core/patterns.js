@@ -32,6 +32,14 @@ SOFTWARE.
  */
 const NO_TRIGGER_RESPONSES = '<div class="text-xs text-center text-gray-500">No trigger responses yet.</div>';
 
+const ACTION_TYPE_JS = 'js';
+const ACTION_TYPE_URL = 'url';
+const ACTION_TYPE_SDK = 'sdk';
+const ACTION_TYPE_UDP = 'udp';
+const ACTION_TYPE_SHELL = 'shell';
+const ACTION_TYPE_SOCKET = 'socket';
+const ACTION_TYPE_MQTT = 'mqtt';
+
 let patterns = [];
 let responses = [];
 
@@ -146,8 +154,7 @@ function addResponse(task, pattern, data, err = null) {
  */
 function updateEventsUI() {
 
-    const responseList = byId('responses-list');
-    responseList.innerHTML = '';
+    responsesListElem.innerHTML = '';
 
     responses.forEach((response, index) => {
 
@@ -186,7 +193,7 @@ function updateEventsUI() {
     </div>
 </div>`;
 
-        responseList.innerHTML = responseHtml + responseList.innerHTML;
+        responsesListElem.innerHTML = responseHtml + responsesListElem.innerHTML;
         responseCountElem.innerHTML = responses.length;
     })
 }
@@ -224,11 +231,10 @@ function getActionTypeColor(type) {
  * @returns {void}
  */
 function renderPatternsList() {
-    const container = patternsListElem;
-    container.innerHTML = '';
+    patternsListElem.innerHTML = '';
 
     if (!patterns.length) {
-        container.innerHTML = `<div class="text-center py-8 text-slate-500 text-sm">No patterns defined yet.<br>Click "New Pattern" to begin.</div>`;
+        patternsListElem.innerHTML = `<div class="text-center py-8 text-slate-500 text-sm">No patterns defined yet.<br>Click "New Pattern" to begin.</div>`;
         return;
     }
 
@@ -282,7 +288,7 @@ function renderPatternsList() {
             </div>
         `;
 
-        container.appendChild(div);
+        patternsListElem.appendChild(div);
         filterPatterns();
         patternFilterCountElem.innerHTML = ++count;
         patternCountElem.innerHTML = count;
@@ -461,7 +467,7 @@ function importPatterns() {
  * @returns {void}
  */
 function resetToDefaults() {
-    if (!confirm('Reset all patterns to factory defaults?')) return;
+    if (!confirm(`Reset all patterns to factory defaults?\nPress Ok to reset back to default patterns: ${config.patterns}`)) return;
 
     loadPatterns(config.patterns);
 }
@@ -518,7 +524,6 @@ function clonePattern(id) {
     renderPatternsList();
 }
 
-
 /**
  * Opens edit pattern dialog for a given alias
  * @param {*} alias 
@@ -550,4 +555,75 @@ async function copyResponseToClipboard(responseId) {
         console.error('Failed to copy:', err);
         return false; // Failed
     }
+}
+
+/**
+ * Triggers a pattern and executes its associated action.
+ * @param {*} pattern 
+ * @param {*} metricValue
+ * @param {*} eeg
+ * @returns {void}
+ */
+function triggerPattern(pattern, metricValue, eeg) {
+    if (isEmpty(pattern)) throw new Error("Pattern is null or empty");
+    if (isEmpty(pattern.action)) throw new Error("Pattern action is null or empty");
+    if (isEmpty(pattern.action.type)) throw new Error("Pattern action type is null or empty");
+
+    pattern.lastTriggered = Date.now();
+    pattern.triggerCount = (pattern.triggerCount || 0) + 1;
+
+    renderPatternsList();
+    executePattern(pattern, metricValue, eeg);
+    renderPatternsList();
+}
+
+/**
+ * Triggers all patterns with a given alias
+ * @param {*} alias 
+ * @returns {void}
+ */
+function triggerAlias(alias) {
+    const result = patterns.filter((p) => p.alias === alias);
+    if (!result || result.length < 1) throw new Error(`Pattern not found with alias: ${alias}`);
+    result.forEach((p) => triggerPattern(p, null, eegBuffer));
+}
+
+
+/**
+ * Executes a pattern action
+ * @param {*} pattern 
+ * @param {*} eeg 
+ * @returns {void}
+ */
+function executePattern(pattern, metricValue, eeg) {
+    notifyStarted(pattern);
+    const actionType = pattern.action.type;
+    try {
+
+        switch (actionType) {
+            case ACTION_TYPE_JS: executeJSAction(pattern, eeg); break;
+            case ACTION_TYPE_URL: executeUrlAction(pattern, eeg); break;
+            case ACTION_TYPE_SDK: executeSDKAction(pattern, eeg); break;
+            case ACTION_TYPE_UDP: executeUDPAction(pattern), eeg; break;
+            case ACTION_TYPE_SHELL: executeShellAction(pattern, eeg); break;
+            case ACTION_TYPE_SOCKET: executeSocketAction(pattern, eeg); break;
+            case ACTION_TYPE_MQTT: executeMqttAction(pattern, eeg); break;
+            default: throw new Error(`Unknown action type: ${actionType}`);
+        }
+
+        addLogEntry(`${pattern.name} → ${actionType.toUpperCase()}`, LOG_TYPE_TRIGGER, pattern, pattern.metricValue);
+
+    } catch (e) {
+        console.error('Pattern execution error:', e);
+        addLogEntry(`${getPatternLogId(pattern)} failed: ${e.message}`, LOG_TYPE_ERROR);
+    }
+}
+
+/**
+ * Returns an id for the pattern
+ * @param {*} pattern 
+ * @returns {string}
+ */
+function getPatternLogId(pattern) {
+    return `[${pattern.name}] [${pattern.action.type.toUpperCase()}]`;
 }
