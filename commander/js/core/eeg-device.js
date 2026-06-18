@@ -40,6 +40,7 @@ let deviceInfo;
 let deviceStatus;
 let isDeviceConnected = false;
 let deviceData;
+let deviceInterval;
 
 /**
  * Disconnects the BrainBit client
@@ -61,7 +62,8 @@ async function disconnectFromEegDevice() {
             await brainbitClient.disconnect();
 
             showNotConnected();
-            
+            onDeviceDisconnected(deviceInfo);
+
         } catch (error) {
 
             if (error.message.includes("GATT Server is disconnected")) {
@@ -78,20 +80,13 @@ async function disconnectFromEegDevice() {
  */
 async function connectToEegDevice() {
 
+    onDeviceConnecting(null);
     await brainbitClient.connect();
 
     isDeviceConnected = true;
     deviceInfo = await brainbitClient.deviceInfo();
+    onDeviceConnected(deviceInfo);
     
-    showConnection();
-    showToast(`${deviceInfo.name} connected`, `Successfully connected to device: ${deviceInfo.name}`);
-
-    sampleRateElem.textContent = eegSimulationConfig.simulation.sampleRate + ' Hz';
-    setVisibility(sampleRateElem, true);
-
-    firmwareTextElem.innerHTML = deviceInfo.firmwareVersion;
-    deviceNameElem.innerHTML = deviceInfo.name;
-
     brainbitClient.eegStream.subscribe((data) => {
         deviceData = data;
     });
@@ -116,8 +111,6 @@ async function connectToEegDevice() {
     //await brainbitClient.startResistanceData();
 
     startDeviceInterval();
-
-    return true;
 }
 
 /**
@@ -229,4 +222,26 @@ function addToBufferAverage(data) {
         ch3: (data.val0_ch3 + data.val1_ch3) / 2 * multiplier,
         ch4: (data.val0_ch4 + data.val1_ch4) / 2 * multiplier
     });
+}
+
+
+/**
+ * Starts the device interval
+ */
+function startDeviceInterval() {
+    deviceInterval = setInterval(() => {
+        if (!isDeviceConnected || !deviceData) return;
+
+        handleDeviceAddToBuffer(deviceData);
+
+    }, 1000 / eegSimulationConfig.simulation.sampleRate * 4); // ~62.5ms per packet (4 samples simulated)
+}
+
+/**
+ * Clears the device interval
+ */
+function clearDeviceInterval() {
+    if (deviceInterval) {
+        clearInterval(deviceInterval);
+    }
 }

@@ -197,7 +197,7 @@ function showToast(title, detail, millis = 4000) {
 async function checkShellServerHealth() {
 
     const shellHost = config.shell.host;
-    addLogEntry(`Connecting to Shell Server at ${shellHost}...`, ACTION_TYPE_SHELL);
+    addLogEntry(`Looking for Shell Server at ${shellHost}...`, ACTION_TYPE_SHELL);
 
     try {
         const response = await fetch(shellHost + '/health');

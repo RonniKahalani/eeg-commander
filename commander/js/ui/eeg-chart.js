@@ -42,7 +42,6 @@ let chart = null;
 let eegBuffer = []; // {timestamp, ch1, ch2, ch3, ch4}
 let eegHighestPeak = 0;
 let eegLowestTrough = 0;
-let deviceInterval;
 
 /**
  * This script handles the simulation chart UI.
@@ -91,27 +90,6 @@ async function initChart() {
         },
         options: eegSimulationConfig.simulation.options
     });
-}
-
-/**
- * Starts the device interval
- */
-function startDeviceInterval() {
-    deviceInterval = setInterval(() => {
-        if (!isDeviceConnected || !deviceData) return;
-
-        handleDeviceAddToBuffer(deviceData);
-
-    }, 1000 / eegSimulationConfig.simulation.sampleRate * 4); // ~62.5ms per packet (4 samples simulated)
-}
-
-/**
- * Clears the device interval
- */
-function clearDeviceInterval() {
-    if (deviceInterval) {
-        clearInterval(deviceInterval);
-    }
 }
 
 /**

@@ -23,10 +23,10 @@ If you're running the shell server on a device remote from the Commander app, yo
 - Click <code>Go Live!</code> (requires the Live Server plugin).
 
 ## Checking the the app functions properly
-- Go to the bottom of the page (teh trigger log) and validate that the the app found the expected shell server.
-- Click the Patterns Tab. Are there any patterns? If not,  something went wrong. You should expect to se 7 patterns in the list.
+- Go to the bottom of the page (to the trigger log) and validate that the app found the expected shell server.
+- Click the Patterns Tab. Are there any patterns? If not, something went wrong. You should expect to se 7 patterns in the list.
 - Go to the EEG tab to test the simulation.
-- Click the Connect button in the top left, but cancel the Bluetooth dialog (then the simulation should start as a backup feature)
+- Click the Simulate button in the top right corner.
 - Select a pattern from the Patterns tab to enable, to test if it triggers.
 
 That should do the trick. If all tests went well you should be raedy to do something cool.
