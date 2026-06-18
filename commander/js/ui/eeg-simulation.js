@@ -40,7 +40,7 @@ function changeYScale(value) {
     chart.options.scales.y.suggestedMax = value;
     chart.options.scales.y.min = -value;
     chart.options.scales.y.max = value;
-    // chart.options.scales.y.ticks.stepSize = Math.max(10, Math.floor(value / 10));
+    chart.options.scales.y.ticks.stepSize = Math.max(10, Math.floor(value / 10));
     chart.update('none');
 }
 

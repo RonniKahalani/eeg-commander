@@ -82,7 +82,9 @@ async function connectToEegDevice() {
 
     isDeviceConnected = true;
     deviceInfo = await brainbitClient.deviceInfo();
+    
     showConnection();
+    showToast(`${deviceInfo.name} connected`, `Successfully connected to device: ${deviceInfo.name}`);
 
     sampleRateElem.textContent = eegSimulationConfig.simulation.sampleRate + ' Hz';
     setVisibility(sampleRateElem, true);
