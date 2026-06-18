@@ -112,7 +112,7 @@ function initLog() {
 function showDeviceInfo() {
 
     if (!isDeviceConnected) {
-        alert('No device connected.')
+        alert('No device connected.\nMake sure the device is already paired with your computer.\nClick the Connect button to connect your device.')
         return;
     }
 
@@ -126,7 +126,7 @@ function showDeviceInfo() {
  */
 async function checkShellServerHealth() {
     if (isEmpty(config.shell.host)) return;
-    
+
     const shellHost = config.shell.host;
     addLogEntry(`Looking for Shell Server at ${shellHost}...`, ACTION_TYPE_SHELL);
 

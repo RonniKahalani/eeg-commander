@@ -123,7 +123,7 @@ function onDeviceDisconnected(deviceInfo) {
     console.log(`EEG Device disconnected: ${deviceInfo.name}`);
 
     setVisibility(sampleRateElem, false);
-    deviceNameElem.innerHTML = 'Not connected';
+    deviceNameElem.innerHTML = 'No device connected';
     showNotConnected();
 
 }
