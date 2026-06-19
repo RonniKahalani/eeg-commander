@@ -50,10 +50,35 @@
 </head>
 
 <body class="bg-slate-900 text-slate-400 app-container min-h-screen">
-    <header></header>
+    <header>
+
+    </header>
 
     <nav class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-lg sticky top-0 z-50">
-        <div class="mx-auto px-6 py-4 flex items-center justify-between">
+            <!-- Connection Status Bar -->
+            <div class="p-4 pb-0 pt-2 mb-0 flex flex-col lg:flex-row lg:items-center gap-4 justify-end">
+
+                <!-- Device Info -->
+                <div id="device-info" class="lg:flex items-center gap-x-6 justify-center">
+
+                    <div class="flex items-center gap-x-1.5">
+                        <div id="device-channels" class="font-medium text-sm"></div>
+                        <div id="device-name" class="font-medium text-sm">No device connected</div>
+                        
+                    <button title="Show device info" id="device-info-btn" 
+                        class="pl-2 w-3 h-3 flex items-center justify-center bg-blue-900 hover:bg-blue-400 text-white rounded-2xl transition-all">
+                        <i class="fas fa-info-circle text-xl"></i>
+                    </button>
+                    </div>
+
+                    <div class="flex items-center gap-x-1.5 hidden">
+                        <div class="font-mono text-emerald-400 text-sm" id="sample-rate">250 Hz</div>
+                    </div>
+
+                </div>
+            </div>
+
+        <div class="mx-auto px-6 pb-4 flex items-center justify-between">
             <div class="flex items-center gap-x-3">
                 <div
                     class="w-11 h-11 bg-gradient-to-br from-orange-500 to-orange-900 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/30">
@@ -120,30 +145,6 @@
     <main>
 
         <div class="mx-auto px-6 pt-2 pb-3">
-
-            <!-- Connection Status Bar -->
-            <div class="p-4 mb-0 flex flex-col lg:flex-row lg:items-center gap-4 justify-center">
-
-                <!-- Device Info -->
-                <div id="device-info" class="lg:flex items-center gap-x-6 justify-center">
-
-                    <div class="flex items-center gap-x-1.5">
-                        <div id="device-channels" class="font-medium text-sm"></div>
-                        <div id="device-name" class="font-medium text-sm">No device connected</div>
-                        
-                    <button title="Show device info" id="device-info-btn" 
-                        class="pl-2 w-3 h-3 flex items-center justify-center bg-blue-900 hover:bg-blue-400 text-white rounded-2xl transition-all">
-                        <i class="fas fa-info-circle text-xl"></i>
-                    </button>
-                    </div>
-
-                    <div class="flex items-center gap-x-1.5 hidden">
-                        <div class="font-mono text-emerald-400 text-sm" id="sample-rate">250 Hz</div>
-                    </div>
-
-                </div>
-            </div>
-
 
             <div class="text-sm font-medium text-center text-body border-b border-orange-400 mb-3">
                 <ul class="flex flex-wrap -mb-px text-lg">
@@ -721,7 +722,7 @@
             <div id="tab-eeg" class="main-tab hidden">
                 <!-- LIVE VISUALIZATION -->
                 <div class="neuro-card rounded-3xl p-0 w-full">
-                    <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center justify-between mb-2">
                         <div>
                             <h2 class="font-semibold text-lg flex items-center gap-x-2">
                                 <i class="fa-solid fa-chart-line text-indigo-400"></i>
@@ -824,15 +825,15 @@
 
                     <div class="pt-2 flex gap-x-2 justify-center text-center">
                         <div class="flex-1 mt-3 text-xs">
-                            Average (of all channels)
+                            Average across channels
                         </div>
 
                         <div class="flex-1 mt-3 text-xs">
-                            Any Channel Peek
+                            Max. Channel Peek
                         </div>
 
                         <div class="flex-1 mt-3 text-xs">
-                            Any Channel Trough
+                            Min. Channel Trough
                         </div>
                     </div>
 

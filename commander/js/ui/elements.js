@@ -48,6 +48,7 @@ const responseDetailsIdElem = byId('response-details-id');
 
 const logContainer = byId('log-container');
 const patternFilterInput = byId('pattern-filter-input');
+const eegAnimationElem = byId('eeg-animation');
 
 const eegAvgElem = byId('eeg-avg');
 const eegPeakElem = byId('eeg-peak');

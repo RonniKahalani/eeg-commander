@@ -82,7 +82,7 @@ async function connectToEegDevice() {
     isDeviceConnected = true;
     deviceInfo = await brainbitClient.deviceInfo();
     onDeviceConnected(deviceInfo);
-    
+
     brainbitClient.eegStream.subscribe((data) => {
         deviceData = data;
     });
@@ -114,7 +114,7 @@ async function connectToEegDevice() {
  * @param {*} event 
  */
 function handleDeviceResistanceData(data) {
-    deviceResistanceData.push(data);
+    //deviceResistanceData.push(data);
     console.log('resistanceData', data);
 }
 

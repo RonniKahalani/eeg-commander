@@ -35,15 +35,6 @@ let eegSimulationConfig = null;
 let simulationInterval = null;
 let isSimulating = false;
 
-function changeYScale(value) {
-    chart.options.scales.y.suggestedMin = -value;
-    chart.options.scales.y.suggestedMax = value;
-    chart.options.scales.y.min = -value;
-    chart.options.scales.y.max = value;
-    chart.options.scales.y.ticks.stepSize = Math.max(10, Math.floor(value / 10));
-    chart.update('none');
-}
-
 /**
  * Initializes the EEG simulator
  */

@@ -187,7 +187,6 @@ function addToBuffer(data) {
     sendToHub(eegData);
     trimEegBuffer(timestamp);
 
-    // Update chart and metrics
     updateChart(data);
     updateLiveMetrics(data);
 
@@ -334,4 +333,17 @@ function eegToColor(data) {
   const lightness = 45 + (n4 * 20);                // Higher amplitude = brighter
 
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+}
+
+/**
+ * Changes the y-scale of the chart
+ * @param {*} value 
+ */
+function changeYScale(value) {
+    chart.options.scales.y.suggestedMin = -value;
+    chart.options.scales.y.suggestedMax = value;
+    chart.options.scales.y.min = -value;
+    chart.options.scales.y.max = value;
+    chart.options.scales.y.ticks.stepSize = Math.max(10, Math.floor(value / 10));
+    chart.update('none');
 }
