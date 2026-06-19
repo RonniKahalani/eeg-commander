@@ -115,8 +115,7 @@ function startSimulation() {
     simulationInterval = setInterval(() => {
         if (!isSimulating) return;
 
-        const data = generateSimulatedEEG(eegSimulationConfig);
-        addToBuffer(data);
+        addToBuffer( generateSimulatedEEG(eegSimulationConfig));
 
     }, 1000 / eegSimulationConfig.simulation.sampleRate * 4); // ~62.5ms per packet (4 samples simulated)
 
