@@ -85,7 +85,7 @@ function handleOnMessage(data, ws) {
         }
 
         entry.messages.push(message);
-        entry.file.write(`${message.timestamp}, ${message.ch1}, ${message.ch2}, ${message.ch3}, ${message.ch4}\n`);
+        entry.file.write(`${message.timestamp},${message.ch1},${message.ch2},${message.ch3},${message.ch4}\n`);
 }
 
 /**

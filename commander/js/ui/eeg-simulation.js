@@ -101,21 +101,22 @@ function generateSimulatedEEG(config) {
 function startSimulation() {
     if (isSimulating) return;
 
+    if (isDeviceConnected) {
+        const doDisconnect = confirm("A Bluetooth device is connected.\n\nPress Ok to disconnect from device to use simulation.");
+        if (!doDisconnect) return;
+
+        disconnectDevice();
+    }
+
     isSimulating = true;
     simTextElem.textContent = 'Stop';
     simIconElem.classList.remove('fa-play');
     simIconElem.classList.add('fa-stop', 'text-red-400');
 
-    if (isDeviceConnected) {
-        if (confirm("A Bluetooth device is connected.\n\nPress Ok to disconnect from device and use simulation.")) {
-            disconnectDevice();
-        }
-    }
-
     simulationInterval = setInterval(() => {
         if (!isSimulating) return;
 
-        addToBuffer( generateSimulatedEEG(eegSimulationConfig));
+        addToBuffer(generateSimulatedEEG(eegSimulationConfig));
 
     }, 1000 / eegSimulationConfig.simulation.sampleRate * 4); // ~62.5ms per packet (4 samples simulated)
 
