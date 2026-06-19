@@ -31,11 +31,6 @@ SOFTWARE.
  * This script handles executing actions.
  */
 
-const OPERATOR_GT = '>';
-const OPERATOR_LT = '<';
-const OPERATOR_GT_OR_EQ = '>=';
-const OPERATOR_LT_OR_EQ = '<=';
-
 const DEFAULT_TIMEOUT = 5; // seconds
 const DEFAULT_REPLIES = 1; // seconds
 
@@ -183,9 +178,7 @@ function executeMqttAction(pattern, eeg) {
         if (client && client.connected) { client.end(); client = null; }
     });
 
-    client.on('close', () => {
-        console.log('🔌 Connection closed');
-    });
+    client.on('close', () => console.log('🔌 Connection closed'));
 }
 
 /**
@@ -478,53 +471,3 @@ function getMetricValue(samples, channel, metric) {
         default: return values.reduce((sum, v) => sum + Math.abs(v), 0) / values.length;
     }
 }
-
-/**
- * Checks all defined patterns against the current EEG data to see if they should trigger.
- * @param eeg
- * @returns {void}
- */
-function checkAllPatterns(eeg) {
-    if (!eeg.length || !patterns.length) return;
-
-    const now = Date.now();
-
-    patterns.forEach(pattern => {
-        if (!pattern.enabled) return;
-
-        // Check cooldown
-        if (now - pattern.lastTriggered < pattern.cooldown * 1000) return;
-
-        // Get recent samples within duration window
-        const durationMs = pattern.condition.duration * 1000;
-        const recentSamples = eeg.filter(d => now - d.timestamp <= durationMs);
-
-        if (recentSamples.length < 5) return; // not enough data
-
-        const metricValue = getMetricValue(recentSamples, pattern.condition.channel, pattern.condition.metric);
-        const threshold = pattern.condition.threshold;
-        const operator = pattern.condition.operator;
-
-        if (isConditionMet(metricValue, operator, threshold)) {
-            triggerPattern(pattern, metricValue, eeg);
-        }
-    });
-}
-
-/**
- * Checks to see if the trigger condition is met
- * @param {*} metricValue 
- * @param {*} operator 
- * @param {*} threshold 
- * @returns {boolean}
- */
-function isConditionMet(metricValue, operator, threshold) {
-    switch (operator) {
-        case OPERATOR_GT: return metricValue > threshold;
-        case OPERATOR_LT: return metricValue < threshold;
-        case OPERATOR_GT_OR_EQ: return metricValue >= threshold;
-        case OPERATOR_LT_OR_EQ: return metricValue <= threshold;
-        default: throw new Error(`Unknown operator: ${operator}`);
-    }
-}
-

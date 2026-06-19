@@ -49,13 +49,18 @@ let clients = new Map();
 const wss = new WebSocketServer({ port: config.port || 8885 });
 wss.on('connection', (ws, req) => {
 
-    ws.on('open', () => {
-        console.log("Server is up. Let's make some noise!.");
-    });
+    ws.on('open', () => console.log("Server is up. Let's make some noise!."));
+    ws.on('message', (data) => handleOnMessage(data, ws));
+    ws.on('close', () => handleClientDisconnect(ws.deviceId));
+});
 
-    ws.on('message', (data) => {
-
-        const dataStr = data.toString();
+/**
+ * Handles the on message event
+ * @param {*} data 
+ * @param {*} ws 
+ */
+function handleOnMessage(data, ws) {
+    const dataStr = data.toString();
         const message = JSON.parse(dataStr);
         const id = message.id;
         ws.deviceId = id;
@@ -67,7 +72,7 @@ wss.on('connection', (ws, req) => {
         let entry;
         if (!clients.has(id)) {
 
-            const logFilePath = path.join(config.logFolder, `eeg-hub-${id}-${createFileDateFormat()}.log`);
+            const logFilePath = path.join(config.logFolder, `eeg-${id}-${createFileDateFormat()}.csv`);
             const file = fs.createWriteStream(logFilePath, { flags: 'a' }) // 'a' = append
 
             entry = { messages: [], socket: ws, file: file };
@@ -81,10 +86,7 @@ wss.on('connection', (ws, req) => {
 
         entry.messages.push(message);
         entry.file.write(`${message.timestamp}, ${message.ch1}, ${message.ch2}, ${message.ch3}, ${message.ch4}\n`);
-    });
-
-    ws.on('close', () => handleClientDisconnect(ws.deviceId));
-});
+}
 
 /**
  * Removes the client from the list, closes its file

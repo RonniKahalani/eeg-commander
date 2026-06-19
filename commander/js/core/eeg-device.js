@@ -220,7 +220,6 @@ function addToBufferAverage(data) {
     });
 }
 
-
 /**
  * Starts the device interval
  */

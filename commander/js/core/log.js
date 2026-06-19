@@ -1,5 +1,4 @@
 "use strict"
-
 /*
 Copyright (c) 2026 Ronni Kahalani
 
@@ -47,7 +46,6 @@ let logEntries = [];
  * @returns {void} 
  */
 function addLogEntry(message, type = LOG_TYPE_INFO, pattern = null, metric = null) {
-    const container = byId('log-container');
     const logTime = new Date().toLocaleTimeString();
 
     let html = `<div class="log-entry flex items-start gap-x-3 py-1.5 px-3 border-l-2 `;
@@ -71,16 +69,16 @@ function addLogEntry(message, type = LOG_TYPE_INFO, pattern = null, metric = nul
     html += `</span></div>`;
 
     // Remove initial placeholder if present
-    if (container.children.length === 1 && container.children[0].classList.contains('italic')) {
-        container.innerHTML = '';
+    if (logContainer.children.length === 1 && logContainer.children[0].classList.contains('italic')) {
+        logContainer.innerHTML = '';
     }
 
-    container.insertAdjacentHTML('beforeend', html);
-    container.scrollTop = container.scrollHeight;
+    logContainer.insertAdjacentHTML('beforeend', html);
+    logContainer.scrollTop = logContainer.scrollHeight;
 
     // Keep only last 18 entries
-    while (container.children.length > 18) {
-        container.removeChild(container.children[0]);
+    while (logContainer.children.length > 18) {
+        logContainer.removeChild(logContainer.children[0]);
     }
 
     logEntries.push({ logTime, message, type });
@@ -91,7 +89,6 @@ function addLogEntry(message, type = LOG_TYPE_INFO, pattern = null, metric = nul
  * @returns {void}
  */
 function clearLog() {
-    const container = byId('log-container');
-    container.innerHTML = `<div class="text-slate-500 italic px-2 py-4 text-center">Log cleared. New triggers will appear here.</div>`;
+    logContainer.innerHTML = `<div class="text-slate-500 italic px-2 py-4 text-center">Log cleared. New triggers will appear here.</div>`;
     logEntries = [];
 }
