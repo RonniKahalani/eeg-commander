@@ -58,6 +58,7 @@ canvas {
 iframe {
     border: 1px solid #334155;
     border-radius: 30px;
+    min-height: 450px;
 }
 
 .pattern-row {
@@ -299,6 +300,7 @@ iframe {
 }
 
 #video-container {
+    min-height: 450px;
     width: 100%;
     max-width: 1200px;
     padding-bottom: 0px;
