@@ -1,5 +1,4 @@
 "use strict"
-
 /*
 Copyright (c) 2026 Ronni Kahalani
 
@@ -125,5 +124,4 @@ function onDeviceDisconnected(deviceInfo) {
     setVisibility(sampleRateElem, false);
     deviceNameElem.innerHTML = 'No device connected';
     showNotConnected();
-
 }
