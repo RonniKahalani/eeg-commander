@@ -31,6 +31,10 @@ SOFTWARE.
  * This script handles executing actions.
  */
 
+const BEARER_DEMO_API_KEY = 'Bearer Demo-API-Key';
+
+const HTTP_METHOD_POST = 'POST';
+
 const ACTION_DEFAULT_TIMEOUT = 5; // seconds
 const ACTION_DEFAULT_REPLIES = 1; // seconds
 
@@ -57,14 +61,12 @@ async function executeUDPAction(pattern, eeg) {
     let response = [];
 
     const settings = {
-        method: 'POST',
-        headers: {
-            // TODO: Replace with actual API key management in shell server. For demo purposes, we use a hardcoded key that matches the default config in shell-server.js.
-            HTTP_HEADER_AUTHORIZATION: `Bearer sk_live_demo1234567890abcdef`,
-            HTTP_HEADER_CONTENT_TYPE: HTTP_HEADER_CONTENT_TYPE_JSON
-        },
+        method: HTTP_METHOD_POST,
+        headers: {},
         body: JSON.stringify({ command: pattern.action.payload, type: ACTION_TYPE_UDP, sender: pattern.name })
-    }
+    };
+    settings.headers[HTTP_HEADER_AUTHORIZATION] = BEARER_DEMO_API_KEY;
+    settings.headers[HTTP_HEADER_CONTENT_TYPE] = HTTP_HEADER_CONTENT_TYPE_JSON;
 
     try {
         const response = await fetch(config.shell.host + '/execute', settings);
@@ -342,14 +344,12 @@ async function executeShellAction(pattern, eeg) {
 
     const task = taskStarted({ pattern: pattern, eeg: eeg });
     const response = await fetch(pattern.action.payload.host + '/execute', {
-        method: 'POST',
-        headers: {
-            // TODO: Replace with actual API key management in shell server. For demo purposes, we use a hardcoded key that matches the default config in shell-server.js.
-            HTTP_HEADER_AUTHORIZATION: `Bearer sk_live_demo1234567890abcdef`,
-            HTTP_HEADER_CONTENT_TYPE: HTTP_HEADER_CONTENT_TYPE_JSON
-        },
+        method: HTTP_METHOD_POST,
+        headers: {},
         body: JSON.stringify({ command: pattern.action.payload.command, type: ACTION_TYPE_SHELL, sender: pattern.name })
     });
+    settings.headers[HTTP_HEADER_AUTHORIZATION] = BEARER_DEMO_API_KEY;
+    settings.headers[HTTP_HEADER_CONTENT_TYPE] = HTTP_HEADER_CONTENT_TYPE_JSON;
 
     const data = await response.json();
     if (response.ok) {
@@ -378,9 +378,7 @@ async function executeUrlAction(pattern, eeg) {
 
     const settings = {
         method: payload.method || 'GET',
-        headers: {
-            HTTP_HEADER_CONTENT_TYPE: HTTP_HEADER_CONTENT_TYPE_JSON,
-        }
+        headers: {}
     };
 
     // If its a POST with a body, include it in the request
