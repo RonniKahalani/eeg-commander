@@ -26,6 +26,67 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+
+const deviceInfoElem = byId('device-info');
+const deviceNameElem = byId('device-name');
+const deviceChannelsElem = byId('device-channels');
+const sampleRateElem = byId('sample-rate');
+const batteryBarElem = byId('battery-bar');
+const batteryTextElem = byId('battery-text');
+
+const simTextElem = byId('sim-text');
+const simIconElem = byId('sim-icon');
+
+const logContainer = byId('log-container');
+const patternFilterInput = byId('pattern-filter-input');
+const eegAnimationElem = byId('eeg-animation');
+
+const eegAvgElem = byId('eeg-avg');
+const eegPeakElem = byId('eeg-peak');
+const eegTroughElem = byId('eeg-trough');
+
+const yScaleSelect = document.getElementById('yScale');
+yScaleSelect.addEventListener('change', (e) => changeYScale(parseInt(e.target.value)));
+
+const connectDeviceBtn = byId('connect-btn');
+connectDeviceBtn.addEventListener('pointerup', async (event) => await connectDevice(event));
+
+const disconnectDeviceBtn = byId('disconnect-btn');
+disconnectDeviceBtn.addEventListener('pointerup', async (event) => await disconnectDevice(event));
+
+const deviceInfoBtn = byId('device-info-btn');
+deviceInfoBtn.addEventListener('pointerup', async (event) => showDeviceInfo());
+
+const patternNameElem = byId('pattern-name');
+const patternAliasElem = byId('pattern-alias');
+const patternDescriptionElem = byId('pattern-description');
+const patternConditionChannelElem = byId('condition-channel');
+const patternConditionOperatorElem = byId('condition-operator');
+const patternConditionThresholdElem = byId('condition-threshold');
+const patternConditionDurationElem = byId('condition-duration');
+const patternConditionCooldownElem = byId('condition-cooldown');
+const patternEnabledElem = byId('pattern-enabled');
+const patternActionTypeElem = byId('action-type');
+const patternFilterCountElem = byId('pattern-filter-count');
+const patternCountElem = byId('pattern-count');
+const patternsListElem = byId('patterns-list');
+
+const responseDetailsDataElem = byId("response-details-data");
+const responseDetailsErrorElem = byId("response-details-error");
+const responseDetailsIdElem = byId("response-details-id");
+const responseDetailsSuccessElem = byId("response-details-success");
+const responseDetailsStarttimeElem = byId("response-details-starttime");
+const responseDetailsEndtimeElem = byId("response-details-endtime");
+const responseDetailsJsonElem = byId("response-details-json");
+const responseCountElem = byId('response-count');
+const responsesListElem = byId('responses-list');
+
+const brainLogoElem = byId('brain-icon');
+brainLogoElem.addEventListener('click', (event) => doEasterEgg(event));
+
+const muteIcon = document.getElementById('mute-icon');
+const unmuteIcon = document.getElementById('unmute-icon');
+
 /**
  * Triggers an easter egg action
  * @param {*} event 

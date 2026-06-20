@@ -31,8 +31,12 @@ SOFTWARE.
  * This script handles executing actions.
  */
 
-const DEFAULT_TIMEOUT = 5; // seconds
-const DEFAULT_REPLIES = 1; // seconds
+const ACTION_DEFAULT_TIMEOUT = 5; // seconds
+const ACTION_DEFAULT_REPLIES = 1; // seconds
+
+const HTTP_HEADER_AUTHORIZATION = 'Authorization';
+const HTTP_HEADER_CONTENT_TYPE = 'Content-Type';
+const HTTP_HEADER_CONTENT_TYPE_JSON = 'application/json';
 
 /**
  * Executes a UDP action by sending a request to a Shell Server, which then sends the UDP message. This is done to bypass browser restrictions on UDP.
@@ -56,8 +60,8 @@ async function executeUDPAction(pattern, eeg) {
         method: 'POST',
         headers: {
             // TODO: Replace with actual API key management in shell server. For demo purposes, we use a hardcoded key that matches the default config in shell-server.js.
-            'Authorization': `Bearer sk_live_demo1234567890abcdef`,
-            'Content-Type': 'application/json'
+            HTTP_HEADER_AUTHORIZATION: `Bearer sk_live_demo1234567890abcdef`,
+            HTTP_HEADER_CONTENT_TYPE: HTTP_HEADER_CONTENT_TYPE_JSON
         },
         body: JSON.stringify({ command: pattern.action.payload, type: ACTION_TYPE_UDP, sender: pattern.name })
     }
@@ -93,7 +97,7 @@ function executeMqttAction(pattern, eeg) {
     if (isEmpty(pattern.action.payload.topic)) throw new Error("Pattern action payload topic is null or empty");
     if (isEmpty(pattern.action.payload.quality)) throw new Error("Pattern action payload quality is null or empty");
     if (isEmpty(pattern.action.payload.message)) throw new Error("Pattern action payload message is null or empty");
-    if (isEmpty(pattern.action.payload.timeout)) pattern.action.payload.timeout = DEFAULT_TIMEOUT;
+    if (isEmpty(pattern.action.payload.timeout)) pattern.action.payload.timeout = ACTION_DEFAULT_TIMEOUT;
     if (isEmpty(pattern.action.payload.replies)) pattern.action.payload.replies = 0;
     // Value definition for the replies property, 0 = fire-and-forget, 1 = single reply, 5 = collect up to 5, or timeout.
 
@@ -195,7 +199,7 @@ function executeSocketAction(pattern, eeg) {
     if (isEmpty(pattern.action.payload)) throw new Error("Pattern action payload is null or empty");
     if (isEmpty(pattern.action.payload.host)) throw new Error("Pattern action payload host is null or empty");
     if (isEmpty(pattern.action.payload.message)) throw new Error("Pattern action payload message is null or empty");
-    if (isEmpty(pattern.action.payload.timeout)) pattern.action.payload.timeout = DEFAULT_TIMEOUT;
+    if (isEmpty(pattern.action.payload.timeout)) pattern.action.payload.timeout = ACTION_DEFAULT_TIMEOUT;
     if (isEmpty(pattern.action.payload.replies)) pattern.action.payload.replies = 0;
     // Value definition for the replies property, 0 = fire-and-forget, 1 = single reply, 5 = collect up to 5, or timeout.
 
@@ -341,8 +345,8 @@ async function executeShellAction(pattern, eeg) {
         method: 'POST',
         headers: {
             // TODO: Replace with actual API key management in shell server. For demo purposes, we use a hardcoded key that matches the default config in shell-server.js.
-            'Authorization': `Bearer sk_live_demo1234567890abcdef`,
-            'Content-Type': 'application/json'
+            HTTP_HEADER_AUTHORIZATION: `Bearer sk_live_demo1234567890abcdef`,
+            HTTP_HEADER_CONTENT_TYPE: HTTP_HEADER_CONTENT_TYPE_JSON
         },
         body: JSON.stringify({ command: pattern.action.payload.command, type: ACTION_TYPE_SHELL, sender: pattern.name })
     });
@@ -375,7 +379,7 @@ async function executeUrlAction(pattern, eeg) {
     const settings = {
         method: payload.method || 'GET',
         headers: {
-            'Content-Type': 'application/json',
+            HTTP_HEADER_CONTENT_TYPE: HTTP_HEADER_CONTENT_TYPE_JSON,
         }
     };
 
@@ -385,11 +389,11 @@ async function executeUrlAction(pattern, eeg) {
     }
 
     if (payload.authorization) {
-        settings.headers['Authorization'] = payload.authorization;
+        settings.headers[HTTP_HEADER_AUTHORIZATION] = payload.authorization;
     }
 
     if (payload.contentType) {
-        settings.headers['Content-Type'] = payload.contentType;
+        settings.headers[HTTP_HEADER_CONTENT_TYPE] = payload.contentType;
     }
 
     try {
