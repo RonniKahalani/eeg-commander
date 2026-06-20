@@ -1,5 +1,4 @@
 "use strict"
-
 /*
 Copyright (c) 2026 Ronni Kahalani
 
