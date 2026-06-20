@@ -82,3 +82,6 @@ const responsesListElem = byId('responses-list');
 
 const brainLogoElem = byId('brain-icon');
 brainLogoElem.addEventListener('click', (event) => doEasterEgg(event));
+
+const muteIcon = document.getElementById('mute-icon');
+const unmuteIcon = document.getElementById('unmute-icon');

@@ -30,17 +30,27 @@ SOFTWARE.
 /**
  * This script handles the commander UI and functionality.
  */
-const LOCAL_STORAGE_PATTERNS = 'patterns';
 const LOCAL_STORAGE_MUTED = 'muted';
 
 let isMuted = false;
 let config;
 
 /**
+ * Toggles the mute status of the application, which can be used to disable sound notifications or other audio feedback.
+ * @returns {void}
+ */
+function toggleMute() {
+    isMuted = !isMuted;
+    localStorage.setItem(LOCAL_STORAGE_MUTED, isMuted);
+    onMuteChanged(isMuted)
+}
+
+/**
  * Initializes the mute feature
  */
 function initMuted() {
-    setMuted(localStorage.getItem(LOCAL_STORAGE_MUTED) === 'true');
+   isMuted = localStorage.getItem(LOCAL_STORAGE_MUTED) === 'true';
+   onMuteChanged(isMuted);
 }
 
 /**
@@ -48,35 +58,6 @@ function initMuted() {
  */
 function initPatternFilter() {
     patternFilterInput.value = '';
-}
-
-/**
- * Initializes a logo click listener for an easter egg
- */
-function initLogoListener() {
-    // Easter egg: click logo to trigger random pattern
-    const logo = document.querySelector('.fa-brain');
-    if (logo) {
-        logo.style.cursor = 'pointer';
-        logo.addEventListener('click', () => {
-            if (patterns.length > 0) {
-                const random = patterns[Math.floor(Math.random() * patterns.length)];
-                addLogEntry('Random test triggered', LOG_TYPE_SYSTEM);
-                triggerPattern(random, random.condition.threshold + 15);
-            }
-        });
-    }
-}
-
-/**
- * Initializes a demo tip
- */
-function initDemoTip() {
-    setTimeout(() => {
-        if (!isSimulating && patterns.length > 0) {
-            showTip('💡 Tip: Click <strong>Simulate</strong> to test patterns instantly', 5200);
-        }
-    }, 4500);
 }
 
 /**
@@ -177,15 +158,14 @@ async function initializeEverything() {
     initChart();
     initTaskInterval();
     initKeyboardListener();
-    initLogoListener();
-    initDemoTip();
     initPatternFilter();
-
     loadSavedPatterns();
     renderPatterns();
 
     console.log('%c[Commander] Web app initialized successfully. All systems nominal.', 'color:#64748b');
     console.log('%c[Hint] Press "/" to add a new pattern quickly.', 'color:#475569');
+
+    showTip('💡 Ready to serve...', 5200);
 }
 
 // Boot the app

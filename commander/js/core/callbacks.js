@@ -141,3 +141,8 @@ function onResponseChange(responses) {
 function onPatternChange(patterns) {
     renderPatterns(patterns, patternsListElem);
 }
+
+function onMuteChanged(muted) {
+    setVisibility(muteIcon, !muted)
+    setVisibility(unmuteIcon, muted);
+}

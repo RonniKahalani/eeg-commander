@@ -32,6 +32,7 @@ SOFTWARE.
  */
 const NO_TRIGGER_RESPONSES = '<div class="text-xs text-center text-gray-500">No trigger responses yet.</div>';
 const PATTERN_TRIGGER_DELAY_MILLIS = 180;
+const LOCAL_STORAGE_PATTERNS = 'patterns';
 
 const OPERATOR_GT = '>';
 const OPERATOR_LT = '<';

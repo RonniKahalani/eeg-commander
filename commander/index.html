@@ -83,7 +83,7 @@
             <div class="flex items-center gap-x-3">
                 <div
                     class="w-11 h-11 bg-gradient-to-br from-orange-500 to-orange-900 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/30">
-                    <i id="brain-icon" class="fa-solid fa-brain text-white text-3xl"></i>
+                    <i title="Click to run a random pattern" id="brain-icon" class="cursor-pointer fa-solid fa-brain text-white text-3xl"></i>
                 </div>
                 <div>
                     <h1 class="font-display text-3xl font-semibold tracking-tighter">EEG <span
@@ -99,14 +99,14 @@
                     class="text-gray-500 dark:text-gray-400 hover:text-blue-400 transition-colors"
                     :class="{ 'text-blue-400': isMuted }">
                     <!-- Volume On Icon -->
-                    <svg id="mute" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    <svg id="mute-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="w-6 h-6 hidden">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z">
                         </path>
                     </svg>
                     <!-- Volume Mute Icon -->
-                    <svg id="unmute" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    <svg id="unmute-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke-width="1.5" stroke="currentColor" class="w-6 h-6" hidden>
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M17.25 9.75L19.5 12m0 0l2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z">
