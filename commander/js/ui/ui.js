@@ -81,6 +81,11 @@ const responseDetailsJsonElem = byId("response-details-json");
 const responseCountElem = byId('response-count');
 const responsesListElem = byId('responses-list');
 
+const taskActivityElem = byId('task-activity');
+const responseSpinnerElem = byId('response-spinner');
+
+const actionTypeElem = byId('action-type');
+
 const brainLogoElem = byId('brain-icon');
 brainLogoElem.addEventListener('click', (event) => doEasterEgg(event));
 
