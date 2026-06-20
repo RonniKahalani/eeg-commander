@@ -32,6 +32,7 @@ SOFTWARE.
  */
 const NO_TRIGGER_RESPONSES = '<div class="text-xs text-center text-gray-500">No trigger responses yet.</div>';
 const PATTERN_TRIGGER_DELAY_MILLIS = 180;
+const LOCAL_STORAGE_PATTERNS = 'patterns';
 
 const OPERATOR_GT = '>';
 const OPERATOR_LT = '<';
@@ -45,6 +46,15 @@ const ACTION_TYPE_UDP = 'udp';
 const ACTION_TYPE_SHELL = 'shell';
 const ACTION_TYPE_SOCKET = 'socket';
 const ACTION_TYPE_MQTT = 'mqtt';
+
+const actionSettings = new Map();
+actionSettings.set(ACTION_TYPE_JS, { color: 'bg-yellow-800', execute: executeJSAction });
+actionSettings.set(ACTION_TYPE_UDP, { color: 'bg-red-800', execute: executeUDPAction });
+actionSettings.set(ACTION_TYPE_URL, { color: 'bg-green-800', execute: executeUrlAction });
+actionSettings.set(ACTION_TYPE_SDK, { color: 'bg-orange-800', execute: executeSDKAction });
+actionSettings.set(ACTION_TYPE_SHELL, { color: 'bg-slate-600', execute: executeShellAction });
+actionSettings.set(ACTION_TYPE_SOCKET, { color: 'bg-blue-800', execute: executeSocketAction });
+actionSettings.set(ACTION_TYPE_MQTT, { color: 'bg-violet-800', execute: executeMqttAction });
 
 let patterns = [];
 let responses = [];
@@ -114,16 +124,8 @@ function addResponse(task, pattern, data, err = null) {
  * @returns {string} Tailwind CSS class for the background color associated with the action type.
  */
 function getActionTypeColor(type) {
-    switch (type) {
-        case ACTION_TYPE_JS: return 'bg-yellow-800';
-        case ACTION_TYPE_UDP: return 'bg-red-800';
-        case ACTION_TYPE_URL: return 'bg-green-800';
-        case ACTION_TYPE_SDK: return 'bg-orange-800';
-        case ACTION_TYPE_SHELL: return 'bg-slate-600';
-        case ACTION_TYPE_SOCKET: return 'bg-blue-800';
-        case ACTION_TYPE_MQTT: return 'bg-violet-800';
-        default: throw new Error(`Unknown action type ${type}`);
-    }
+    if (!actionSettings.has(type)) throw new Error(`Unknown action type ${type}`);
+    return actionSettings.get(type).color;
 }
 
 /**
@@ -147,10 +149,9 @@ function filterPatterns(filter) {
 
     let count = 0;
     Array.from(patternRows).forEach(row => {
-        const pattern = findPattern(row.id);
-        const matched = matchesPatternFilter(pattern, searchTerm);
-        setVisibility(row, matched);
-        if (matched) { count++; }
+        const matches = matchesPatternFilter(findPattern(row.id), searchTerm);
+        setVisibility(row, matches);
+        if (matches) { count++; }
     });
 
     patternFilterCountElem.innerHTML = count;
@@ -403,7 +404,6 @@ function triggerPattern(pattern, metricValue, eeg) {
     pattern.lastTriggered = Date.now();
     pattern.triggerCount = (pattern.triggerCount || 0) + 1;
 
-    // onPatternChange(patterns);
     executePattern(pattern, metricValue, eeg);
     onPatternChange(patterns);
 }
@@ -419,7 +419,6 @@ function triggerAlias(alias) {
     result.forEach((p) => triggerPattern(p, null, eegBuffer));
 }
 
-
 /**
  * Executes a pattern action
  * @param {*} pattern 
@@ -429,19 +428,12 @@ function triggerAlias(alias) {
 function executePattern(pattern, metricValue, eeg) {
     notifyStarted(pattern);
     const actionType = pattern.action.type;
+
+    if (!actionSettings.has(actionType)) throw new Error(`Unknown action type ${type}`);
+
     try {
 
-        switch (actionType) {
-            case ACTION_TYPE_JS: executeJSAction(pattern, eeg); break;
-            case ACTION_TYPE_URL: executeUrlAction(pattern, eeg); break;
-            case ACTION_TYPE_SDK: executeSDKAction(pattern, eeg); break;
-            case ACTION_TYPE_UDP: executeUDPAction(pattern), eeg; break;
-            case ACTION_TYPE_SHELL: executeShellAction(pattern, eeg); break;
-            case ACTION_TYPE_SOCKET: executeSocketAction(pattern, eeg); break;
-            case ACTION_TYPE_MQTT: executeMqttAction(pattern, eeg); break;
-            default: throw new Error(`Unknown action type: ${actionType}`);
-        }
-
+        actionSettings.get(actionType).execute(pattern, eeg);
         addLogEntry(`${pattern.name} → ${actionType.toUpperCase()}`, LOG_TYPE_TRIGGER, pattern, pattern.metricValue);
 
     } catch (e) {

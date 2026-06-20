@@ -216,32 +216,6 @@ function setVisibility(elem, visible) {
 }
 
 /**
- * Toggles the mute status of the application, which can be used to disable sound notifications or other audio feedback.
- * @returns {void}
- */
-function toggleMute() {
-    setMuted(!isMuted);
-}
-
-/**
- * Set the mute status and update the UI accordingly.
- * @param {*} muted 
- */
-function setMuted(muted) {
-    isMuted = muted;
-    localStorage.setItem(LOCAL_STORAGE_MUTED, isMuted);
-    const mute = document.getElementById('mute');
-    const unmute = document.getElementById('unmute');
-    if (muted) {
-        setVisibility(mute, false)
-        setVisibility(unmute, true);
-    } else {
-        setVisibility(mute, true);
-        setVisibility(unmute, false);
-    }
-}
-
-/**
  * Returns a reference to a DOM element
  * @param {*} id 
  * @returns {Object}

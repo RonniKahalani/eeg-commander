@@ -95,8 +95,6 @@ function onPatternFail(response) {
  * @param {*} device 
  */
 function onDeviceConnected(deviceInfo) {
-    console.log(`EEG Device connected: ${deviceInfo.name}`);
-
     showConnected();
     showToast(`${deviceInfo.name} connected`, `Successfully connected to device: ${deviceInfo.name}`);
 
@@ -111,7 +109,7 @@ function onDeviceConnected(deviceInfo) {
  * @param {*} deviceInfo 
  */
 function onDeviceConnecting(deviceInfo) {
-    console.log(`EEG Device connecting...`);
+
 }
 
 /**
@@ -119,8 +117,6 @@ function onDeviceConnecting(deviceInfo) {
  * @param {*} deviceInfo 
  */
 function onDeviceDisconnected(deviceInfo) {
-    console.log(`EEG Device disconnected: ${deviceInfo.name}`);
-
     setVisibility(sampleRateElem, false);
     deviceNameElem.innerHTML = 'No device connected';
     showNotConnected();
@@ -140,4 +136,9 @@ function onResponseChange(responses) {
  */
 function onPatternChange(patterns) {
     renderPatterns(patterns, patternsListElem);
+}
+
+function onMuteChanged(muted) {
+    setVisibility(muteIcon, !muted)
+    setVisibility(unmuteIcon, muted);
 }
