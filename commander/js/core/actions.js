@@ -33,6 +33,7 @@ SOFTWARE.
 
 const BEARER_DEMO_API_KEY = 'Bearer Demo-API-Key';
 
+const HTTP_METHOD_GET = 'GET';
 const HTTP_METHOD_POST = 'POST';
 
 const ACTION_DEFAULT_TIMEOUT = 5; // seconds
@@ -343,14 +344,15 @@ async function executeShellAction(pattern, eeg) {
     if (isEmpty(pattern.action.payload.command)) throw new Error("Pattern action payload command is null or empty");
 
     const task = taskStarted({ pattern: pattern, eeg: eeg });
-    const response = await fetch(pattern.action.payload.host + '/execute', {
+    const settings = {
         method: HTTP_METHOD_POST,
         headers: {},
         body: JSON.stringify({ command: pattern.action.payload.command, type: ACTION_TYPE_SHELL, sender: pattern.name })
-    });
+    }
     settings.headers[HTTP_HEADER_AUTHORIZATION] = BEARER_DEMO_API_KEY;
     settings.headers[HTTP_HEADER_CONTENT_TYPE] = HTTP_HEADER_CONTENT_TYPE_JSON;
 
+    const response = await fetch(pattern.action.payload.host + '/execute', settings);
     const data = await response.json();
     if (response.ok) {
         addResponse(task, pattern, data.stdout || data.stderr || '[no output]');
@@ -377,22 +379,13 @@ async function executeUrlAction(pattern, eeg) {
     const payload = pattern.action.payload;
 
     const settings = {
-        method: payload.method || 'GET',
+        method: payload.method || HTTP_METHOD_GET,
         headers: {}
     };
 
-    // If its a POST with a body, include it in the request
-    if (payload.body && payload.method === 'POST') {
-        settings.body = getAsString(payload.body);
-    }
-
-    if (payload.authorization) {
-        settings.headers[HTTP_HEADER_AUTHORIZATION] = payload.authorization;
-    }
-
-    if (payload.contentType) {
-        settings.headers[HTTP_HEADER_CONTENT_TYPE] = payload.contentType;
-    }
+    if (payload.authorization) { settings.headers[HTTP_HEADER_AUTHORIZATION] = payload.authorization; }
+    if (payload.contentType) { settings.headers[HTTP_HEADER_CONTENT_TYPE] = payload.contentType; }
+    if (payload.body && payload.method === HTTP_METHOD_POST) { settings.body = getAsString(payload.body); }
 
     try {
         const response = await fetch(payload.url, settings);

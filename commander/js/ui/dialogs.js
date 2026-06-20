@@ -26,6 +26,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+const patternModalElem = byId('pattern-modal');
+
+const actionUrlBodyTypeElem = byId('action-url-body-section');
+
 let currentEditingId = null;
 
 /**
@@ -34,7 +38,7 @@ let currentEditingId = null;
 class PatternDialog {
 
     constructor() {
-        this.patternModal = byId('pattern-modal');
+        this.patternModal = patternModalElem;
     }
 
     /**
@@ -57,7 +61,7 @@ class PatternDialog {
      * @param {*} method 
      */
     handleUrlMethodSection(method) {
-        setVisibility(byId('action-url-body-section'), (method === 'POST'));
+        setVisibility(actionUrlBodyTypeElem, (method === 'POST'));
     }
 
     /**
@@ -67,37 +71,27 @@ class PatternDialog {
     savePattern() {
 
         const actionType = patternActionTypeElem.value;
-        let actionPayload = '';
+        if (!patternDialogSettings.has(actionType)) throw new Error(`Unknown action type: ${actionType}`);
 
-        // TODO: Add the missing cases for UDP and Socket actions
-        switch (actionType) {
-
-            case ACTION_TYPE_JS: actionPayload = this.updateJSPattern(); break;
-            case ACTION_TYPE_SHELL: actionPayload = this.updateShellPattern(); break;
-            case ACTION_TYPE_URL: actionPayload = this.updateURLPattern(); break;
-            case ACTION_TYPE_SDK: actionPayload = this.updateSDKPattern(); break;
-            case ACTION_TYPE_UDP: actionPayload = this.updateUDPPattern(); break;
-            case ACTION_TYPE_SOCKET: actionPayload = this.updateSocketPattern(); break;
-            case ACTION_TYPE_MQTT: actionPayload = this.updateMQTTPattern(); break;
-            default: throw new Error(`Unknown action type: ${actionType}`);
-        }
+        const test = patternDialogSettings.get(actionType);
+        const actionPayload = test.update();
 
         const newPattern = {
             id: currentEditingId || ('p' + Date.now()),
             name: patternNameElem.value.trim() || 'Unnamed Pattern',
             alias: patternAliasElem.value.trim() || 'Unnamed Alias',
-            description : patternDescriptionElem.value.trim() || '',
-            enabled : patternEnabledElem.checked,
-            condition: { 
-                channel: patternConditionChannelElem.value, 
-                metric: (patternConditionChannelElem.value === 'any' ? 'peak' : 'moving_avg_abs'), 
-                operator: patternConditionOperatorElem.value, 
-                threshold: parseInt(patternConditionThresholdElem.value), 
-                duration: parseInt(patternConditionDurationElem.value) 
+            description: patternDescriptionElem.value.trim() || '',
+            enabled: patternEnabledElem.checked,
+            condition: {
+                channel: patternConditionChannelElem.value,
+                metric: (patternConditionChannelElem.value === 'any' ? 'peak' : 'moving_avg_abs'),
+                operator: patternConditionOperatorElem.value,
+                threshold: parseInt(patternConditionThresholdElem.value),
+                duration: parseInt(patternConditionDurationElem.value)
             },
-            action: { 
-                type: actionType, 
-                payload: actionPayload 
+            action: {
+                type: actionType,
+                payload: actionPayload
             },
             cooldown: parseInt(patternConditionCooldownElem.value) || 5,
             lastTriggered: 0,
@@ -115,7 +109,7 @@ class PatternDialog {
         }
 
         this.close();
-        renderPatternsList();
+        onPatternChange();
 
         // Auto-save to localStorage as backup
         localStorage.setItem(LOCAL_STORAGE_PATTERNS, JSON.stringify(patterns));
@@ -216,7 +210,6 @@ class PatternDialog {
                 byId('action-mqtt-timeout').value = pattern.action.payload?.timeout || '';
                 byId('action-mqtt-replies').value = pattern.action.payload?.replies || '';
                 break;
-
         }
 
         this.updateActionFields();
@@ -228,23 +221,8 @@ class PatternDialog {
      * @returns {void}
      */
     updateActionFields() {
-        const type = byId('action-type').value;
-
         document.querySelectorAll('.action-panel').forEach(el => el.classList.add('hidden'));
-
-        let clazz;
-        switch (type) {
-            case ACTION_TYPE_JS: clazz = 'action-js'; break;
-            case ACTION_TYPE_SHELL: clazz = 'action-shell'; break;
-            case ACTION_TYPE_URL: clazz = 'action-url'; break;
-            case ACTION_TYPE_SDK: clazz = 'action-sdk'; break;
-            case ACTION_TYPE_UDP: clazz = 'action-udp'; break;
-            case ACTION_TYPE_SOCKET: clazz = 'action-socket'; break;
-            case ACTION_TYPE_MQTT: clazz = 'action-mqtt'; break;
-            default: throw new Error(`Unknown action type: ${type}`);
-        }
-
-        byId(clazz).classList.remove('hidden');
+        byId(`action-${actionTypeElem.value}`).classList.remove('hidden');
     }
 
     /**
@@ -353,3 +331,12 @@ class ResponseDialog {
 
 const patternDialog = new PatternDialog();
 const responseDialog = new ResponseDialog();
+
+const patternDialogSettings = new Map();
+patternDialogSettings.set(ACTION_TYPE_JS, { update: patternDialog.updateJSPattern });
+patternDialogSettings.set(ACTION_TYPE_SHELL, { update: patternDialog.updateShellPattern });
+patternDialogSettings.set(ACTION_TYPE_URL, { update: patternDialog.updateURLPattern });
+patternDialogSettings.set(ACTION_TYPE_SDK, { update: patternDialog.updateSDKPattern });
+patternDialogSettings.set(ACTION_TYPE_UDP, { update: patternDialog.updateUDPPattern });
+patternDialogSettings.set(ACTION_TYPE_SOCKET, { update: patternDialog.updateSocketPattern });
+patternDialogSettings.set(ACTION_TYPE_MQTT, { update: patternDialog.updateMQTTPattern });
