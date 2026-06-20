@@ -410,25 +410,6 @@ async function executeUrlAction(pattern, eeg) {
 }
 
 /**
- * Tests a pattern by simulating a matching metric value.
- * @param {*} id 
- * @returns {void}
- */
-function testPattern(id) {
-    const pattern = findPattern(id);
-    if (!pattern) return;
-
-    addLogEntry(`Manual test: ${pattern.name}`, LOG_TYPE_SYSTEM);
-
-    // Simulate a matching metric value
-    const fakeMetric = pattern.condition.threshold + (pattern.condition.operator === OPERATOR_GT || pattern.condition.operator === OPERATOR_GT_OR_EQ ? 12 : -8);
-
-    setTimeout(() => {
-        triggerPattern(pattern, fakeMetric);
-    }, 180);
-}
-
-/**
  * Runs the JS code and returns the value returned by the code
  * @param {*} code 
  * @param eeg

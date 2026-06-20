@@ -39,7 +39,8 @@
     <script type='text/javascript' defer src="/commander/js/ui/eeg-chart.js"></script>
     <script type='text/javascript' defer src="/commander/js/ui/eeg-simulation.js"></script>
     <script type='text/javascript' defer src="/commander/js/ui/dialogs.js"></script>
-
+    <script type='text/javascript' defer src="/commander/js/ui/ui.js"></script>
+    
     <script type='text/javascript' defer src="/commander/js/helper/three-helper.js"></script>
     <script type='text/javascript' defer src="/commander/js/helper/media-helper.js"></script>
     <script type='text/javascript' defer src="/commander/js/helper/ui-helper.js"></script>
@@ -82,7 +83,7 @@
             <div class="flex items-center gap-x-3">
                 <div
                     class="w-11 h-11 bg-gradient-to-br from-orange-500 to-orange-900 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/30">
-                    <i class="fa-solid fa-brain text-white text-3xl"></i>
+                    <i id="brain-icon" class="fa-solid fa-brain text-white text-3xl"></i>
                 </div>
                 <div>
                     <h1 class="font-display text-3xl font-semibold tracking-tighter">EEG <span

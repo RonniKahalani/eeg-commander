@@ -125,3 +125,19 @@ function onDeviceDisconnected(deviceInfo) {
     deviceNameElem.innerHTML = 'No device connected';
     showNotConnected();
 }
+
+/**
+ * Updates the events UI
+ * @param {*} response 
+ */
+function onResponseChange(responses) {
+    renderEvents(responses, responsesListElem);
+}
+
+/**
+ * Updates the patterns UI
+ * @param {*} pattern 
+ */
+function onPatternChange(patterns) {
+    renderPatterns(patterns, patternsListElem);
+}

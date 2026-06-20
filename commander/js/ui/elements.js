@@ -36,16 +36,6 @@ const batteryTextElem = byId('battery-text');
 const simTextElem = byId('sim-text');
 const simIconElem = byId('sim-icon');
 
-const responseCountElem = byId('response-count');
-const responsesListElem = byId('responses-list');
-
-const patternsListElem = byId('patterns-list');
-
-const patternFilterCountElem = byId('pattern-filter-count');
-const patternCountElem = byId('pattern-count');
-
-const responseDetailsIdElem = byId('response-details-id');
-
 const logContainer = byId('log-container');
 const patternFilterInput = byId('pattern-filter-input');
 const eegAnimationElem = byId('eeg-animation');
@@ -76,3 +66,19 @@ const patternConditionDurationElem = byId('condition-duration');
 const patternConditionCooldownElem = byId('condition-cooldown');
 const patternEnabledElem = byId('pattern-enabled');
 const patternActionTypeElem = byId('action-type');
+const patternFilterCountElem = byId('pattern-filter-count');
+const patternCountElem = byId('pattern-count');
+const patternsListElem = byId('patterns-list');
+
+const responseDetailsDataElem = byId("response-details-data");
+const responseDetailsErrorElem = byId("response-details-error");
+const responseDetailsIdElem = byId("response-details-id");
+const responseDetailsSuccessElem = byId("response-details-success");
+const responseDetailsStarttimeElem = byId("response-details-starttime");
+const responseDetailsEndtimeElem = byId("response-details-endtime");
+const responseDetailsJsonElem = byId("response-details-json");
+const responseCountElem = byId('response-count');
+const responsesListElem = byId('responses-list');
+
+const brainLogoElem = byId('brain-icon');
+brainLogoElem.addEventListener('click', (event) => doEasterEgg(event));
