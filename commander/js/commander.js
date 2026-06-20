@@ -182,7 +182,7 @@ async function initializeEverything() {
     initPatternFilter();
 
     loadSavedPatterns();
-    renderPatternsList();
+    renderPatterns();
 
     console.log('%c[Commander] Web app initialized successfully. All systems nominal.', 'color:#64748b');
     console.log('%c[Hint] Press "/" to add a new pattern quickly.', 'color:#475569');

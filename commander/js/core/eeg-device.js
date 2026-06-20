@@ -226,10 +226,16 @@ function addToBufferAverage(data) {
 function startDeviceInterval() {
     deviceInterval = setInterval(() => {
         if (!isDeviceConnected || !deviceData) return;
-
         handleDeviceAddToBuffer(deviceData);
+    }, getDeviceIntervalDelay());
+}
 
-    }, 1000 / eegSimulationConfig.simulation.sampleRate * 4); // ~62.5ms per packet (4 samples simulated)
+/**
+ * Returns the delay for device intervals
+ * @returns {number} The delay in millis
+ */
+function getDeviceIntervalDelay() {
+    return 1000 / eegSimulationConfig.simulation.sampleRate * 4; // ~62.5ms per packet (4 samples simulated)
 }
 
 /**

@@ -101,26 +101,47 @@ function generateSimulatedEEG(config) {
 function startSimulation() {
     if (isSimulating) return;
 
-    isSimulating = true;
-    simTextElem.textContent = 'Stop';
-    simIconElem.classList.remove('fa-play');
-    simIconElem.classList.add('fa-stop', 'text-red-400');
-
     if (isDeviceConnected) {
-        if (confirm("A Bluetooth device is connected.\n\nPress Ok to disconnect from device and use simulation.")) {
-            disconnectDevice();
-        }
+        const doDisconnect = confirm("A Bluetooth device is connected.\n\nPress Ok to disconnect from device to use simulation.");
+        if (!doDisconnect) return;
+
+        disconnectDevice();
     }
 
+    isSimulating = true;
+    updateSimulationButton();
     simulationInterval = setInterval(() => {
         if (!isSimulating) return;
 
-        const data = generateSimulatedEEG(eegSimulationConfig);
-        addToBuffer(data);
+        addToBuffer(generateSimulatedEEG(eegSimulationConfig));
 
-    }, 1000 / eegSimulationConfig.simulation.sampleRate * 4); // ~62.5ms per packet (4 samples simulated)
+    }, 1000 / eegSimulationConfig.simulation.sampleRate * 4); 
 
     addLogEntry('Simulation started — generating synthetic EEG data', 'system');
+}
+
+/**
+ * Returns the delay for simulation intervals
+ * @returns {number} The delay in millis
+ */
+function getSimulationIntervalDelay() {
+    return 1000 / eegSimulationConfig.simulation.sampleRate * 4; // ~62.5ms per packet (4 samples simulated)
+}
+
+/**
+ * Updates the simulation button
+ */
+function updateSimulationButton() {
+    if (isSimulating) {
+        simTextElem.textContent = 'Stop';
+        simIconElem.classList.remove('fa-play');
+        simIconElem.classList.add('fa-stop', 'text-red-400');
+
+    } else {
+        simTextElem.textContent = 'Simulate';
+        simIconElem.classList.add('fa-play');
+        simIconElem.classList.remove('fa-stop', 'text-red-400');
+    }
 }
 
 /**
@@ -134,10 +155,7 @@ function stopSimulation() {
     clearInterval(simulationInterval);
     simulationInterval = null;
 
-    simTextElem.textContent = 'Simulate';
-    simIconElem.classList.add('fa-play');
-    simIconElem.classList.remove('fa-stop', 'text-red-400');
-
+    updateSimulationButton();
     addLogEntry('Simulation stopped', 'system');
 }
 

@@ -89,6 +89,6 @@ function addLogEntry(message, type = LOG_TYPE_INFO, pattern = null, metric = nul
  * @returns {void}
  */
 function clearLog() {
-    logContainer.innerHTML = `<div class="text-slate-500 italic px-2 py-4 text-center">Log cleared. New triggers will appear here.</div>`;
+    logContainer.innerHTML = `<div class="text-slate-500 px-2 py-4 text-center">Log cleared.</div>`;
     logEntries = [];
 }
