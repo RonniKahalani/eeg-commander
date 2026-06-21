@@ -2,7 +2,9 @@
 # EEG Commander
 This web app offers a generic and declarative way to turn brain signal patterns into real-world actions.
 
-Please start with this presentation: [EEG Commander Introduction](https://docs.google.com/presentation/d/1lEOeM68fSkk5HG2CAB10j1WqsvjgeOr76yQdEa2zMGg/edit?usp=sharing).
+Please start with these
+- [Introduction](https://docs.google.com/presentation/d/1lEOeM68fSkk5HG2CAB10j1WqsvjgeOr76yQdEa2zMGg/edit?usp=sharing).
+- [Video](https://drive.google.com/file/d/1XCkEK5r91wmRx2MW0JrOTMw3NzlUWFCe/view?usp=sharing).
 
 ## The big question
 - Do I need to invest in an EEG device to be able to play with EEG Commander?
