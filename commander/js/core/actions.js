@@ -43,6 +43,23 @@ const HTTP_HEADER_AUTHORIZATION = 'Authorization';
 const HTTP_HEADER_CONTENT_TYPE = 'Content-Type';
 const HTTP_HEADER_CONTENT_TYPE_JSON = 'application/json';
 
+const ACTION_TYPE_JS = 'js';
+const ACTION_TYPE_URL = 'url';
+const ACTION_TYPE_SDK = 'sdk';
+const ACTION_TYPE_UDP = 'udp';
+const ACTION_TYPE_SHELL = 'shell';
+const ACTION_TYPE_SOCKET = 'socket';
+const ACTION_TYPE_MQTT = 'mqtt';
+
+const actionSettings = new Map();
+actionSettings.set(ACTION_TYPE_JS, { color: 'bg-yellow-800', execute: executeJSAction });
+actionSettings.set(ACTION_TYPE_UDP, { color: 'bg-red-800', execute: executeUDPAction });
+actionSettings.set(ACTION_TYPE_URL, { color: 'bg-green-800', execute: executeUrlAction });
+actionSettings.set(ACTION_TYPE_SDK, { color: 'bg-orange-800', execute: executeSDKAction });
+actionSettings.set(ACTION_TYPE_SHELL, { color: 'bg-slate-600', execute: executeShellAction });
+actionSettings.set(ACTION_TYPE_SOCKET, { color: 'bg-blue-800', execute: executeSocketAction });
+actionSettings.set(ACTION_TYPE_MQTT, { color: 'bg-violet-800', execute: executeMqttAction });
+
 /**
  * Executes a UDP action by sending a request to a Shell Server, which then sends the UDP message. This is done to bypass browser restrictions on UDP.
  * @param {*} pattern The pattern object containing the action with the UDP configuration.
