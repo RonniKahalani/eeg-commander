@@ -1,23 +1,23 @@
 # Patterns
 A pattern is a declaration of
 
-- General info like name, description, enabled etc.
-- Condition - When to trigger based on EEG signal patterns
-- Action - What to do when triggered like running code or sending data.
+- General info like name, alias, description, enabled etc.
+- Condition - When to trigger based on thresholds in the EEG data stream.
+- Action - What to do when triggered, like running JavaScript code or sending data via a specific integration technology.
 
 
 Patterns are used to trigger an action when its condition is matched up against an EEG data stream.
 
 ## Condition
 In this condition example the pattern will trigger its action when:
-- the average, across all channels, gets below (<) the specified threshold of 12 microvolts (µV) for a given duration (4) seconds.
+- the average, across all channels, gets below (<) the specified threshold (12 microvolts µV) for a given duration (4 seconds).
 
-The pattern will not trigger again until its cool down time (5) has passed.
+The pattern will not trigger again until its cool down time (5 seconds) has passed.
 
 ![Main Page](/docs/images/pattern-condition.png)
 
 ### What is Cooldown (seconds)?
-The Cooldown is a protection mechanism that prevents the same mental command from triggering too frequently.
+Cooldown is a protection mechanism that prevents the same pattern from triggering too frequently.
 
 | Use-Case                  | Recommanded Cooldown   | Reason |
 | --------------------------| :---------------------:| ------ |
@@ -29,7 +29,7 @@ The Cooldown is a protection mechanism that prevents the same mental command fro
 
 
 ## Action
-There are different types of actions, but common for them all is that they perform a front- or backend action.
+There are different types of actions, but common for them all is that they perform a frontend (JavaScript)- or backend (integration) action.
 
 ### Action types
 - [JavaScript](/docs/ACTIONS_JAVASCRIPT.md)
@@ -41,18 +41,19 @@ There are different types of actions, but common for them all is that they perfo
 - [SDK features](/docs/ACTIONS_SDK.md)
 
 ## Patterns Tab
-Lists defined EEG patterns. A pattern consist of a condition and an action.
+Lists all the defined patterns.
+
 Each row repesents a pattern with actions like
-- edit, clone, delete, run and enable.
+- Edit, Clone, Delete, Run and Enable.
 
 ## Adding new patterns to the default patterns list
 To register a new pattern you can add it to the default patterns in the Yaml file <code>/commander/data/patterns/eeg-patterns-default.yaml</code>
 
-Remember to reset the pattern list so it reads the default patterns file. You can also import and export the current patterns in the app.
+Remember to reset the pattern list (with the small reset icon) so it reloads the default patterns file. You can also import and export the current patterns in the app.
 
 The default or imported patterns are saved to local storage in the browser, not to any external file.
 
-This shows an example of a patterns file with only one pattern:
+This shows an example of a Yaml patterns file with only one pattern:
 <pre>
 patterns:
     name: Relaxed (JS - Video)
@@ -77,8 +78,12 @@ In reality you could totally refactor the index.html page and hide all the patte
 You can easily add new action types, with a few code additions.
 
 ### In <code>actions.js</code>
-- Add your own <code>async function execute[Type]Action(pattern, eeg)</code>
-- Add a call to your action type in the switch statement in <code>function executePattern(pattern, metricValue, eeg)</code>
+- Add an action type constant in declaration section
+  - <code>ACTION_TYPE_[Type]</code>.
+- Add your own execute function for your new action type
+  - <code>async function execute[Type]Action(pattern, eeg)</code>
+- Add an entry to the actionSettings map with a color (css class) and a function reference to your newly created execute action function.
+  - <code>actionSettings.set(ACTION_TYPE_[Type], { color: `bg-yellow-800`, execute: execute[Type]Action });</code>
 
 ### In <code>patterns.js</code>
 - Add a background color for your action type in <code>function getActionTypeColor(type)</code>
