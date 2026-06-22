@@ -112,7 +112,7 @@ class PatternDialog {
         onPatternChange();
 
         // Auto-save to localStorage as backup
-        localStorage.setItem(LOCAL_STORAGE_PATTERNS, JSON.stringify(patterns));
+        setLocalStoragePatterns(patterns);
     }
 
     /**

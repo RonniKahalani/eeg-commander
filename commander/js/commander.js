@@ -30,8 +30,6 @@ SOFTWARE.
 /**
  * This script handles the commander UI and functionality.
  */
-const LOCAL_STORAGE_MUTED = 'muted';
-
 let isMuted = false;
 let config;
 
@@ -41,7 +39,7 @@ let config;
  */
 function toggleMute() {
     isMuted = !isMuted;
-    localStorage.setItem(LOCAL_STORAGE_MUTED, isMuted);
+    setLocalStorageMuted(isMuted);
     onMuteChanged(isMuted)
 }
 
@@ -49,7 +47,7 @@ function toggleMute() {
  * Initializes the mute feature
  */
 function initMuted() {
-   isMuted = localStorage.getItem(LOCAL_STORAGE_MUTED) === 'true';
+   isMuted = getLocalStorageMuted();
    onMuteChanged(isMuted);
 }
 

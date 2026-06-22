@@ -32,7 +32,6 @@ SOFTWARE.
  */
 const NO_TRIGGER_RESPONSES = '<div class="text-xs text-center text-gray-500">No trigger responses yet.</div>';
 const PATTERN_TRIGGER_DELAY_MILLIS = 180;
-const LOCAL_STORAGE_PATTERNS = 'patterns';
 
 const OPERATOR_GT = '>';
 const OPERATOR_LT = '<';
@@ -185,7 +184,7 @@ function togglePatternEnabled(id) {
 
     pattern.enabled = !pattern.enabled;
 
-    localStorage.setItem(LOCAL_STORAGE_PATTERNS, JSON.stringify(patterns));
+    setLocalStoragePatterns(patterns);
     onPatternChange(patterns);
     addLogEntry(`${pattern.name} ${pattern.enabled ? 'enabled' : 'disabled'}`, LOG_TYPE_SYSTEM);
 }
@@ -210,7 +209,6 @@ function deletePattern(id) {
 function exportPatterns() {
     const config = {
         version: "1.0",
-        device: "BrainBit 2",
         exported: new Date().toISOString(),
         patterns: patterns.map(p => ({
             name: p.name,
@@ -222,16 +220,26 @@ function exportPatterns() {
     };
 
     const yamlStr = jsyaml.dump(config, { indent: 2, lineWidth: 80 });
-    const blob = new Blob([yamlStr], { type: 'text/yaml' });
+    downloadData(yamlStr, 'text/yaml', `eeg-patterns-${config.exported}.yaml`)
+    addLogEntry('Configuration exported as YAML', LOG_TYPE_SUCCESS);
+}
+
+/**
+ * Downloads the data in a specific content type to a specific file name
+ * @param {*} data 
+ * @param {*} contentType 
+ * @param {*} filename 
+ */
+function downloadData(data, contentType, filename) {
+    const blob = new Blob([data], { type: contentType });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     anchor.href = url;
-    anchor.download = `eeg-patterns-${config.exported}.yaml`;
+    anchor.download = filename;
     anchor.click();
     URL.revokeObjectURL(url);
-
-    addLogEntry('Configuration exported as YAML', LOG_TYPE_SUCCESS);
 }
+
 
 /**
  * Loads a patterns file
@@ -261,8 +269,7 @@ async function loadPatterns(url) {
             onPatternChange(patterns);
             addLogEntry(`Loaded ${patterns.length} patterns from YAML (@{url})`, LOG_TYPE_SUCCESS);
 
-            // Save to localStorage
-            localStorage.setItem(LOCAL_STORAGE_PATTERNS, JSON.stringify(patterns));
+            setLocalStoragePatterns(patterns);
 
         } else {
             alert('Invalid YAML: missing "patterns" array');
@@ -309,18 +316,13 @@ function resetToDefaults() {
  * @returns {void}
  */
 async function loadSavedPatterns() {
-    const saved = localStorage.getItem(LOCAL_STORAGE_PATTERNS);
-    if (saved) {
-        try {
-            const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-                patterns = parsed;
-                return;
-            }
-        } catch (e) { }
+    const localPatterns = getLocalStoragePatterns();
+    if (!localPatterns) {
+        // Fallback to defaults
+        await loadPatterns(config.patterns);
+        return;
     }
-    // Fallback to defaults
-    await loadPatterns(config.patterns);
+    patterns = localPatterns;
 }
 
 /**
@@ -465,11 +467,13 @@ function checkAllPatterns(eeg) {
         if (!pattern.enabled) return;
 
         // Check cooldown
-        if (now - pattern.lastTriggered < pattern.cooldown * 1000) return;
+        const timeSinceTriggeredMillis = now - pattern.lastTriggered;
+        const cooldownMillis = pattern.cooldown * 1000;
+        if (timeSinceTriggeredMillis < cooldownMillis) return;
 
         // Get recent samples within duration window
-        const durationMs = pattern.condition.duration * 1000;
-        const recentSamples = eeg.filter(d => now - d.timestamp <= durationMs);
+        const durationMillis = pattern.condition.duration * 1000;
+        const recentSamples = eeg.filter(d => now - d.timestamp <= durationMillis);
 
         if (recentSamples.length < 5) return; // not enough data
 

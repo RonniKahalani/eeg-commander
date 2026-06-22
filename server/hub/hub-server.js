@@ -134,6 +134,6 @@ function addLogEntry(message, logType = 'info') {
  * @returns {Object} The configuration
  */
 function loadConfig() {
-    const content = fs.readFileSync('.\\server\\hub\\config.json', 'utf8');
+    const content = fs.readFileSync('config.json', 'utf8');
     return JSON.parse(content);
 }
