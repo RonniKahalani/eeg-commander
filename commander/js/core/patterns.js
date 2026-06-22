@@ -32,7 +32,6 @@ SOFTWARE.
  */
 const NO_TRIGGER_RESPONSES = '<div class="text-xs text-center text-gray-500">No trigger responses yet.</div>';
 const PATTERN_TRIGGER_DELAY_MILLIS = 180;
-const LOCAL_STORAGE_PATTERNS = 'patterns';
 
 const OPERATOR_GT = '>';
 const OPERATOR_LT = '<';
@@ -185,7 +184,7 @@ function togglePatternEnabled(id) {
 
     pattern.enabled = !pattern.enabled;
 
-    localStorage.setItem(LOCAL_STORAGE_PATTERNS, JSON.stringify(patterns));
+    setLocalStoragePatterns(patterns);
     onPatternChange(patterns);
     addLogEntry(`${pattern.name} ${pattern.enabled ? 'enabled' : 'disabled'}`, LOG_TYPE_SYSTEM);
 }
@@ -222,7 +221,6 @@ function exportPatterns() {
 
     const yamlStr = jsyaml.dump(config, { indent: 2, lineWidth: 80 });
     downloadData(yamlStr, 'text/yaml', `eeg-patterns-${config.exported}.yaml`)
-
     addLogEntry('Configuration exported as YAML', LOG_TYPE_SUCCESS);
 }
 
@@ -239,7 +237,7 @@ function downloadData(data, contentType, filename) {
     anchor.href = url;
     anchor.download = filename;
     anchor.click();
-    URL.revokeObjectURL(url);    
+    URL.revokeObjectURL(url);
 }
 
 
@@ -271,8 +269,7 @@ async function loadPatterns(url) {
             onPatternChange(patterns);
             addLogEntry(`Loaded ${patterns.length} patterns from YAML (@{url})`, LOG_TYPE_SUCCESS);
 
-            // Save to localStorage
-            localStorage.setItem(LOCAL_STORAGE_PATTERNS, JSON.stringify(patterns));
+            setLocalStoragePatterns(patterns);
 
         } else {
             alert('Invalid YAML: missing "patterns" array');
@@ -319,18 +316,13 @@ function resetToDefaults() {
  * @returns {void}
  */
 async function loadSavedPatterns() {
-    const saved = localStorage.getItem(LOCAL_STORAGE_PATTERNS);
-    if (saved) {
-        try {
-            const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-                patterns = parsed;
-                return;
-            }
-        } catch (e) { }
+    const localPatterns = getLocalStoragePatterns();
+    if (!localPatterns) {
+        // Fallback to defaults
+        await loadPatterns(config.patterns);
+        return;
     }
-    // Fallback to defaults
-    await loadPatterns(config.patterns);
+    patterns = localPatterns;
 }
 
 /**
@@ -477,7 +469,7 @@ function checkAllPatterns(eeg) {
         // Check cooldown
         const timeSinceTriggeredMillis = now - pattern.lastTriggered;
         const cooldownMillis = pattern.cooldown * 1000;
-        if ( timeSinceTriggeredMillis < cooldownMillis) return;
+        if (timeSinceTriggeredMillis < cooldownMillis) return;
 
         // Get recent samples within duration window
         const durationMillis = pattern.condition.duration * 1000;
