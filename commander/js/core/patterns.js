@@ -210,7 +210,6 @@ function deletePattern(id) {
 function exportPatterns() {
     const config = {
         version: "1.0",
-        device: "BrainBit 2",
         exported: new Date().toISOString(),
         patterns: patterns.map(p => ({
             name: p.name,
@@ -222,16 +221,27 @@ function exportPatterns() {
     };
 
     const yamlStr = jsyaml.dump(config, { indent: 2, lineWidth: 80 });
-    const blob = new Blob([yamlStr], { type: 'text/yaml' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = `eeg-patterns-${config.exported}.yaml`;
-    anchor.click();
-    URL.revokeObjectURL(url);
+    downloadData(yamlStr, 'text/yaml', `eeg-patterns-${config.exported}.yaml`)
 
     addLogEntry('Configuration exported as YAML', LOG_TYPE_SUCCESS);
 }
+
+/**
+ * Downloads the data in a specific content type to a specific file name
+ * @param {*} data 
+ * @param {*} contentType 
+ * @param {*} filename 
+ */
+function downloadData(data, contentType, filename) {
+    const blob = new Blob([data], { type: contentType });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.click();
+    URL.revokeObjectURL(url);    
+}
+
 
 /**
  * Loads a patterns file
@@ -465,11 +475,13 @@ function checkAllPatterns(eeg) {
         if (!pattern.enabled) return;
 
         // Check cooldown
-        if (now - pattern.lastTriggered < pattern.cooldown * 1000) return;
+        const timeSinceTriggeredMillis = now - pattern.lastTriggered;
+        const cooldownMillis = pattern.cooldown * 1000;
+        if ( timeSinceTriggeredMillis < cooldownMillis) return;
 
         // Get recent samples within duration window
-        const durationMs = pattern.condition.duration * 1000;
-        const recentSamples = eeg.filter(d => now - d.timestamp <= durationMs);
+        const durationMillis = pattern.condition.duration * 1000;
+        const recentSamples = eeg.filter(d => now - d.timestamp <= durationMillis);
 
         if (recentSamples.length < 5) return; // not enough data
 
