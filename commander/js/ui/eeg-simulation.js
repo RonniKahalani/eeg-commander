@@ -115,7 +115,7 @@ function startSimulation() {
 
         addToBuffer(generateSimulatedEEG(eegSimulationConfig));
 
-    }, 1000 / eegSimulationConfig.simulation.sampleRate * 4); 
+    }, getSimulationIntervalDelay()); 
 
     addLogEntry('Simulation started — generating synthetic EEG data', 'system');
 }
