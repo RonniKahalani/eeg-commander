@@ -97,13 +97,13 @@ const unmuteIcon = document.getElementById('unmute-icon');
  * @param {*} event 
  */
 function doEasterEgg(event) {
-    if (patterns.length > 0) {
-        const index = Math.floor(Math.random() * patterns.length);
-        const random = patterns[index];
+    if (patterns.length < 1) return;
 
-        triggerPattern(random, random.condition.threshold + 15);
-        addLogEntry('Random test triggered', LOG_TYPE_SYSTEM);
-    }
+    const index = Math.floor(Math.random() * patterns.length);
+    const random = patterns[index];
+
+    triggerPattern(random, random.condition.threshold + 15);
+    addLogEntry('Random test triggered', LOG_TYPE_SYSTEM);
 }
 
 /**
