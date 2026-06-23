@@ -202,7 +202,7 @@ function executeMqttAction(pattern, eeg) {
         if (client && client.connected) { client.end(); client = null; }
     });
 
-    client.on('close', () => console.log('🔌 Connection closed'));
+    client.on('close', () => {});
 }
 
 /**
