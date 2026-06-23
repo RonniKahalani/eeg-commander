@@ -109,7 +109,7 @@ function onDeviceConnected(deviceInfo) {
  * @param {*} deviceInfo 
  */
 function onDeviceConnecting(deviceInfo) {
-
+    // Ignored for now
 }
 
 /**
