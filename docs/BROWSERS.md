@@ -3,7 +3,7 @@ For the EEG Commander app to connect to an EEG device the browser has to support
 
 If you're only using the EEG simulator, every newer browser is supported.
 
-## Browsers currently supporting the Bluetooth Web API (for using EEG devices)
+## Browsers currently supporting Bluetooth Web API (for using EEG devices)
 - Chrome
 - Edge
 - Opera

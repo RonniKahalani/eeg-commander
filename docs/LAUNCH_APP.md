@@ -8,19 +8,24 @@ Firefox does not support the Bluetooth Web API and will not connect to a device,
 
 ## Get the code
 - Clone or fork the app from <code>https://github.com/RonniKahalani/eeg-commander</code>
+
 ## Open the project (ex. VS Code)
 - Open the <code>eeg-commander</code> folder.
-
-## Start a Shell server
-- Can be ignored if you're not using Shell or UDP actions.
-- Open the <code>/server/shell</code> folder in a terminal window.
-- Run the command <code>node shell-server</code>
-
-If you're running the shell server on a device remote from the Commander app, you have to point to it via the <code>shell.host</code> property in the <code>config.json</code> file.
 
 ## Launch the web app
 - Select the file <code>/commander/index.html</code>
 - Click <code>Go Live!</code> (requires the Live Server plugin).
+
+## Initial server connection error in the trigger log
+You should have one server connection error, for a shell server, in the trigger log in the bottom of the interface. 
+
+Thit is because the EEG Commander, by default, is looking for a local Shell server, but you haven't started the server yet. So you're currently not able to run Shell or UDP pattern actions, which is what the Shell server offers.
+
+### Start the needed server
+Go through this [Tutorial](/docs/TUTORIAL.md) to learn how to start the different servers and create your own [patterns](/docs/PATTERNS.md).
+
+### Refresh the EEG Commander browser window
+After you've startet the servers you need, press (F5-key or CTRL-R in Windows) to refresh the browser window and the EEG Commander app will try to connect to the servers you've declared in the config file <code>/commander/data/config.json</code>, following the tutorial guidelines.
 
 ## Checking the the app functions properly
 - Go to the bottom of the page (to the trigger log) and validate that the app found the expected shell server.
@@ -29,4 +34,4 @@ If you're running the shell server on a device remote from the Commander app, yo
 - Click the Simulate button in the top right corner.
 - Select a pattern from the Patterns tab to enable, to test if it triggers.
 
-That should do the trick. If all tests went well you should be raedy to do something cool.
+That should do the trick. If all tests went well you should be ready to do something cool.
