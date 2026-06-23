@@ -10,4 +10,4 @@ All EEG Commander clients can sends their EEG data to this Hub server which can 
 If you don't need this server:
 - Set <code>hub.host</code> to empty (""), in <code>/commander/data/config.json</code>.
 
-Default config value: <code>ws://localhost:8885</code>.
+Default config value: Empty ("") which means not using a Hub server.

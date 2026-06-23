@@ -154,7 +154,7 @@ async function initializeEverything() {
     initShellClient();
     initHubClient();
     initChart();
-    initTaskInterval();
+    initTaskInterval(config.ui.taskStatusIntervalMillis);
     initKeyboardListener();
     initPatternFilter();
     loadSavedPatterns();

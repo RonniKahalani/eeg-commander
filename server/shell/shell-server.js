@@ -457,9 +457,9 @@ function handleUsage(req, res) {
             command: 'string (required) - The full shell command to execute, e.g. "ls -la" or "echo hello world"'
         },
         usage_examples: [
-            `curl -X POST http://${localIp}:${PORT}/execute -H "Content-Type: application/json" -d \'{"command": "echo Hello from Node.js"}\'`,
-            `curl -X POST http://${localIp}:${PORT}/execute -H "Content-Type: application/json" -d \'{"command": "ls -la /home/workdir"}\'`,
-            `curl -X POST http://${localIp}:${PORT}/execute -H "Content-Type: application/json" -d \'{"command": "node --version"}\'`
+            `curl -X POST http://${localIp}:${port}/execute -H "Content-Type: application/json" -d \'{"command": "echo Hello from Node.js"}\'`,
+            `curl -X POST http://${localIp}:${port}/execute -H "Content-Type: application/json" -d \'{"command": "ls -la /home/workdir"}\'`,
+            `curl -X POST http://${localIp}:${port}/execute -H "Content-Type: application/json" -d \'{"command": "node --version"}\'`
         ],
         warnings: [
             'This endpoint executes arbitrary shell commands. Use with caution.',
@@ -541,13 +541,13 @@ function getLocalIpAddress() {
  * Starts the HTTP server on the specified port and logs the available endpoints and version information to the console.
  */
 config = security.loadConfig();
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, '0.0.0.0', () => {
+const port = process.env.PORT || config.port || 3000;
+server.listen(port, '0.0.0.0', () => {
     console.clear();
     console.log('--------------------------------------------------------------');
-    console.log(`Shell Server v${VERSION}`);
+    console.log(`Shell Server v${config.version}`);
     console.log('--------------------------------------------------------------');
-    console.log(`Endpoint: http://${getLocalIpAddress()}:${PORT}`);
+    console.log(`Endpoint: http://${getLocalIpAddress()}:${port}`);
     console.log('Hostname: ' + os.hostname());
     console.log('');
     console.log('Endpoints:');

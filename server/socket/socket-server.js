@@ -33,15 +33,14 @@ import { WebSocketServer } from 'ws';
 import os from 'os';
 import { getLocalIpAddress } from '../shared/network.js';
 
-const VERSION = '1.0.0';
-const PORT = 8889;
-const wss = new WebSocketServer({ port: PORT });
+const port = process.env.PORT || 8889;
+const wss = new WebSocketServer({ port: port });
 
 console.clear();
 console.log('--------------------------------------------------------------');
-console.log(`WebSocket Server v${VERSION}`);
+console.log(`WebSocket Server v0.0.1`);
 console.log('--------------------------------------------------------------');
-console.log(`Endpoint: http://${getLocalIpAddress()}:${PORT}`);
+console.log(`Endpoint: http://${getLocalIpAddress()}:${port}`);
 console.log('Hostname: ' + os.hostname());
 console.log('--------------------------------------------------------------');
 

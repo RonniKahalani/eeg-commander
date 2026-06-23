@@ -40,8 +40,9 @@ const ACTION_DEFAULT_TIMEOUT = 5; // seconds
 const ACTION_DEFAULT_REPLIES = 1; // seconds
 
 const HTTP_HEADER_AUTHORIZATION = 'Authorization';
-const HTTP_HEADER_CONTENT_TYPE = 'Content-Type';
-const HTTP_HEADER_CONTENT_TYPE_JSON = 'application/json';
+const CONTENT_TYPE = 'Content-Type';
+const CONTENT_TYPE_JSON = 'application/json';
+const CONTENT_TYPE_YAML = 'text/yaml';
 
 const ACTION_TYPE_JS = 'js';
 const ACTION_TYPE_URL = 'url';
@@ -84,7 +85,7 @@ async function executeUDPAction(pattern, eeg) {
         body: JSON.stringify({ command: pattern.action.payload, type: ACTION_TYPE_UDP, sender: pattern.name })
     };
     settings.headers[HTTP_HEADER_AUTHORIZATION] = BEARER_DEMO_API_KEY;
-    settings.headers[HTTP_HEADER_CONTENT_TYPE] = HTTP_HEADER_CONTENT_TYPE_JSON;
+    settings.headers[CONTENT_TYPE] = CONTENT_TYPE_JSON;
 
     try {
         const response = await fetch(config.shell.host + '/execute', settings);
@@ -202,7 +203,7 @@ function executeMqttAction(pattern, eeg) {
         if (client && client.connected) { client.end(); client = null; }
     });
 
-    client.on('close', () => console.log('🔌 Connection closed'));
+    client.on('close', () => {});
 }
 
 /**
@@ -229,6 +230,7 @@ function executeSocketAction(pattern, eeg) {
 
     let timeout = false;
     let done = false;
+    
     const ws = new WebSocket(payload.host);
     ws.onopen = () => {
         ws.send(JSON.stringify(payload.message));
@@ -266,7 +268,6 @@ function executeSocketAction(pattern, eeg) {
         }
     };
 
-    let errorMsg = null;
     ws.onerror = (err) => {
         //clearTimeout(connectionTimeout);
         done = true;
@@ -367,7 +368,7 @@ async function executeShellAction(pattern, eeg) {
         body: JSON.stringify({ command: pattern.action.payload.command, type: ACTION_TYPE_SHELL, sender: pattern.name })
     }
     settings.headers[HTTP_HEADER_AUTHORIZATION] = BEARER_DEMO_API_KEY;
-    settings.headers[HTTP_HEADER_CONTENT_TYPE] = HTTP_HEADER_CONTENT_TYPE_JSON;
+    settings.headers[CONTENT_TYPE] = CONTENT_TYPE_JSON;
 
     const response = await fetch(pattern.action.payload.host + '/execute', settings);
     const data = await response.json();
@@ -401,7 +402,7 @@ async function executeUrlAction(pattern, eeg) {
     };
 
     if (payload.authorization) { settings.headers[HTTP_HEADER_AUTHORIZATION] = payload.authorization; }
-    if (payload.contentType) { settings.headers[HTTP_HEADER_CONTENT_TYPE] = payload.contentType; }
+    if (payload.contentType) { settings.headers[CONTENT_TYPE] = payload.contentType; }
     if (payload.body && payload.method === HTTP_METHOD_POST) { settings.body = getAsString(payload.body); }
 
     try {
