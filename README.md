@@ -7,11 +7,11 @@ Please start with these
 - [Video](https://drive.google.com/file/d/1XCkEK5r91wmRx2MW0JrOTMw3NzlUWFCe/view?usp=sharing)
 
 ## The big question
-- Do I need to invest in an EEG device to be able to play with EEG Commander?
+Do I need to invest in an EEG device to be able to play with EEG Commander? 
 
 No, this app includes a configurable EEG simulator, so nothing is holding you back from trying it out.
 
-## The Software
+## About the software
 - [License](/LICENSE.md)
 - [Purpose](/docs/PURPOSE.md)
 - [Features](/docs/FEATURES.md)
@@ -22,7 +22,7 @@ No, this app includes a configurable EEG simulator, so nothing is holding you ba
 - [Tutorial](/docs/TUTORIAL.md)
 - [Launching the app](/docs/LAUNCH_APP.md)
 
-## The Community
+## About the Community
 - [Community](/docs/COMMUNITY.md)
 - [Contributing](/docs/CONTRIBUTING.md)
 - [Code of Conduct](/docs/CODE_OF_CONDUCT.md)
