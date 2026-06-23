@@ -1,5 +1,6 @@
 # WebSocket Echo Server
-This server is for testing purposes for the [Commander](/commander/) app.
+This server is for WebSocket echo purposes for the EEG Commander clients.
 
-To run the server
-<pre><code>node socket-server.js</code></pre>
+## Starting the server
+- Go to folder <code>/commander/server/socket</code>
+- Run command: <code>node socket-server</code>

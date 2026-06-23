@@ -1,8 +1,9 @@
 # EEG Commander Tutorial
 This tutorial will help you get started and has the following steps.
 - Introduction
+- Using the servers.
 - Create pattern.
-- Select EEG trigger signal.
+- Select condition.
 - Select action type.
 - Start simulation.
 - Test pattern.
@@ -10,34 +11,27 @@ This tutorial will help you get started and has the following steps.
 ## Introduction
 The purpose of this tutorial is to help you make your first new pattern.
 
+## Using the servers
 First you have to take some choices
-- Are you going to use a Shell server for executing OS shell script- and UDP actions?
-- Are you going to use a Hub server to send EEG data to?
-- Are you going to use a UDP Echo server for testing?
-- Are you going to use a WebSocket Echo server for testing?
+- Do you need a Shell server?
+- Do you need a Hub server?
+- Do you need an UDP echo server?
+- Do you need a WebSocket echo server?
 
-### Using the Shell server
-- Go to folder <code>/commander/server/shell</code>
-- Run command <code>node shell-server</code>
+### Do you need the Shell server?
+This server executes OS shell scripts- and UDP actions on behalf of EEG Commander clents, via HTTP POST requests. Read more about [Shell server](/server/shell/README.md)
 
-If you don't want to use this server, leave <code>shell.host</code> empty in the <code>/commander/data/config.json</code> configuration file. Read more about the [Shell server](/server/shell/README.md)
+### Do you need a Hub server?
+This server is used to aggegate real-time EEG data from multiple EEG Commander clients, via a bidirectional WebSocket connection. Read more about [Hub server](/server/hub/README.md)
 
-### Using the Hub server
-- Go to folder <code>/commander/server/hub</code>
-- Run command: <code>node hub-server</code>
+### Do you need an UDP server?
+This server is for UDP echo purposes for the EEG Commander clients. Read about [UDP server](/server/udp/README.md)
 
-If you don't want to use this server, leave <code>hub.host</code> empty in the <code>/commander/data/config.json</code> configuration file.  Read more about the [Hub server](/server/hub/README.md)
-
-### Using the UDP Echo server for testing
-- Go to folder <code>/commander/server/udp</code>
-- Run command: <code>node udp-server</code>
-
-### Using the WebSocket Echo server for testing
-- Go to folder <code>/commander/server/socket</code>
-- Run command: <code>node socket-server</code>
+### Do you need a WebSocket server?
+This server is for WebSocket echo purposes for the EEG Commander clients. Read about [Socket server](/server/socket/README.md)
 
 ## Create pattern
-Start by checking out this about [EEG Patterns](/docs/PATTERNS.md).
+Start by getting to know [EEG Patterns](/docs/PATTERNS.md).
 
 The quickest way to make a new pattern is to clone an existing one of the same action type.
 
@@ -50,11 +44,13 @@ The quickest way to make a new pattern is to clone an existing one of the same a
 
 **Note**: Your new pattern currently only exists in the local storage of the browser. To persist it on disk use the export feature on the Patterns Tab.
 
-## Set pattern condition
-Select your condition 
+### Set pattern condition
+Select your condition
+
+![Main Page](/docs/images/pattern-condition.png)
 
 
-## Set action type
+### Set action type
 Select one of the available action types for your pattern
 - [JS](ACTIONS_JAVASCRIPT.md)
 - [URL](ACTIONS_URL.md)
