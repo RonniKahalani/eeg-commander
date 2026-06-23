@@ -34,7 +34,7 @@ SOFTWARE.
  * Tells the surrounding that a pattern succeded.
  * @param {*} response 
  */
-function notifySuccess(response) {
+function notifyPatternSuccess(response) {
     if (onPatternSuccess) onPatternSuccess(response);
 }
 
@@ -42,7 +42,7 @@ function notifySuccess(response) {
  * Tells the surrounding that a pattern failed.
  * @param {*} response 
  */
-function notifyFail(response) {
+function notifyPatternFail(response) {
     if (onPatternFail) onPatternFail(response);
 }
 
@@ -50,7 +50,7 @@ function notifyFail(response) {
  * Tells the surrounding that a pattern failed.
  * @param {*} response 
  */
-function notifyStarted(pattern) {
+function notifyPatternStarted(pattern) {
     if (onPatternStart) onPatternStart(pattern);
 }
 

@@ -95,7 +95,7 @@ function addResponse(task, pattern, data, err = null) {
 
     onResponseChange(responses);
 
-    const callback = (err) ? notifyFail : notifySuccess;
+    const callback = (err) ? notifyPatternFail : notifyPatternSuccess;
     callback(response);
     return response;
 }
@@ -411,7 +411,7 @@ function triggerAlias(alias) {
  * @returns {void}
  */
 function executePattern(pattern, metricValue, eeg) {
-    notifyStarted(pattern);
+    notifyPatternStarted(pattern);
     const actionType = pattern.action.type;
 
     if (!actionSettings.has(actionType)) throw new Error(`Unknown action type ${type}`);
