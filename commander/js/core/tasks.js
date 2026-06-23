@@ -73,13 +73,7 @@ function taskSuccess(task) {
  * @param {number} millis
  */
 function initTaskInterval(millis) {
-    const interval = setInterval(() => {
-        const taskStatus = getTaskStatus();
-        setVisibility(responseSpinnerElem, taskStatus.active.length > 0);
-        taskActivityElem.innerHTML = `${taskStatus.active.length} active, ${taskStatus.success.length} success, ${taskStatus.fail.length} fail.`;
-    }, millis);
-
-    return interval;
+    return setInterval(() => onTaskStatusUpdate(getTaskStatus()), millis);
 }
 
 /**

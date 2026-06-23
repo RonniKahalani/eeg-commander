@@ -289,3 +289,31 @@ function renderPatterns(patternsToRender = null, elem = null) {
         patternCountElem.innerHTML = count;
     });
 }
+
+/**
+ * Shows a tip
+ * @param {*} title 
+ * @param {*} message 
+ * @param {*} millis 
+ */
+function showTip(message, millis = 5000) {
+    const tip = document.createElement('div');
+    tip.className = 'fixed bottom-4 left-1/2 -translate-x-1/2 bg-slate-900 border border-indigo-500/30 px-4 py-2 rounded-3xl text-xs flex items-center gap-x-2 shadow-xl z-50';
+    tip.innerHTML = `<span class="text-indigo-400">${message}</span>`;
+    document.body.appendChild(tip);
+
+    setTimeout(() => {
+        tip.style.transition = 'opacity 0.4s';
+        tip.style.opacity = '0';
+        setTimeout(() => tip.remove(), 400);
+    }, millis);
+}
+
+/**
+ * Shows a tab
+ * @param {*} id 
+ */
+function showTab(id) {
+    Array.from(document.getElementsByClassName('main-tab')).forEach(element => setVisibility(element, false));
+    setVisibility(document.getElementById(id), true);
+}

@@ -52,6 +52,12 @@ const ACTION_TYPE_SHELL = 'shell';
 const ACTION_TYPE_SOCKET = 'socket';
 const ACTION_TYPE_MQTT = 'mqtt';
 
+/**
+ * The action settings are used to eliminate multiple switch statement.
+ * The color property is a css class reference, that takes care of all its styling.
+ * By default it uses Tailwind background color codes.
+ * The execute property is a reference to the function that handles the spefific action. 
+ */
 const actionSettings = new Map();
 actionSettings.set(ACTION_TYPE_JS, { color: 'bg-yellow-800', execute: executeJSAction });
 actionSettings.set(ACTION_TYPE_UDP, { color: 'bg-red-800', execute: executeUDPAction });
@@ -203,7 +209,7 @@ function executeMqttAction(pattern, eeg) {
         if (client && client.connected) { client.end(); client = null; }
     });
 
-    client.on('close', () => {});
+    client.on('close', () => { });
 }
 
 /**
@@ -230,7 +236,7 @@ function executeSocketAction(pattern, eeg) {
 
     let timeout = false;
     let done = false;
-    
+
     const ws = new WebSocket(payload.host);
     ws.onopen = () => {
         ws.send(JSON.stringify(payload.message));

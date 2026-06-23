@@ -100,7 +100,7 @@ function onDeviceConnected(deviceInfo) {
 
     sampleRateElem.textContent = eegSimulationConfig.simulation.sampleRate + ' Hz';
     setVisibility(sampleRateElem, true);
-    
+
     deviceNameElem.innerHTML = deviceInfo.name;
 }
 
@@ -109,7 +109,7 @@ function onDeviceConnected(deviceInfo) {
  * @param {*} deviceInfo 
  */
 function onDeviceConnecting(deviceInfo) {
-
+    // Ignored for now
 }
 
 /**
@@ -141,4 +141,9 @@ function onPatternChange(patterns) {
 function onMuteChanged(muted) {
     setVisibility(muteIcon, !muted)
     setVisibility(unmuteIcon, muted);
+}
+
+function onTaskStatusUpdate(taskStatus) {
+    setVisibility(responseSpinnerElem, taskStatus.active.length > 0);
+    taskActivityElem.innerHTML = `${taskStatus.active.length} active, ${taskStatus.success.length} success, ${taskStatus.fail.length} fail.`;
 }
