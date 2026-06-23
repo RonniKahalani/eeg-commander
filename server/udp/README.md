@@ -1,5 +1,6 @@
 # UDP Echo Server
-This server is for testing purposes for the [Commander](/commander/) app.
+This server is for UDP echo purposes for the EEG Commander clients.
 
-To run the server
-<pre><code>node udp-server.js</code></pre>
+Starting the server
+- Go to folder <code>/commander/server/udp</code>
+- Run command: <code>node udp-server</code>

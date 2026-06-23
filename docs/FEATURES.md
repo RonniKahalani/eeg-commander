@@ -1,23 +1,28 @@
 # Features
-Here is a list of features included in the app.
+Here is a list of features included in this project.
 
-## Patterns
-- A [pattern](/docs/PATTERNS.md) consist of an EEG signal condition and a real-world action.
+## Playground view
+- Explore the different pattern action types (UI and integration technilogies).
+- Run and change the examples.
+
+## Patterns view
+- Create, edit and delete [patterns](/docs/PATTERNS.md).
 - Config file for default pattern list.
 - Import and export of patterns lists.
 - Run/test patterns manually.
 - Trigger/event logging.
 
-## Media
-- Mute/unmute audio.
-- Includes UI- and 3D interactions examples.
-
-## EEG Data
+## EEG view
 - Supports both EEG device and simulated data.
 - Config file for EEG simulation settings.
 
 ## Servers
-Includes a set of servers:
+The project includes the the following servers
 - [Shell Server](/server/shell/README.md) for OS shell execution and UDP messaging.
-- [UDP Test Echo Server](/server/udp/README.md) for testing purposes.
-- [WebSocket Test Echo Server](/server/socket/README.md) for testing purposes.
+- [Hub Server](/server/hub/README.md) for EEG data aggregation from multiple EEG Commander clients.
+- [UDP Test Echo Server](/server/udp/README.md) for echo purposes.
+- [WebSocket Test Echo Server](/server/socket/README.md) for echo purposes.
+
+## Media
+- Mute/unmute audio.
+- Includes UI- and 3D interaction examples using JavaScript actions.
