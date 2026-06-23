@@ -13,5 +13,9 @@
   "hub": {
     "host": "",
     "id": ""
+  },
+  "ui": {
+    "taskUpdateIntervalMillis": 180
   }
+
 }

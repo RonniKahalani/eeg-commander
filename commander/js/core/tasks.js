@@ -34,8 +34,6 @@ const TASK_STATE_FAILED = 'failed';
 const TASK_STATE_SUCCESS = 'success';
 const TASK_STATE_ACTIVE = 'active';
 
-const TASK_TRIGGER_DELAY_MILLIS = 180;
-
 let tasks = [];
 
 /**
@@ -73,7 +71,7 @@ function taskSuccess(task) {
 /**
  * Initializes task monitoring
  */
-function initTaskInterval() {
+function initTaskInterval(millis) {
     const interval = setInterval(() => {
         const activeTasks = tasks.filter((task) => task.state === TASK_STATE_ACTIVE);
         const successTasks = tasks.filter((task) => task.state === TASK_STATE_SUCCESS);
@@ -81,7 +79,7 @@ function initTaskInterval() {
 
         setVisibility(responseSpinnerElem, activeTasks.length > 0);
         taskActivityElem.innerHTML = `${activeTasks.length} active, ${successTasks.length} success, ${failTasks.length} fail.`;
-    }, TASK_TRIGGER_DELAY_MILLIS);
+    }, millis);
 
     return interval;
 }
