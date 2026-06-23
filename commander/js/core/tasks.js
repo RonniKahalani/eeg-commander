@@ -70,16 +70,26 @@ function taskSuccess(task) {
 
 /**
  * Initializes task monitoring
+ * @param {number} millis
  */
 function initTaskInterval(millis) {
     const interval = setInterval(() => {
-        const activeTasks = tasks.filter((task) => task.state === TASK_STATE_ACTIVE);
-        const successTasks = tasks.filter((task) => task.state === TASK_STATE_SUCCESS);
-        const failTasks = tasks.filter((task) => task.state === TASK_STATE_FAILED);
-
-        setVisibility(responseSpinnerElem, activeTasks.length > 0);
-        taskActivityElem.innerHTML = `${activeTasks.length} active, ${successTasks.length} success, ${failTasks.length} fail.`;
+        const taskStatus = getTaskStatus();
+        setVisibility(responseSpinnerElem, taskStatus.active.length > 0);
+        taskActivityElem.innerHTML = `${taskStatus.active.length} active, ${taskStatus.success.length} success, ${taskStatus.fail.length} fail.`;
     }, millis);
 
     return interval;
+}
+
+/**
+ * Returns a task status object
+ * @returns {Object} An status object
+ */
+function getTaskStatus() {
+    return {
+        active: tasks.filter((task) => task.state === TASK_STATE_ACTIVE),
+        success: tasks.filter((task) => task.state === TASK_STATE_SUCCESS),
+        fail: tasks.filter((task) => task.state === TASK_STATE_FAILED)
+    };
 }
