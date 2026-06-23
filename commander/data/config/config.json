@@ -11,7 +11,7 @@
     "valueMultiplier": 1000
   },
   "hub": {
-    "host": "ws://localhost:8885",
-    "id": "Ronni PC"
+    "host": "",
+    "id": ""
   }
 }
