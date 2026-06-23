@@ -33,9 +33,6 @@ import dgram from 'node:dgram';
 import os from 'os';
 import { getLocalIpAddress } from '../shared/network.js';
 
-const VERSION = '1.0.0';
-const PORT = 8888;
-const HOST = '0.0.0.0';
 const server = dgram.createSocket('udp4');
 
 server.on('listening', () => {
@@ -56,11 +53,13 @@ server.on('error', (err) => {
 });
 
 // Start server
-server.bind(PORT, HOST);
+const host = '0.0.0.0';
+const port = process.env.PORT || 8888;
+server.bind(port, host);
 console.clear();
 console.log('--------------------------------------------------------------');
-console.log(`🚀 UDP Server v${VERSION}`);
+console.log(`🚀 UDP Server v0.0.1`);
 console.log('--------------------------------------------------------------');
-console.log(`Endpoint: http://${getLocalIpAddress()}:${PORT}`);
+console.log(`Endpoint: http://${getLocalIpAddress()}:${port}`);
 console.log('Hostname: ' + os.hostname());
 console.log('--------------------------------------------------------------');
